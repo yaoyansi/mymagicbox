@@ -1,0 +1,22 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dynamic_enum", "dynamic_enum.vcxproj", "{2962B824-EFDF-2DFE-7214-2D8C29A5D0EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+		ReleaseDebug|x64 = ReleaseDebug|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2962B824-EFDF-2DFE-7214-2D8C29A5D0EE}.Debug|x64.ActiveCfg = Debug|x64
+		{2962B824-EFDF-2DFE-7214-2D8C29A5D0EE}.Debug|x64.Build.0 = Debug|x64
+		{2962B824-EFDF-2DFE-7214-2D8C29A5D0EE}.Release|x64.ActiveCfg = Release|x64
+		{2962B824-EFDF-2DFE-7214-2D8C29A5D0EE}.Release|x64.Build.0 = Release|x64
+		{2962B824-EFDF-2DFE-7214-2D8C29A5D0EE}.ReleaseDebug|x64.ActiveCfg = ReleaseDebug|x64
+		{2962B824-EFDF-2DFE-7214-2D8C29A5D0EE}.ReleaseDebug|x64.Build.0 = ReleaseDebug|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
