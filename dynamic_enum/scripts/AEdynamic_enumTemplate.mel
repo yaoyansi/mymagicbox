@@ -1,38 +1,143 @@
-// Copyright (C) 1997-2011 Autodesk, Inc., and/or its licensors.
-// All rights reserved.
-//
-// The coded instructions, statements, computer programs, and/or related
-// material (collectively the "Data") in these files contain unpublished
-// information proprietary to Autodesk, Inc. ("Autodesk") and/or its licensors,
-// which is protected by U.S. and Canadian federal copyright law and by
-// international treaties.
-//
-// The Data is provided for use exclusively by You. You have the right to use,
-// modify, and incorporate this Data into other products for purposes authorized 
-// by the Autodesk software license agreement, without fee.
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. AUTODESK
-// DOES NOT MAKE AND HEREBY DISCLAIMS ANY EXPRESS OR IMPLIED WARRANTIES
-// INCLUDING, BUT NOT LIMITED TO, THE WARRANTIES OF NON-INFRINGEMENT,
-// MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, OR ARISING FROM A COURSE 
-// OF DEALING, USAGE, OR TRADE PRACTICE. IN NO EVENT WILL AUTODESK AND/OR ITS
-// LICENSORS BE LIABLE FOR ANY LOST REVENUES, DATA, OR PROFITS, OR SPECIAL,
-// DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES, EVEN IF AUTODESK AND/OR ITS
-// LICENSORS HAS BEEN ADVISED OF THE POSSIBILITY OR PROBABILITY OF SUCH DAMAGES.
 
-//-
-// ==========================================================================
-//
-// ==========================================================================
-//+
+global string $g_NodeDotPlug;
+global string $g_GridMenuGroupName;
 
+global string $g_GridNames[]={};
+
+proc clearMenuGroup(string $menuGroupName)
+{
+	string $items[] = `optionMenuGrp -q -itemListLong $menuGroupName`;
+	for($i in $items)
+	{
+		deleteUI $i;
+	}
+}
+
+proc setMenuGroup(string $menuGroupName, string $menuItem[])
+{
+	for($item in $menuItem)
+	{
+		menuItem -parent ($menuGroupName + "|OptionMenu") -label $item;
+	}
+}
+
+global proc updateGridNames(string $vdbFilePath)
+{
+	global string $g_GridNames[];
+	global string $g_GridMenuGroupName;
+	global string $g_NodeDotPlug;
+
+	if($vdbFilePath=="D:/vdb0.vdb")
+	{
+		$g_GridNames = {"", "G0", "G1"};
+	}
+	else if($vdbFilePath=="D:/vdb1.vdb")
+	{
+		$g_GridNames = {"", "M0", "M1", "M2"};
+	}
+	print($g_GridNames);
+
+	clearMenuGroup($g_GridMenuGroupName);
+	setMenuGroup($g_GridMenuGroupName, $g_GridNames);
+	
+	string $node = plugNode($g_NodeDotPlug);
+	SetGridPlugValue($node);
+}
+//---------------------------------------------------------
+global proc SetGridPlugValue(string $node)
+{
+	global string $g_NodeDotPlug;
+	global string $g_GridMenuGroupName;
+
+	print("Debug>SetGridPlugValue("+$node+")\n");
+
+    string $gridName = `optionMenuGrp  -q -value $g_GridMenuGroupName`;
+
+    setAttr ($node+".grid") -type "string" $gridName;
+}
+//---------------------------------------------------------
+global proc myFilenameEdit(string $value)
+{
+	global string $g_NodeDotPlug;
+
+	print("Debug>myFilenameEdit("+$value+")\n");
+
+    //$attr = self.nodeAttr('filepath');
+    setAttr $g_NodeDotPlug -type "string" $value;
+
+	updateGridNames($value);
+}
+
+global proc LoadFilenameButtonPush()
+{
+    $basicFilter = "All Files (*.*)";
+    string $ret[] = `fileDialog2 -fileFilter $basicFilter -cap "Load VDB File" -okc "Load" -fm 4`;
+	print("$ret[]="); print($ret); print("\n");
+    if( size($ret) != 0 )
+	{
+        myFilenameEdit($ret[0]);
+        textFieldGrp -edit -text $ret[0] "filenameGrp";
+	}
+}
+//---------------------------------------------------
+global proc AEFilepathNew(string $node_plug)
+{
+	print("Debug>AEFilepathNew("+$node_plug+")\n");
+
+	global string $g_NodeDotPlug;
+	global string $g_GridMenuGroupName;
+
+	$g_NodeDotPlug = $node_plug;
+	string $node = plugNode($node_plug);
+
+	// set layout
+    rowColumnLayout 
+		-numberOfColumns 2 
+		-columnWidth 1 360 
+		-columnWidth 2 30
+		-columnAlign 1 "left"
+		-columnAlign 2 "left"
+		-columnAttach 1 "left" 1
+		-columnAttach 2 "left" 1;
+
+	// UI elements
+	// 1.VDB file path field
+	textFieldGrp -label "VDB Path" "filenameGrp";
+
+	// 2.file browser button
+    symbolButton -image "navButtonBrowse.png" -command "LoadFilenameButtonPush";
+
+	// 3.menu group for displaying grid names
+	$g_GridMenuGroupName = `optionMenuGrp -label ("All Grid Names")`;
+    optionMenuGrp -e
+        -changeCommand ("evalDeferred(\"SetGridPlugValue "+$node+"\")")
+        $g_GridMenuGroupName;
+
+
+	AEFilepathReplace($node_plug);
+}
+
+global proc AEFilepathReplace(string $node_plug)
+{
+	print("Debug>AEFilepathReplace("+$node_plug+")\n");
+
+	textFieldGrp -e -text `getAttr($node_plug)` "filenameGrp";
+
+	myFilenameEdit(getAttr($node_plug));
+}
+
+//-------------------------------------------
 global proc AEdynamic_enumTemplate( string $nodeName )
 {
 	AEswatchDisplay $nodeName;
 	editorTemplate -beginScrollLayout;
 
 	editorTemplate -beginLayout "Attributes" -collapse 0;
-		editorTemplate -addControl "filepath";
-		editorTemplate -addControl "grid";
+		//editorTemplate -addControl "filepath";
+		//editorTemplate -addControl "grid";
+		editorTemplate -callCustom AEFilepathNew AEFilepathReplace "filepath";
+		editorTemplate -addSeparator;
+		//editorTemplate -addControl "grid";
 	editorTemplate -endLayout;
 
 	// include/call base class/node attributes
