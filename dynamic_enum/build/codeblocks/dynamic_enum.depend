@@ -1,0 +1,180 @@
+# depslib dependency file v1.0
+1409666984 source:/home/user0/dev/mymagicbox/dynamic_enum/src/dynamic_enum.cpp
+	"dynamic_enum.h"
+
+1409672659 /home/user0/dev/mymagicbox/dynamic_enum/src/dynamic_enum.h
+	<maya/MIOStream.h>
+	<maya/MPxNode.h>
+	<maya/MString.h>
+	<maya/MTypeId.h>
+	<maya/MPlug.h>
+	<maya/MDataBlock.h>
+	<maya/MDataHandle.h>
+	<maya/MArrayDataHandle.h>
+	<maya/MFnNumericAttribute.h>
+	<maya/MFnTypedAttribute.h>
+	<maya/MFnStringData.h>
+	<maya/MFloatVector.h>
+	<maya/MGlobal.h>
+
+1404780999 /usr/autodesk/maya2015-x64/include/maya/MIOStream.h
+	<maya/MIOStreamFwd.h>
+	<iostream>
+	<iostream.h>
+
+1404780995 /usr/autodesk/maya2015-x64/include/maya/MIOStreamFwd.h
+	<iosfwd>
+
+1404781001 /usr/autodesk/maya2015-x64/include/maya/MPxNode.h
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+	<maya/MObject.h>
+	<maya/MTypeId.h>
+	<maya/MDataHandle.h>
+	<maya/MDataBlock.h>
+	<maya/MPlug.h>
+	<maya/MString.h>
+	<maya/MDGContext.h>
+
+1404780995 /usr/autodesk/maya2015-x64/include/maya/MStatus.h
+	<maya/MTypes.h>
+	<maya/MIOStream.h>
+	<maya/MIOStreamFwd.h>
+
+1404780998 /usr/autodesk/maya2015-x64/include/maya/MTypes.h
+	<winsock2.h>
+	"windows.h"
+	<sys/types.h>
+	<sys/stat.h>
+	<basetsd.h>
+	<inttypes.h>
+	<stdarg.h>
+
+1404780995 /usr/autodesk/maya2015-x64/include/maya/MObject.h
+	<maya/MFn.h>
+	<maya/MTypes.h>
+	<stdio.h>
+
+1404781002 /usr/autodesk/maya2015-x64/include/maya/MFn.h
+
+1404780998 /usr/autodesk/maya2015-x64/include/maya/MTypeId.h
+	<maya/MTypes.h>
+	<maya/MStatus.h>
+
+1404781000 /usr/autodesk/maya2015-x64/include/maya/MDataHandle.h
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+	<string.h>
+	<maya/MFnNumericData.h>
+	<maya/MFnData.h>
+	<maya/MTypeId.h>
+	<maya/MObject.h>
+
+1404781000 /usr/autodesk/maya2015-x64/include/maya/MFnNumericData.h
+	<maya/MFnData.h>
+
+1404781000 /usr/autodesk/maya2015-x64/include/maya/MFnData.h
+	<maya/MFnBase.h>
+
+1404781000 /usr/autodesk/maya2015-x64/include/maya/MFnBase.h
+	<maya/MFn.h>
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+
+1404781001 /usr/autodesk/maya2015-x64/include/maya/MDataBlock.h
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+	<maya/MDataHandle.h>
+	<maya/MArrayDataHandle.h>
+
+1404780994 /usr/autodesk/maya2015-x64/include/maya/MArrayDataHandle.h
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+	<string.h>
+
+1404780999 /usr/autodesk/maya2015-x64/include/maya/MPlug.h
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+	<maya/MDGContext.h>
+	<maya/MObject.h>
+	<maya/MIntArray.h>
+
+1404780998 /usr/autodesk/maya2015-x64/include/maya/MDGContext.h
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+
+1404780995 /usr/autodesk/maya2015-x64/include/maya/MIntArray.h
+	<maya/MTypes.h>
+	<maya/MStatus.h>
+
+1404780999 /usr/autodesk/maya2015-x64/include/maya/MString.h
+	<maya/MTypes.h>
+	<maya/MStatus.h>
+
+1404780996 /usr/autodesk/maya2015-x64/include/maya/MFnNumericAttribute.h
+	<maya/MFnAttribute.h>
+	<maya/MFnNumericData.h>
+	<maya/MObject.h>
+
+1404780997 /usr/autodesk/maya2015-x64/include/maya/MFnAttribute.h
+	<maya/MFnBase.h>
+	<maya/MFnData.h>
+
+1404781001 /usr/autodesk/maya2015-x64/include/maya/MFnTypedAttribute.h
+	<maya/MFnAttribute.h>
+	<maya/MFnData.h>
+	<maya/MObject.h>
+
+1404780998 /usr/autodesk/maya2015-x64/include/maya/MFnStringData.h
+	<maya/MFnData.h>
+
+1404780994 /usr/autodesk/maya2015-x64/include/maya/MFloatVector.h
+	<maya/MTypes.h>
+	<maya/MStatus.h>
+	<math.h>
+
+1404780995 /usr/autodesk/maya2015-x64/include/maya/MGlobal.h
+	<maya/MIntArray.h>
+	<maya/MDoubleArray.h>
+	<maya/MString.h>
+	<maya/MStringArray.h>
+	<maya/MObject.h>
+	<maya/MStatus.h>
+	<maya/MSelectionMask.h>
+	<maya/MTransformationMatrix.h>
+
+1404780996 /usr/autodesk/maya2015-x64/include/maya/MDoubleArray.h
+	<maya/MTypes.h>
+	<maya/MStatus.h>
+
+1404780999 /usr/autodesk/maya2015-x64/include/maya/MStringArray.h
+	<maya/MTypes.h>
+	<maya/MStatus.h>
+
+1404781000 /usr/autodesk/maya2015-x64/include/maya/MSelectionMask.h
+	<maya/MObject.h>
+	<maya/MStatus.h>
+
+1404780995 /usr/autodesk/maya2015-x64/include/maya/MTransformationMatrix.h
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+
+1409672659 source:/home/user0/dev/mymagicbox/dynamic_enum/src/plugin.cpp
+	<maya/MFnPlugin.h>
+	<maya/MStatus.h>
+	"dynamic_enum.h"
+
+1404780994 /usr/autodesk/maya2015-x64/include/maya/MFnPlugin.h
+	<maya/MFnBase.h>
+	<maya/MApiVersion.h>
+	<maya/MPxNode.h>
+	<maya/MPxData.h>
+	<maya/MTypes.h>
+
+1404781002 /usr/autodesk/maya2015-x64/include/maya/MApiVersion.h
+
+1404780997 /usr/autodesk/maya2015-x64/include/maya/MPxData.h
+	<maya/MStatus.h>
+	<maya/MTypes.h>
+	<maya/MIOStreamFwd.h>
+

@@ -1,4 +1,6 @@
-+ dynamic_enum any E:/dev/autodesk/maya/mymagicbox/dynamic_enum
+#+ dynamic_enum any E:/dev/autodesk/maya/mymagicbox/dynamic_enum
++ dynamic_enum any /home/user0/dev/mymagicbox/dynamic_enum
+
 PATH +:= bin
 XBMLANGPATH +:= icons
 MAYA_RENDER_DESC_PATH +:= .
