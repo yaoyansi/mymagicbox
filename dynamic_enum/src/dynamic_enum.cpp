@@ -38,16 +38,16 @@
 // IFF type ID
 // Each node requires a unique identifier which is used by
 // MFnDependencyNode::create() to identify which node to create, and by
-// the Maya file format. 
+// the Maya file format.
 //
 // For local testing of nodes you can use any identifier between
 // 0x00000000 and 0x0007ffff, but for any node that you plan to use for
 // more permanent purposes, you should get a universally unique id from
 // Autodesk Support. You will be assigned a unique range that you
-// can manage on your own. 
+// can manage on your own.
 //
 MTypeId DynamicEnum::m_id( 0x81001 );
-MString DynamicEnum::m_classification("shader/surface");
+MString DynamicEnum::m_classification("shader/surface:drawdb/shader/surface");
 
 ///////////////////////////////////////////////////////
 // DESCRIPTION: attribute information
@@ -71,22 +71,22 @@ void DynamicEnum::postConstructor( )
 	setMPSafe( true );
 }
 
-MString DynamicEnum::typeName()
+MString DynamicEnum::cTypeName()
 {
 	return "dynamic_enum";
 }
 
-MTypeId DynamicEnum::typeId()
+MTypeId DynamicEnum::cTypeId()
 {
 	return DynamicEnum::m_id;
 }
 
-MPxNode::Type DynamicEnum::type()
+MPxNode::Type DynamicEnum::cType()
 {
 	return MPxNode::kDependNode;
 }
 
-const MString& DynamicEnum::classification()
+const MString& DynamicEnum::cClassification()
 {
 	return m_classification;
 }
@@ -103,7 +103,7 @@ DynamicEnum::~DynamicEnum() { }
 // The creator() method allows Maya to instantiate instances of this node.
 // It is called every time a new instance of the node is requested by
 // either the createNode command or the MFnDependencyNode::create()
-// method. 
+// method.
 //
 // In this case creator simply returns a new DynamicEnum object.
 //
@@ -117,19 +117,19 @@ void* DynamicEnum::creator()
 // The initialize method is called only once when the node is first
 // registered with Maya. In this method you define the attributes of the
 // node, what data comes in and goes out of the node that other nodes may
-// want to connect to. 
+// want to connect to.
 //
 
 MStatus DynamicEnum::initialize()
 {
-	MFnNumericAttribute nAttr; 
+	MFnNumericAttribute nAttr;
 	MFnTypedAttribute tAttr;
 	MFnStringData sData;
 	MStatus status; // Status will be used to hold the MStatus value
 
 	// returned by each api function call. It is important
 	// to check the status returned by a call to aid in
-	// debugging. Failed API calls can result in subtle 
+	// debugging. Failed API calls can result in subtle
 	// errors that can be difficult to track down, you may
 	// wish to use the CHECK_MSTATUS macro for any API
 	// call where you do not need to provide your own
@@ -138,7 +138,7 @@ MStatus DynamicEnum::initialize()
 
 	// Attribute Initialization:
 	aFilePath = tAttr.create( "filepath", "file", MFnData::kString, &status );
-	CHECK_MSTATUS( status );	
+	CHECK_MSTATUS( status );
 	CHECK_MSTATUS( tAttr.setKeyable( true ) );
 	CHECK_MSTATUS( tAttr.setStorable( true ) );
 	CHECK_MSTATUS( tAttr.setDefault( sData.create("") ) );
@@ -175,24 +175,24 @@ MStatus DynamicEnum::initialize()
 
 
 // The compute() method does the actual work of the node using the inputs
-// of the node to generate its output. 
+// of the node to generate its output.
 //
 // Compute takes two parameters: plug and data.
 // - Plug is the the data value that needs to be recomputed
 // - Data provides handles to all of the nodes attributes, only these
 //   handles should be used when performing computations.
 //
-MStatus DynamicEnum::compute( const MPlug& plug, MDataBlock& block ) 
-{ 
+MStatus DynamicEnum::compute( const MPlug& plug, MDataBlock& block )
+{
 	// The plug parameter will allow us to determine which output attribute
 	// needs to be calculated.
 	//
 	if( plug == aOutColor )
 	{
 		MStatus status;
-		MFloatVector resultColor( 0.0, 0.0, 0.0 ); 
+		MFloatVector resultColor( 0.0, 0.0, 0.0 );
 
-	} 
+	}
 	else
 	{
 		return( MS::kUnknownParameter ); // We got an unexpected plug

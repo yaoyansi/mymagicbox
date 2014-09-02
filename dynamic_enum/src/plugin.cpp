@@ -6,23 +6,23 @@
 // These methods load and unload the plugin, registerNode registers the
 // new node type with maya
 //
-PLUGIN_EXPORT MStatus initializePlugin( MObject obj )
+MStatus initializePlugin( MObject obj )
 {
 
 	MFnPlugin plugin( obj, PLUGIN_COMPANY, "4.5", "Any" );
 
-	CHECK_MSTATUS( 
-		plugin.registerNode( 
-		DynamicEnum::typeName(), 
-		DynamicEnum::typeId(), 
-		DynamicEnum::creator, 
-		DynamicEnum::initialize, 
-		DynamicEnum::type(),
-		&DynamicEnum::classification() 
+	CHECK_MSTATUS(
+		plugin.registerNode(
+            DynamicEnum::cTypeName(),
+            DynamicEnum::cTypeId(),
+            DynamicEnum::creator,
+            DynamicEnum::initialize,
+            DynamicEnum::cType(),
+            &DynamicEnum::cClassification()
 		) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
-	command += DynamicEnum::classification();
+	command += DynamicEnum::cClassification();
 	command += "\");}\n";
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );
@@ -30,14 +30,14 @@ PLUGIN_EXPORT MStatus initializePlugin( MObject obj )
 	return( MS::kSuccess );
 }
 
-PLUGIN_EXPORT MStatus uninitializePlugin( MObject obj )
+MStatus uninitializePlugin( MObject obj )
 {
 	MFnPlugin plugin( obj );
 
-	CHECK_MSTATUS( plugin.deregisterNode( DynamicEnum::typeId() ) );
+	CHECK_MSTATUS( plugin.deregisterNode( DynamicEnum::cTypeId() ) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
-	command += DynamicEnum::classification();
+	command += DynamicEnum::cClassification();
 	command += "\");}\n";
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );

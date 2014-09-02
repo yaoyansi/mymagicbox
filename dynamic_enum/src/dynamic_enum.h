@@ -28,11 +28,11 @@
 #include <maya/MTypeId.h>
 #include <maya/MPlug.h>
 #include <maya/MDataBlock.h>
-#include <maya/MDataHandle.h> 
+#include <maya/MDataHandle.h>
 #include <maya/MArrayDataHandle.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnTypedAttribute.h>
-#include <maya/MFnStringData.h> 
+#include <maya/MFnStringData.h>
 #include <maya/MFloatVector.h>
 #include <maya/MGlobal.h>
 
@@ -70,12 +70,12 @@ public:
 	// MPxNode member function.
 	//
 
-	virtual void	postConstructor(); 
+	virtual void	postConstructor();
 
-	static MString typeName();
-	static MTypeId typeId();
-	static MPxNode::Type type();
-	static const MString& classification();
+	static MString          cTypeName();
+	static MTypeId          cTypeId();
+	static MPxNode::Type    cType();
+	static const MString&   cClassification();
 
 
 protected:
