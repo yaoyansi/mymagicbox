@@ -20,5 +20,7 @@
 *.lastbuildstate
 *.lib
 *.cache
-
-
+*.so
+*.o
+*.*~
+*~
