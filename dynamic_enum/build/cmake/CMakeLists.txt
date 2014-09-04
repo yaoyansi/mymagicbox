@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 project (Tutorial)
 
-#SET(ENV{MAYA_LOCATION} "/usr/autodesk/maya2015-x64")
+SET(ENV{MAYA_LOCATION} "/usr/autodesk/maya2015-x64")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Modules/")
 
 # can optionally specify a version: FIND_PACKAGE( Maya 2012 REQUIRED )
