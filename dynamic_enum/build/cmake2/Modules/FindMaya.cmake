@@ -25,14 +25,13 @@ LIST(APPEND MAYA_INCLUDE_DIRS ${MAYA_INCLUDE_DIR})
 
 
 
-FIND_PATH(MAYA_LIBRARY_DIR OpenMaya
-  PATHS
-    ENV MAYA_LOCATION
-    ${MAYA_BASE_DIR}
-  PATH_SUFFIXES
-    ../../devkit/include/
-    include/
-  DOC "Maya's devkit headers path"
+FIND_PATH(MAYA_LIBRARY_DIR libOpenMaya.so
+    PATHS
+      ENV MAYA_LOCATION
+      ${MAYA_BASE_DIR}
+    PATH_SUFFIXES
+      lib/
+    DOC "Maya's libraries path"
 )
 
 
