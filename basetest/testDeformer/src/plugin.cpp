@@ -9,20 +9,20 @@
 MStatus initializePlugin( MObject obj )
 {
 
-	MFnPlugin plugin( obj, PLUGIN_COMPANY, "4.5", "Any" );
+	MFnPlugin plugin( obj, "yaoyu", "1.0.1", "Any" );
 
 	CHECK_MSTATUS(
 		plugin.registerNode(
-            DynamicEnum::cTypeName(),
-            DynamicEnum::cTypeId(),
-            DynamicEnum::creator,
-            DynamicEnum::initialize,
-            DynamicEnum::cType(),
-            &DynamicEnum::cClassification()
+            TestDeformer::cTypeName(),
+            TestDeformer::cTypeId(),
+            TestDeformer::creator,
+            TestDeformer::initialize,
+            TestDeformer::cType(),
+            &TestDeformer::cClassification()
 		) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
-	command += DynamicEnum::cClassification();
+	command += TestDeformer::cClassification();
 	command += "\");}\n";
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );
@@ -34,10 +34,10 @@ MStatus uninitializePlugin( MObject obj )
 {
 	MFnPlugin plugin( obj );
 
-	CHECK_MSTATUS( plugin.deregisterNode( DynamicEnum::cTypeId() ) );
+	CHECK_MSTATUS( plugin.deregisterNode( TestDeformer::cTypeId() ) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
-	command += DynamicEnum::cClassification();
+	command += TestDeformer::cClassification();
 	command += "\");}\n";
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );

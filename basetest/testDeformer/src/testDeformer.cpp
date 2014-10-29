@@ -1,67 +1,25 @@
-//-
-// ==========================================================================
-// Copyright 1995,2006,2008 Autodesk, Inc. All rights reserved.
-//
-// Use of this software is subject to the terms of the Autodesk
-// license agreement provided at the time of installation or download,
-// or which otherwise accompanies this software in either electronic
-// or hard copy form.
-// ==========================================================================
-//+
-
-// Example Plugin: lambertShader.cpp
-//
-// Produces dependency graph node LambertShader
-// This node is an example of a Lambert shader and how to build a
-// dependency node as a surface shader in Maya. The inputs for this node
-// are many, and can be found in the Maya UI on the Attribute Editor for
-// the node. The output attributes for the node are "outColor" and
-// "outTransparency". To use this shader, create a lambertShader with
-// Shading Group or connect the outputs to a Shading Group's
-// "SurfaceShader" attribute.
-//
 
 #include "testDeformer.h"
 
 
-/////////////////////////////////
-// Plugin Lambert Shader Class //
-/////////////////////////////////
-
-
-// This class will create a new shader. Shaders are custom dependency
-// graph objects so we will derive this class from the basic DG node
-// type MPxNode
-//
-
-
-// IFF type ID
-// Each node requires a unique identifier which is used by
-// MFnDependencyNode::create() to identify which node to create, and by
-// the Maya file format.
-//
 // For local testing of nodes you can use any identifier between
 // 0x00000000 and 0x0007ffff, but for any node that you plan to use for
 // more permanent purposes, you should get a universally unique id from
 // Autodesk Support. You will be assigned a unique range that you
 // can manage on your own.
 //
-MTypeId DynamicEnum::m_id( 0x81001 );
-MString DynamicEnum::m_classification("shader/surface:drawdb/shader/surface");
+MTypeId TestDeformer::m_id( 0x7269b );
+MString TestDeformer::m_classification("utility/general");
 
 ///////////////////////////////////////////////////////
 // DESCRIPTION: attribute information
 ///////////////////////////////////////////////////////
 //
-MObject  DynamicEnum::aFilePath;
-MObject  DynamicEnum::aGridName;
-MObject  DynamicEnum::aOutColor;
-
-// the postConstructor() function is called immediately after the objects
-// constructor. It is not safe to call MPxNode member functions from the
-// constructor, instead they should be called here.
+MObject  TestDeformer::aFilePath;
+MObject  TestDeformer::aGridName;
+MObject  TestDeformer::aOutColor;
 //
-void DynamicEnum::postConstructor( )
+void TestDeformer::postConstructor( )
 {
 	// setMPSafe indicates that this shader can be used for multiprocessor
 	// rendering. For a shading node to be MP safe, it cannot access any
@@ -70,57 +28,37 @@ void DynamicEnum::postConstructor( )
 	//
 	setMPSafe( true );
 }
-
-MString DynamicEnum::cTypeName()
+//
+MString TestDeformer::cTypeName()
 {
 	return "testDeformer";
 }
-
-MTypeId DynamicEnum::cTypeId()
+//
+MTypeId TestDeformer::cTypeId()
 {
-	return DynamicEnum::m_id;
+	return TestDeformer::m_id;
 }
-
-MPxNode::Type DynamicEnum::cType()
+//
+MPxNode::Type TestDeformer::cType()
 {
-	return MPxNode::kDependNode;
+	return MPxNode::kDeformerNode;
 }
-
-const MString& DynamicEnum::cClassification()
+//
+const MString& TestDeformer::cClassification()
 {
 	return m_classification;
 }
-
-
-// This node does not need to perform any special actions on creation or
-// destruction
 //
-
-DynamicEnum::DynamicEnum() { }
-DynamicEnum::~DynamicEnum() { }
-
-
-// The creator() method allows Maya to instantiate instances of this node.
-// It is called every time a new instance of the node is requested by
-// either the createNode command or the MFnDependencyNode::create()
-// method.
+TestDeformer::TestDeformer() { }
 //
-// In this case creator simply returns a new DynamicEnum object.
+TestDeformer::~TestDeformer() { }
 //
-
-void* DynamicEnum::creator()
+void* TestDeformer::creator()
 {
-	return new DynamicEnum();
+	return new TestDeformer();
 }
-
-
-// The initialize method is called only once when the node is first
-// registered with Maya. In this method you define the attributes of the
-// node, what data comes in and goes out of the node that other nodes may
-// want to connect to.
 //
-
-MStatus DynamicEnum::initialize()
+MStatus TestDeformer::initialize()
 {
 	MFnNumericAttribute nAttr;
 	MFnTypedAttribute tAttr;
@@ -172,32 +110,12 @@ MStatus DynamicEnum::initialize()
 
 	return( MS::kSuccess );
 }
-
-
-// The compute() method does the actual work of the node using the inputs
-// of the node to generate its output.
 //
-// Compute takes two parameters: plug and data.
-// - Plug is the the data value that needs to be recomputed
-// - Data provides handles to all of the nodes attributes, only these
-//   handles should be used when performing computations.
-//
-MStatus DynamicEnum::compute( const MPlug& plug, MDataBlock& block )
+MStatus TestDeformer::deform(MDataBlock& block,
+                          MItGeometry& iter,
+                          const MMatrix& mat,
+                          unsigned int multiIndex)
 {
-	// The plug parameter will allow us to determine which output attribute
-	// needs to be calculated.
-	//
-	if( plug == aOutColor )
-	{
-		MStatus status;
-		MFloatVector resultColor( 0.0, 0.0, 0.0 );
-
-	}
-	else
-	{
-		return( MS::kUnknownParameter ); // We got an unexpected plug
-	}
-
 	return( MS::kSuccess );
 }
 

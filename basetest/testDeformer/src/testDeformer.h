@@ -23,7 +23,7 @@
 #pragma once
 
 #include <maya/MIOStream.h>
-#include <maya/MPxNode.h>
+#include <maya/MPxDeformerNode.h>
 #include <maya/MString.h>
 #include <maya/MTypeId.h>
 #include <maya/MPlug.h>
@@ -42,19 +42,15 @@
 /////////////////////////////////
 
 
-// This class will create a new shader. Shaders are custom dependency
-// graph objects so we will derive this class from the basic DG node
-// type MPxNode
-//
 
-class DynamicEnum : public MPxNode
+class TestDeformer : public MPxDeformerNode
 {
 public:
-	DynamicEnum();
-	virtual			~DynamicEnum();
+	TestDeformer();
+	virtual			~TestDeformer();
 
 	static  void *	creator();
-	virtual MStatus	compute( const MPlug&, MDataBlock& );
+
 	static  MStatus	initialize();
 
 
@@ -71,6 +67,10 @@ public:
 	//
 
 	virtual void	postConstructor();
+    virtual MStatus deform(MDataBlock& block,
+                          MItGeometry& iter,
+                          const MMatrix& mat,
+                          unsigned int multiIndex);
 
 	static MString          cTypeName();
 	static MTypeId          cTypeId();
