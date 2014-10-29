@@ -38,12 +38,11 @@ find_package(Maya REQUIRED)
 # Find Boost
  
 set(HDRS
-	../../src/mystring.h
+	../../src/testDeformer.h
 )
 
 set(SRCS
-	../../src/main.cpp
-	../../src/mystring.cpp
+	../../src/testDeformer.cpp
 	../../src/plugin.cpp
 )
 
