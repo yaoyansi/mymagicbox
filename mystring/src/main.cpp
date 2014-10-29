@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "mystring.h"
 
 int main()
@@ -24,6 +25,11 @@ int main()
     MyString str4("DDD");
     MyString str5("DDD");
     std::cout << "str4==str5:"<< ((str4==str5)? "true":"false") << std::endl;
+
+    std::vector<MyString> vec;
+    vec.push_back(MyString("aaa"));
+    vec.push_back(MyString("bbb"));
+    std::cout << "vec:"<< vec[0] << ", " << vec[1] << std::endl;
 
     return 0;
 }
