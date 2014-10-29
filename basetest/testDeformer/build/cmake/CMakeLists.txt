@@ -62,6 +62,7 @@ TARGET_LINK_LIBRARIES( ${MY_PROJECT_NAME}
 	${MAYA_Foundation_LIBRARY} 
 	${MAYA_OpenMaya_LIBRARY} 
 	${MAYA_OpenMayaUI_LIBRARY}
+	${MAYA_OpenMayaAnim_LIBRARY}
 )
 
 set(MAYA_EXTENSION ".so")
