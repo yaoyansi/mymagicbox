@@ -1,0 +1,48 @@
+/*
+
+Title: testDeformer.mel
+
+Required: testDeformer.mll (or testDeformer.so)
+
+Author: 
+
+Date: 
+
+Version: 1.0
+
+Description:
+	
+	Select the driver poly mesh (the one that will get snapped to) and 
+	then shift select the driven object (the one you want to deform)
+	and run the command:
+	
+	testDeformer();
+
+
+Return: 	creates & returns a deformer node of "testDeformer" type.
+
+*/
+
+global proc string[] testDeformer()
+{
+	string $defr[];
+	string $selected[] = `ls -sl`;
+	if( ! `pluginInfo -q -l testDeformer` ){
+		eval "catch (`loadPlugin -qt testDeformer`)";
+	}
+	if( `pluginInfo -q -l testDeformer` )
+	{	
+		if ( `size $selected` != 2 || (( ! size(`listRelatives -type "mesh" $selected[0]`) && `nodeType $selected[0]` != "mesh" ) || (   ! size(`listRelatives -type "mesh" $selected[1]`) && `nodeType $selected[1]` != "mesh" )))
+		{
+			error " Select the polygon driver geometry first, and the polygon mesh to be deformed last.";
+		}
+		else
+		{
+			$defr = `deformer -type testDeformer $selected[1]`;
+			connectAttr ($selected[0]+".worldMesh[0]") ($defr[0]+".vertSnapInput");
+			setAttr ($defr[0]+".initialize") 1;
+		}
+	}
+	else{ error "Copy the testDeformer plugin into the MAYA_PLUGIN_PATH.";  }
+	return( $defr );
+}
