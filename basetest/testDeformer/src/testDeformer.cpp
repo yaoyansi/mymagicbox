@@ -1,6 +1,7 @@
 
 #include "testDeformer.h"
 
+#include <cfloat>
 
 // For local testing of nodes you can use any identifier between
 // 0x00000000 and 0x0007ffff, but for any node that you plan to use for
@@ -15,9 +16,9 @@ MString TestDeformer::m_classification("utility/general");
 // DESCRIPTION: attribute information
 ///////////////////////////////////////////////////////
 //
-MObject  TestDeformer::aFilePath;
-MObject  TestDeformer::aGridName;
-MObject  TestDeformer::aOutColor;
+MObject  TestDeformer::driver_mesh;
+MObject  TestDeformer::initialized_data;
+MObject  TestDeformer::vert_map;
 //
 void TestDeformer::postConstructor( )
 {
@@ -49,9 +50,14 @@ const MString& TestDeformer::cClassification()
 	return m_classification;
 }
 //
-TestDeformer::TestDeformer() { }
+TestDeformer::TestDeformer()
+: MPxDeformerNode()
+{
+}
 //
-TestDeformer::~TestDeformer() { }
+TestDeformer::~TestDeformer()
+{
+}
 //
 void* TestDeformer::creator()
 {
@@ -60,9 +66,10 @@ void* TestDeformer::creator()
 //
 MStatus TestDeformer::initialize()
 {
-	MFnNumericAttribute nAttr;
-	MFnTypedAttribute tAttr;
-	MFnStringData sData;
+	MFnNumericAttribute numericAttr;
+	MFnTypedAttribute polyMeshAttr;
+	MFnEnumAttribute enumAttr;
+
 	MStatus status; // Status will be used to hold the MStatus value
 
 	// returned by each api function call. It is important
@@ -74,49 +81,183 @@ MStatus TestDeformer::initialize()
 	// error handling.
 	//
 
-	// Attribute Initialization:
-	aFilePath = tAttr.create( "filepath", "file", MFnData::kString, &status );
+	// vertSnapInput
+	driver_mesh = polyMeshAttr.create( "vertSnapInput", "vsnpin", MFnData::kMesh, &status );
 	CHECK_MSTATUS( status );
-	CHECK_MSTATUS( tAttr.setKeyable( true ) );
-	CHECK_MSTATUS( tAttr.setStorable( true ) );
-	CHECK_MSTATUS( tAttr.setDefault( sData.create("") ) );
+	CHECK_MSTATUS( polyMeshAttr.setStorable( false ) );
+	CHECK_MSTATUS( polyMeshAttr.setConnectable( true ) );
+	CHECK_MSTATUS( addAttribute(driver_mesh) );
+	CHECK_MSTATUS( attributeAffects(driver_mesh, outputGeom) );
 
-	aGridName = tAttr.create( "grid", "grd", MFnData::kString, &status );
-	CHECK_MSTATUS( status );
-	CHECK_MSTATUS( tAttr.setKeyable( true ) );
-	CHECK_MSTATUS( tAttr.setStorable( true ) );
-	CHECK_MSTATUS( tAttr.setDefault( sData.create("") ) );
-
-	aOutColor = nAttr.createColor( "outColor", "oc", &status );
-	CHECK_MSTATUS( status );
-	CHECK_MSTATUS( nAttr.setHidden( false ) );
-	CHECK_MSTATUS( nAttr.setReadable( true ) );
-	CHECK_MSTATUS( nAttr.setWritable( false ) );
-
-	// Next we will add the attributes we have defined to the node
 	//
-	CHECK_MSTATUS( addAttribute( aFilePath ) );
-	CHECK_MSTATUS( addAttribute( aGridName ) );
-	CHECK_MSTATUS( addAttribute( aOutColor ) );
+	initialized_data = enumAttr.create( "initialize", "inl", 0/*default*/, &status );
+	CHECK_MSTATUS( status );
+	CHECK_MSTATUS( enumAttr.addField(	"Off", 0) );
+	CHECK_MSTATUS( enumAttr.addField(	"Re-Set Bind", 1) );
+	CHECK_MSTATUS( enumAttr.addField(	"Bound", 2) );
+	CHECK_MSTATUS( enumAttr.setKeyable(true) );
+	CHECK_MSTATUS( enumAttr.setStorable(true) );
+	CHECK_MSTATUS( enumAttr.setReadable(true) );
+	CHECK_MSTATUS( enumAttr.setWritable(true) );
+	CHECK_MSTATUS( enumAttr.setDefault(0) );
+	CHECK_MSTATUS( addAttribute( initialized_data ) );
+	CHECK_MSTATUS( attributeAffects( initialized_data, outputGeom ) );
 
-	// The attributeAffects() method is used to indicate when the input
-	// attribute affects the output attribute. This knowledge allows Maya
-	// to optimize dependencies in the graph in more complex nodes where
-	// there may be several inputs and outputs, but not all the inputs
-	// affect all the outputs.
-	//
-	CHECK_MSTATUS( attributeAffects( aFilePath, aOutColor ) );
-	CHECK_MSTATUS( attributeAffects( aGridName, aOutColor ) );
+
+	vert_map = numericAttr.create( "vtxIndexMap", "vtximp", MFnNumericData::kLong, 0/*default*/, &status );
+	CHECK_MSTATUS( status );
+    CHECK_MSTATUS( numericAttr.setKeyable(false) );
+	CHECK_MSTATUS( numericAttr.setArray(true) );
+	CHECK_MSTATUS( numericAttr.setStorable(true) );
+	CHECK_MSTATUS( numericAttr.setReadable(true) );
+	CHECK_MSTATUS( numericAttr.setWritable(true) );
+	CHECK_MSTATUS( addAttribute( vert_map ) );
+	CHECK_MSTATUS( attributeAffects( vert_map, outputGeom ) );
+
+	CHECK_MSTATUS( MGlobal::executePythonCommand("import maya.cmds; maya.cmds.makePaintable('"+TestDeformer::cTypeName()+"', 'weights', attrType='multiFloat')") );
 
 	return( MS::kSuccess );
 }
 //
-MStatus TestDeformer::deform(MDataBlock& block,
+MStatus TestDeformer::deform(MDataBlock& data,
                           MItGeometry& iter,
-                          const MMatrix& mat,
-                          unsigned int multiIndex)
+                          const MMatrix& localToWorldMatrix,
+                          unsigned int mIndex)
 {
+    short initialized_mapping = data.inputValue( initialized_data ).asShort();
+
+    if( initialized_mapping == 1 )
+    {
+        initVertMapping(data, iter, localToWorldMatrix, mIndex);
+        initialized_mapping = data.inputValue( initialized_data ).asShort();
+    }
+
+    if( initialized_mapping == 2 )
+    {
+        MStatus status;
+
+        envelope = MPxDeformerNode::envelope;
+        MDataHandle envelopeHandle = data.inputValue( envelope, &status );
+        CHECK_MSTATUS( status );
+        float env = envelopeHandle.asFloat();
+
+        MArrayDataHandle vertMapArrayData  = data.inputArrayValue( vert_map, &status  );
+        CHECK_MSTATUS( status );
+
+        MDataHandle meshAttrHandle = data.inputValue( driver_mesh, &status );
+        CHECK_MSTATUS( status );
+
+        MObject meshMobj;
+
+        meshMobj = meshAttrHandle.asMesh();
+        MItMeshVertex vertIter( meshMobj );
+
+        while( !iter.isDone() )
+        {
+            float weight = weightValue( data, mIndex, iter.index() ); //painted weight
+            float ww = weight * env;
+
+            if ( fabs(ww) > FLT_EPSILON )//if ( ww != 0 )
+            {
+                vertMapArrayData.jumpToElement( iter.index() );
+                int index_mapped = vertMapArrayData.inputValue().asInt();
+                if( index_mapped >= 0 )
+                {
+                    int prevInt;
+                    CHECK_MSTATUS( vertIter.setIndex(index_mapped, prevInt) );
+
+                    MPoint mappedPt = vertIter.position( MSpace::kWorld );
+
+                    MPoint iterPt = iter.position() * localToWorldMatrix;
+
+                    MPoint pt = iterPt + ((mappedPt - iterPt) * ww );
+                    pt = pt * localToWorldMatrix.inverse();
+                    iter.setPosition( pt );
+                }
+            }
+            iter.next();
+        }
+    }
+
 	return( MS::kSuccess );
+}
+//
+//
+void TestDeformer::initVertMapping(MDataBlock& data,
+                          MItGeometry& iter,
+                          const MMatrix& localToWorldMatrix,
+                          unsigned int mIndex)
+{
+    MStatus status;
+
+    MDataHandle meshAttrHandle = data.inputValue( driver_mesh, &status );
+    CHECK_MSTATUS( status );
+    MObject meshMobj = meshAttrHandle.asMesh();
+    MItMeshVertex vertIter( meshMobj );
+    vertIter.reset();
+    int count = iter.count();
+
+    MArrayDataHandle vertMapOutArrayData = data.outputArrayValue( vert_map, &status );
+    CHECK_MSTATUS( status );
+
+    MArrayDataBuilder vertMapOutArrayBuilder( vert_map, count );
+    MPointArray allPts;
+    allPts.clear();
+
+    int i = 0;
+    while( !iter.isDone() )
+    {
+        MDataHandle initIndexDataHnd = vertMapOutArrayBuilder.addElement( i );
+        int negIndex = -1;
+
+        initIndexDataHnd.setInt( negIndex );
+        initIndexDataHnd.setClean();
+
+        allPts.append( iter.position() * localToWorldMatrix );
+        i = i+1;
+        iter.next();
+    }
+    vertMapOutArrayData.set( vertMapOutArrayBuilder );
+
+    while( !vertIter.isDone() )
+    {
+        MPoint driver_pt;
+        driver_pt = vertIter.position( MSpace::kWorld );
+        int closest_pt_index = getClosestPt( driver_pt, allPts );
+
+        MDataHandle snapDataHnd = vertMapOutArrayBuilder.addElement( closest_pt_index );
+        snapDataHnd.setInt( vertIter.index() );
+
+        snapDataHnd.setClean();
+        vertIter.next();
+    }
+    vertMapOutArrayData.set( vertMapOutArrayBuilder );
+
+    MObject tObj  =  thisMObject();
+
+    MPlug setInitMode = MPlug( tObj, initialized_data  );
+    setInitMode.setShort( 2 );
+
+    iter.reset();
+}
+//
+int TestDeformer::getClosestPt(const MPoint &pt, const MPointArray &points)
+{
+    int ptIndex=0;
+	float currentDistance = 9e99;
+	float furthestDistanceSoFar = 9e99;
+
+	for(int i = 0; i < points.length(); ++i)
+    {
+        currentDistance = pt.distanceTo( points[i] );
+        if(currentDistance < furthestDistanceSoFar )
+        {
+            ptIndex = i;
+            furthestDistanceSoFar = currentDistance;
+        }
+    }
+
+	return ptIndex;
 }
 
 

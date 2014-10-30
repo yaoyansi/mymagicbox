@@ -32,11 +32,14 @@
 #include <maya/MArrayDataHandle.h>
 #include <maya/MFnNumericAttribute.h>
 #include <maya/MFnTypedAttribute.h>
-#include <maya/MFnStringData.h>
+#include <maya/MFnEnumAttribute.h>
 #include <maya/MFloatVector.h>
 #include <maya/MGlobal.h>
-
-
+#include <maya/MPointArray.h>
+#include <maya/MItMeshVertex.h>
+#include <maya/MItGeometry.h>
+#include <maya/MMatrix.h>
+#include <maya/MArrayDataBuilder.h>
 /////////////////////////////////
 // Plugin Lambert Shader Class //
 /////////////////////////////////
@@ -67,24 +70,29 @@ public:
 	//
 
 	virtual void	postConstructor();
-    virtual MStatus deform(MDataBlock& block,
+    virtual MStatus deform(MDataBlock& data,
                           MItGeometry& iter,
-                          const MMatrix& mat,
-                          unsigned int multiIndex);
+                          const MMatrix& localToWorldMatrix,
+                          unsigned int mIndex);
 
 	static MString          cTypeName();
 	static MTypeId          cTypeId();
 	static MPxNode::Type    cType();
 	static const MString&   cClassification();
 
+private:
+    void initVertMapping(MDataBlock& data,
+                          MItGeometry& iter,
+                          const MMatrix& localToWorldMatrix,
+                          unsigned int mIndex);
+    int getClosestPt(const MPoint &pt, const MPointArray &points);
+
 
 protected:
-	static MTypeId   m_id;  // The IFF type id
+	static MTypeId   m_id;
 	static MString   m_classification;
 
-	static MObject  aFilePath;
-	static MObject  aGridName;
-
-	// Output color
-	static MObject  aOutColor;
+	static MObject  driver_mesh;
+	static MObject  initialized_data;
+	static MObject  vert_map;
 };
