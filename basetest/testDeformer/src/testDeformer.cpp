@@ -124,18 +124,20 @@ MStatus TestDeformer::deform(MDataBlock& data,
                           const MMatrix& localToWorldMatrix,
                           unsigned int mIndex)
 {
-    short initialized_mapping = data.inputValue( initialized_data ).asShort();
+    MStatus status;
+
+    short initialized_mapping = data.inputValue( initialized_data, &status).asShort();
+    CHECK_MSTATUS(status);
 
     if( initialized_mapping == 1 )
     {
         initVertMapping(data, iter, localToWorldMatrix, mIndex);
-        initialized_mapping = data.inputValue( initialized_data ).asShort();
+        initialized_mapping = data.inputValue( initialized_data, &status ).asShort();
+        CHECK_MSTATUS(status);
     }
 
     if( initialized_mapping == 2 )
     {
-        MStatus status;
-
         envelope = MPxDeformerNode::envelope;
         MDataHandle envelopeHandle = data.inputValue( envelope, &status );
         CHECK_MSTATUS( status );
@@ -150,32 +152,40 @@ MStatus TestDeformer::deform(MDataBlock& data,
         MObject meshMobj;
 
         meshMobj = meshAttrHandle.asMesh();
-        MItMeshVertex vertIter( meshMobj );
+        MItMeshVertex vertIter( meshMobj, &status );
+        CHECK_MSTATUS( status );
 
-        while( !iter.isDone() )
+        while( !iter.isDone(&status) )
         {
+            CHECK_MSTATUS( status );
+
             float weight = weightValue( data, mIndex, iter.index() ); //painted weight
             float ww = weight * env;
 
             if ( fabs(ww) > FLT_EPSILON )//if ( ww != 0 )
             {
-                vertMapArrayData.jumpToElement( iter.index() );
-                int index_mapped = vertMapArrayData.inputValue().asInt();
+                CHECK_MSTATUS(vertMapArrayData.jumpToElement(iter.index()));
+
+                int index_mapped = vertMapArrayData.inputValue(&status).asInt();
+                CHECK_MSTATUS( status );
+
                 if( index_mapped >= 0 )
                 {
                     int prevInt;
                     CHECK_MSTATUS( vertIter.setIndex(index_mapped, prevInt) );
 
-                    MPoint mappedPt = vertIter.position( MSpace::kWorld );
+                    MPoint mappedPt = vertIter.position( MSpace::kWorld, &status );
+                    CHECK_MSTATUS( status );
 
-                    MPoint iterPt = iter.position() * localToWorldMatrix;
+                    MPoint iterPt = iter.position(MSpace::kObject, &status) * localToWorldMatrix;
+                    CHECK_MSTATUS( status );
 
                     MPoint pt = iterPt + ((mappedPt - iterPt) * ww );
                     pt = pt * localToWorldMatrix.inverse();
-                    iter.setPosition( pt );
+                    CHECK_MSTATUS(iter.setPosition( pt ));
                 }
             }
-            iter.next();
+            CHECK_MSTATUS(iter.next());
         }
     }
 
@@ -192,46 +202,60 @@ void TestDeformer::initVertMapping(MDataBlock& data,
 
     MDataHandle meshAttrHandle = data.inputValue( driver_mesh, &status );
     CHECK_MSTATUS( status );
+
     MObject meshMobj = meshAttrHandle.asMesh();
-    MItMeshVertex vertIter( meshMobj );
-    vertIter.reset();
+    MItMeshVertex vertIter( meshMobj, &status );
+    CHECK_MSTATUS(status);
+
+    CHECK_MSTATUS(vertIter.reset());
     int count = iter.count();
 
     MArrayDataHandle vertMapOutArrayData = data.outputArrayValue( vert_map, &status );
     CHECK_MSTATUS( status );
 
-    MArrayDataBuilder vertMapOutArrayBuilder( vert_map, count );
+    MArrayDataBuilder vertMapOutArrayBuilder( vert_map, count, &status );
+    CHECK_MSTATUS( status );
+
     MPointArray allPts;
     allPts.clear();
 
     int i = 0;
-    while( !iter.isDone() )
+    while( !iter.isDone(&status) )
     {
-        MDataHandle initIndexDataHnd = vertMapOutArrayBuilder.addElement( i );
+        CHECK_MSTATUS( status );
+
+        MDataHandle initIndexDataHnd = vertMapOutArrayBuilder.addElement( i, &status );
+        CHECK_MSTATUS( status );
+
         int negIndex = -1;
 
         initIndexDataHnd.setInt( negIndex );
         initIndexDataHnd.setClean();
 
-        allPts.append( iter.position() * localToWorldMatrix );
+        CHECK_MSTATUS(allPts.append( iter.position() * localToWorldMatrix ));
         i = i+1;
         iter.next();
     }
-    vertMapOutArrayData.set( vertMapOutArrayBuilder );
+    CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
 
-    while( !vertIter.isDone() )
+    while( !vertIter.isDone(&status) )
     {
+        CHECK_MSTATUS(status);
+
         MPoint driver_pt;
-        driver_pt = vertIter.position( MSpace::kWorld );
+        driver_pt = vertIter.position( MSpace::kWorld, &status );
+        CHECK_MSTATUS(status);
+
         int closest_pt_index = getClosestPt( driver_pt, allPts );
 
-        MDataHandle snapDataHnd = vertMapOutArrayBuilder.addElement( closest_pt_index );
+        MDataHandle snapDataHnd = vertMapOutArrayBuilder.addElement( closest_pt_index, &status );
+        CHECK_MSTATUS( status );
         snapDataHnd.setInt( vertIter.index() );
 
         snapDataHnd.setClean();
-        vertIter.next();
+        CHECK_MSTATUS(vertIter.next());
     }
-    vertMapOutArrayData.set( vertMapOutArrayBuilder );
+    CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
 
     MObject tObj  =  thisMObject();
 
