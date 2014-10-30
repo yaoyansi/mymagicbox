@@ -87,6 +87,12 @@ private:
                           unsigned int mIndex);
     int getClosestPt(const MPoint &pt, const MPointArray &points);
 
+    void _deform_on_one_mesh(MDataBlock& data,
+                              MItGeometry& iter,
+                              const MMatrix& localToWorldMatrix,
+                              unsigned int mIndex,
+                              MObject &meshMobj,
+                              const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData);
 
 protected:
 	static MTypeId   m_id;

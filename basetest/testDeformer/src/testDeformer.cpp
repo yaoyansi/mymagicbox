@@ -141,7 +141,6 @@ MStatus TestDeformer::deform(MDataBlock& data,
         envelope = MPxDeformerNode::envelope;
         MDataHandle envelopeHandle = data.inputValue( envelope, &status );
         CHECK_MSTATUS( status );
-        float env = envelopeHandle.asFloat();
 
         MArrayDataHandle vertMapArrayData  = data.inputArrayValue( vert_map, &status  );
         CHECK_MSTATUS( status );
@@ -152,42 +151,11 @@ MStatus TestDeformer::deform(MDataBlock& data,
         MObject meshMobj;
 
         meshMobj = meshAttrHandle.asMesh();
-        MItMeshVertex vertIter( meshMobj, &status );
-        CHECK_MSTATUS( status );
 
-        while( !iter.isDone(&status) )
-        {
-            CHECK_MSTATUS( status );
-
-            float weight = weightValue( data, mIndex, iter.index() ); //painted weight
-            float ww = weight * env;
-
-            if ( fabs(ww) > FLT_EPSILON )//if ( ww != 0 )
-            {
-                CHECK_MSTATUS(vertMapArrayData.jumpToElement(iter.index()));
-
-                int index_mapped = vertMapArrayData.inputValue(&status).asInt();
-                CHECK_MSTATUS( status );
-
-                if( index_mapped >= 0 )
-                {
-                    int prevInt;
-                    CHECK_MSTATUS( vertIter.setIndex(index_mapped, prevInt) );
-
-                    MPoint mappedPt = vertIter.position( MSpace::kWorld, &status );
-                    CHECK_MSTATUS( status );
-
-                    MPoint iterPt = iter.position(MSpace::kObject, &status) * localToWorldMatrix;
-                    CHECK_MSTATUS( status );
-
-                    MPoint pt = iterPt + ((mappedPt - iterPt) * ww );
-                    pt = pt * localToWorldMatrix.inverse();
-                    CHECK_MSTATUS(iter.setPosition( pt ));
-                }
-            }
-            CHECK_MSTATUS(iter.next());
-        }
-    }
+        _deform_on_one_mesh(data, iter, localToWorldMatrix, mIndex,
+                            meshMobj,
+                            envelopeHandle, vertMapArrayData );
+    }// if
 
 	return( MS::kSuccess );
 }
@@ -284,4 +252,50 @@ int TestDeformer::getClosestPt(const MPoint &pt, const MPointArray &points)
 	return ptIndex;
 }
 
+void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
+                                      MItGeometry& iter,
+                                      const MMatrix& localToWorldMatrix,
+                                      unsigned int mIndex,
+                                      MObject &meshMobj,
+                                      const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData)
+{
+    MStatus status;
 
+    float env = envelopeHandle.asFloat();
+
+    MItMeshVertex vertIter( meshMobj, &status );
+    CHECK_MSTATUS( status );
+
+    while( !iter.isDone(&status) )
+    {
+        CHECK_MSTATUS( status );
+
+        float weight = weightValue( data, mIndex, iter.index() ); //painted weight
+        float ww = weight * env;
+
+        if ( fabs(ww) > FLT_EPSILON )//if ( ww != 0 )
+        {
+            CHECK_MSTATUS(vertMapArrayData.jumpToElement(iter.index()));
+
+            int index_mapped = vertMapArrayData.inputValue(&status).asInt();
+            CHECK_MSTATUS( status );
+
+            if( index_mapped >= 0 )
+            {
+                int prevInt;
+                CHECK_MSTATUS( vertIter.setIndex(index_mapped, prevInt) );
+
+                MPoint mappedPt = vertIter.position( MSpace::kWorld, &status );
+                CHECK_MSTATUS( status );
+
+                MPoint iterPt = iter.position(MSpace::kObject, &status) * localToWorldMatrix;
+                CHECK_MSTATUS( status );
+
+                MPoint pt = iterPt + ((mappedPt - iterPt) * ww );
+                pt = pt * localToWorldMatrix.inverse();
+                CHECK_MSTATUS(iter.setPosition( pt ));
+            }
+        }//if
+        CHECK_MSTATUS(iter.next());
+    }//while
+}
