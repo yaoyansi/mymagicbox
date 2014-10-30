@@ -94,6 +94,9 @@ private:
                               MObject &meshMobj,
                               const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData);
 
+    void _initVertMapping_on_one_mesh( MObject &meshMobj, MArrayDataBuilder &vertMapOutArrayBuilder, const MPointArray& allPts
+                                      );
+
 protected:
 	static MTypeId   m_id;
 	static MString   m_classification;

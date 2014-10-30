@@ -132,6 +132,13 @@ MStatus TestDeformer::deform(MDataBlock& data,
     if( initialized_mapping == 1 )
     {
         initVertMapping(data, iter, localToWorldMatrix, mIndex);
+
+        MObject tObj  =  thisMObject();
+        MPlug setInitMode = MPlug( tObj, initialized_data  );
+        setInitMode.setShort( 2 );
+        iter.reset();
+
+
         initialized_mapping = data.inputValue( initialized_data, &status ).asShort();
         CHECK_MSTATUS(status);
     }
@@ -168,25 +175,20 @@ void TestDeformer::initVertMapping(MDataBlock& data,
 {
     MStatus status;
 
-    MDataHandle meshAttrHandle = data.inputValue( driver_mesh, &status );
-    CHECK_MSTATUS( status );
-
-    MObject meshMobj = meshAttrHandle.asMesh();
-    MItMeshVertex vertIter( meshMobj, &status );
-    CHECK_MSTATUS(status);
-
-    CHECK_MSTATUS(vertIter.reset());
-    int count = iter.count();
 
     MArrayDataHandle vertMapOutArrayData = data.outputArrayValue( vert_map, &status );
     CHECK_MSTATUS( status );
 
+    int count = iter.count();
     MArrayDataBuilder vertMapOutArrayBuilder( vert_map, count, &status );
     CHECK_MSTATUS( status );
 
-    MPointArray allPts;
-    allPts.clear();
 
+
+
+    MPointArray allPts;// world vertex position of the driven mesh
+    allPts.clear();
+    // walk through the driven mesh
     int i = 0;
     while( !iter.isDone(&status) )
     {
@@ -206,33 +208,26 @@ void TestDeformer::initVertMapping(MDataBlock& data,
     }
     CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
 
-    while( !vertIter.isDone(&status) )
+
+
+
+
+    MDataHandle meshAttrHandle = data.inputValue( driver_mesh, &status );
+    CHECK_MSTATUS( status );
+
+    MObject meshMobj = meshAttrHandle.asMesh();
+
     {
-        CHECK_MSTATUS(status);
-
-        MPoint driver_pt;
-        driver_pt = vertIter.position( MSpace::kWorld, &status );
-        CHECK_MSTATUS(status);
-
-        int closest_pt_index = getClosestPt( driver_pt, allPts );
-
-        MDataHandle snapDataHnd = vertMapOutArrayBuilder.addElement( closest_pt_index, &status );
-        CHECK_MSTATUS( status );
-        snapDataHnd.setInt( vertIter.index() );
-
-        snapDataHnd.setClean();
-        CHECK_MSTATUS(vertIter.next());
+        _initVertMapping_on_one_mesh(meshMobj, vertMapOutArrayBuilder, allPts);// Note: vertMapOutArrayBuilder is updated in this function!
+        CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
     }
-    CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
 
-    MObject tObj  =  thisMObject();
 
-    MPlug setInitMode = MPlug( tObj, initialized_data  );
-    setInitMode.setShort( 2 );
 
-    iter.reset();
+
+
 }
-//
+// which one is the closest point(in points array) to pt
 int TestDeformer::getClosestPt(const MPoint &pt, const MPointArray &points)
 {
     int ptIndex=0;
@@ -299,3 +294,38 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
         CHECK_MSTATUS(iter.next());
     }//while
 }
+
+//
+void TestDeformer::_initVertMapping_on_one_mesh( MObject &meshMobj, MArrayDataBuilder &vertMapOutArrayBuilder, const MPointArray& allPts)
+{
+    MStatus status;
+
+
+    MItMeshVertex vertIter( meshMobj, &status );
+    CHECK_MSTATUS(status);
+    CHECK_MSTATUS(vertIter.reset());
+
+
+    // for each vertex of the driver mesh
+    while( !vertIter.isDone(&status) )
+    {
+        CHECK_MSTATUS(status);
+
+        // get vertex position
+        MPoint driver_pt;
+        driver_pt = vertIter.position( MSpace::kWorld, &status );
+        CHECK_MSTATUS(status);
+
+        //get the closest driven point
+        int closest_pt_index = getClosestPt( driver_pt, allPts );//which one is the closest point(in allPts array) to driver_pt
+
+        //add the closest driven point
+        MDataHandle snapDataHnd = vertMapOutArrayBuilder.addElement( closest_pt_index, &status );
+        CHECK_MSTATUS( status );
+        snapDataHnd.setInt( vertIter.index() );
+        snapDataHnd.setClean();
+
+        CHECK_MSTATUS(vertIter.next());
+    }
+}
+
