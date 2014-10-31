@@ -17,8 +17,18 @@
 
 #include "peltOverlapCmd.h"
 
+#include <maya/MIOStream.h>
+#include <maya/MString.h>
+#include <maya/MArgList.h>
+#include <maya/MSyntax.h>
+#include <maya/MArgDatabase.h>
+#include <maya/MGlobal.h>
+#include <maya/MDagPath.h>
+#include <maya/MSelectionList.h>
+#include <maya/MItMeshPolygon.h>
 
-#define kExitFlag	"-ea"
+
+#define kExitFlag	    "-ea"
 #define kExitFlagLong	"-exitAfterNthPairs"
 
 ///////////////////////////////////////////////////
@@ -28,16 +38,24 @@
 ///////////////////////////////////////////////////
 
 peltOverlap::peltOverlap()
-	: fNthPairs (1)
-{}
-
-peltOverlap::~peltOverlap() {}
-
+: fNthPairs (1)
+{
+}
+//
+peltOverlap::~peltOverlap()
+{
+}
+//
 void* peltOverlap::creator()
 {
 	return new peltOverlap;
 }
-
+//
+MString peltOverlap::cCmdName()
+{
+    return "peltOverlapCmd";
+}
+//
 MSyntax peltOverlap::newSyntax()
 {
 	 MSyntax syntax;
@@ -45,7 +63,7 @@ MSyntax peltOverlap::newSyntax()
 	 syntax.setObjectType(MSyntax::kStringObjects);
 	 return syntax;
 }
-
+//
 MStatus peltOverlap::parseArgs( const MArgList& args )
 {
 	MStatus		status = MS::kSuccess;
@@ -67,12 +85,9 @@ MStatus peltOverlap::parseArgs( const MArgList& args )
 
 	return status;
 }
-
+//
+// Return the overlapping faces in pairs for given shading groups.
 MStatus peltOverlap::doIt( const MArgList& args )
-//
-// Description
-//     Return the overlapping faces in pairs for given shading groups.
-//
 {
 	MStatus status = parseArgs ( args );
 	if ( !status ) return status;
@@ -100,14 +115,11 @@ MStatus peltOverlap::doIt( const MArgList& args )
 	}
 	return MS::kSuccess;
 }
-
+//
+// Represent a face by a center and radius, i.e.
+// center = {center1u, center1v, center2u, center2v, ... }
+// radius = {radius1, radius2,  ... }
 void peltOverlap::createBoundingCircle(const MStringArray &flattenFaces, MFloatArray &center, MFloatArray &radius)
-//
-// Description
-//     Represent a face by a center and radius, i.e.
-//     center = {center1u, center1v, center2u, center2v, ... }
-//     radius = {radius1, radius2,  ... }
-//
 {
     center.setLength(2 * flattenFaces.length());
     radius.setLength(flattenFaces.length());
@@ -144,10 +156,11 @@ void peltOverlap::createBoundingCircle(const MStringArray &flattenFaces, MFloatA
 		radius[i]  = sqrt(rsqr);
 	}
 }
-//     Represent a face by a series of edges(rays), i.e.
-//     orig = {orig1u, orig1v, orig2u, orig2v, ... }
-//     vec  = {vec1u,  vec1v,  vec2u,  vec2v,  ... }
-//     return false if no valid uv's.
+//
+// Represent a face by a series of edges(rays), i.e.
+// orig = {orig1u, orig1v, orig2u, orig2v, ... }
+// vec  = {vec1u,  vec1v,  vec2u,  vec2v,  ... }
+// return false if no valid uv's.
 bool peltOverlap::createRayGivenFace(const MString &face, MFloatArray &orig, MFloatArray &vec)
 {
     MSelectionList selList;
@@ -178,6 +191,7 @@ bool peltOverlap::createRayGivenFace(const MString &face, MFloatArray &orig, MFl
 	}
 	return true;
 }
+//
 // Check if there are crossing edges between two faces. Return true
 // if there are crossing edges and false otherwise. A face is represented
 // by a series of edges(rays), i.e.
@@ -242,6 +256,7 @@ unsigned int peltOverlap::checkCrossingEdges(
 	}
 	return 0;
 }
+//
 // Return overlapping faces in pairs for given a shading group and its associated faces.
 void peltOverlap::numOverlapUVFaces(const MString& shadingGroup, MStringArray& flattenFaces)
 {

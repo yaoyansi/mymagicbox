@@ -1,17 +1,24 @@
-#include "testuv.h"
+#include "testuvCmd.h"
 #include "objectuv.h"
 
-TestUVCmd::~TestUVCmd() {}
-
+TestUVCmd::TestUVCmd()
+{
+}
+//
+TestUVCmd::~TestUVCmd()
+{
+}
+//
 void* TestUVCmd::creator()
 {
 	return new TestUVCmd();
 }
-
+//
 MString TestUVCmd::cCmdName()
 {
-    return "testuv";
+    return "testuvCmd";
 }
+//
 MStatus TestUVCmd::doIt( const MArgList& args )
 {
 	MStatus res = MS::kSuccess;
@@ -23,7 +30,7 @@ MStatus TestUVCmd::doIt( const MArgList& args )
 		ObjectUV object(objname);
 		object.testUV();
 	} else {
-		cerr << "No Object name specified\n";
+		std::cerr << "No Object name specified\n";
 	}
 
 	return res;

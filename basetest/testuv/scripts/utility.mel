@@ -23,7 +23,7 @@ proc string[] getSGsFromShape( string $shape )
 proc slectTheOverlapFaces(string $sgName)
 {
     select -cl;
-    string $faces[] = `peltOverlap $sgName`;
+    string $faces[] = `peltOverlapCmd $sgName`;
     select -cl;
     for($f in $faces)
     {
