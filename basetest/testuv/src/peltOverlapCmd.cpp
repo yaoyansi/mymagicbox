@@ -253,33 +253,44 @@ void peltOverlap::numOverlapUVFaces(const MString& shadingGroup, MStringArray& f
 
 	for(unsigned int i = 0; i < flattenFaces.length() && numOverlap < fNthPairs; i++)
     {
+        // for face[i]
+        //construct point and edge(line section) for face[i]
         if(!createRayGivenFace(flattenFaces[i], face1Orig, face1Vec))
             continue;
 
+        // center point of face[i]
 		const float cui  = center[2*i];
 		const float cvi  = center[2*i+1];
+
+		//radius of face[i]
 		const float ri  = radius[i];
-		// Exclude the degenerate face
-		// if(area(face1Orig) < 0.000001) continue;
+
+		//////////////////////////////////////////////
+		//////// test face[i] and other faces  ///////
+		//////////////////////////////////////////////
 		// Loop through face j where j != i
 		for(unsigned int j = i+1; j < flattenFaces.length() && numOverlap < fNthPairs; j++)
 		{
+            // center point of face[j]
 			const float &cuj = center[2*j];
 			const float &cvj = center[2*j+1];
+
+            //radius of face[j]
 			const float &rj  = radius[j];
+
+			// Quick rejection if bounding circles don't overlap
+			// 如果两个线段的中心点的距离大于它们的外接圆的半径和, 则这两个线段不可能相交
 			float du = cuj - cui;
 			float dv = cvj - cvi;
 			float dsqr = du*du + dv*dv;
-
-			// Quick rejection if bounding circles don't overlap
 			if (dsqr >= (ri+rj)*(ri+rj))
                 continue;
 
+            //construct point and edge(line section) for face[j]
 			if(!createRayGivenFace(flattenFaces[j], face2Orig, face2Vec))
                 continue;
 
-			// Exclude the degenerate face
-			// if(area(face2Orig) < 0.000001) continue;
+            // test if the two line sections cross with eachother
 			if (checkCrossingEdges(face1Orig, face1Vec, face2Orig, face2Vec)) {
 				numOverlap++;
 				appendToResult(flattenFaces[i]);
