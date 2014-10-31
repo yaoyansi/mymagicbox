@@ -95,6 +95,7 @@ MStatus peltOverlap::doIt( const MArgList& args )
 	    MGlobal::executeCommand("ConvertSelectionToFaces");
 	    MGlobal::executeCommand("ls -sl -flatten", flattenFaces, false, false);
 
+	    // return overlap faces from shading group
 	    numOverlapUVFaces(fShadingGroups[i], flattenFaces);
 	}
 	return MS::kSuccess;
@@ -108,9 +109,10 @@ void peltOverlap::createBoundingCircle(const MStringArray &flattenFaces, MFloatA
 //     radius = {radius1, radius2,  ... }
 //
 {
-        center.setLength(2 * flattenFaces.length());
-        radius.setLength(flattenFaces.length());
-	for(unsigned int i = 0; i < flattenFaces.length(); i++) {
+    center.setLength(2 * flattenFaces.length());
+    radius.setLength(flattenFaces.length());
+	for(unsigned int i = 0; i < flattenFaces.length(); i++)
+    {
 		MSelectionList selList;
 		selList.add(flattenFaces[i]);
 		MDagPath dagPath;
@@ -142,17 +144,13 @@ void peltOverlap::createBoundingCircle(const MStringArray &flattenFaces, MFloatA
 		radius[i]  = sqrt(rsqr);
 	}
 }
-
-bool peltOverlap::createRayGivenFace(const MString &face, MFloatArray &orig, MFloatArray &vec)
-//
-// Description
 //     Represent a face by a series of edges(rays), i.e.
 //     orig = {orig1u, orig1v, orig2u, orig2v, ... }
 //     vec  = {vec1u,  vec1v,  vec2u,  vec2v,  ... }
-//
 //     return false if no valid uv's.
+bool peltOverlap::createRayGivenFace(const MString &face, MFloatArray &orig, MFloatArray &vec)
 {
-        MSelectionList selList;
+    MSelectionList selList;
 	selList.add(face);
 	MDagPath dagPath;
 	MObject  comp;
@@ -180,44 +178,31 @@ bool peltOverlap::createRayGivenFace(const MString &face, MFloatArray &orig, MFl
 	}
 	return true;
 }
-
-float peltOverlap::area(const MFloatArray &orig)
-{
-	float sum = 0.f;
-	unsigned int num = orig.length() / 2;
-	for (unsigned int i = 0; i < num; i++) {
-		unsigned int idx  = 2 * i;
-		unsigned int idy  = (i + 1 ) % num;
-		idy = 2 * idy + 1;
-		unsigned int idy2 = (i + num - 1) % num;
-		idy2 = 2 * idy2 + 1;
-		sum += orig[idx] * (orig[idy] - orig[idy2]);
-	}
-	return fabs(sum) * 0.5f;
-}
-
-unsigned int peltOverlap::checkCrossingEdges(
-MFloatArray &face1Orig,
-MFloatArray &face1Vec,
-MFloatArray &face2Orig,
-MFloatArray &face2Vec
-)
 // Check if there are crossing edges between two faces. Return true
 // if there are crossing edges and false otherwise. A face is represented
 // by a series of edges(rays), i.e.
 // faceOrig[] = {orig1u, orig1v, orig2u, orig2v, ... }
 // faceVec[]  = {vec1u,  vec1v,  vec2u,  vec2v,  ... }
+unsigned int peltOverlap::checkCrossingEdges(
+    MFloatArray &face1Orig,
+    MFloatArray &face1Vec,
+    MFloatArray &face2Orig,
+    MFloatArray &face2Vec
+)
 {
 	unsigned int face1Size = face1Orig.length();
 	unsigned int face2Size = face2Orig.length();
-	for (unsigned int i = 0; i < face1Size; i += 2) {
+
+	for (unsigned int i = 0; i < face1Size; i += 2)
+    {
 		float o1x = face1Orig[i];
 		float o1y = face1Orig[i+1];
 		float v1x = face1Vec[i];
 		float v1y = face1Vec[i+1];
 		float n1x =  v1y;
 		float n1y = -v1x;
-		for (unsigned int j = 0; j < face2Size; j += 2) {
+		for (unsigned int j = 0; j < face2Size; j += 2)
+        {
 			// Given ray1(O1, V1) and ray2(O2, V2)
 			// Normal of ray1 is (V1.y, V1.x)
 			float o2x = face2Orig[j];
@@ -227,57 +212,72 @@ MFloatArray &face2Vec
 			float n2x =  v2y;
 			float n2y = -v2x;
 
+			///////////////////////////////////////////////////////////////////
+			////        check if the two edges cross with each other        ///
+			///////////////////////////////////////////////////////////////////
 			// Find t for ray2
 			// t = [(o1x-o2x)n1x + (o1y-o2y)n1y] / (v2x * n1x + v2y * n1y)
 			float denum = v2x * n1x + v2y * n1y;
 			// Edges are parallel if denum is close to 0.
-			if (fabs(denum) < 0.000001f) continue;
+			if (fabs(denum) < 0.000001f)
+                continue;
 			float t2 = ((o1x-o2x)* n1x + (o1y-o2y) * n1y) / denum;
-			if (t2 < 0.00001f || t2 > 0.99999f) continue;
+
+			if (t2 < 0.00001f || t2 > 0.99999f)
+                continue;
 
 			// Find t for ray1
 			// t = [(o2x-o1x)n2x + (o2y-o1y)n2y] / (v1x * n2x + v1y * n2y)
 			denum = v1x * n2x + v1y * n2y;
 			// Edges are parallel if denum is close to 0.
-			if (fabs(denum) < 0.000001f) continue;
+			if (fabs(denum) < 0.000001f)
+                continue;
+
 			float t1 = ((o2x-o1x)* n2x + (o2y-o1y) * n2y) / denum;
 
 			// Edges intersect
-			if (t1 > 0.00001f && t1 < 0.99999f) return 1;
+			if (t1 > 0.00001f && t1 < 0.99999f)
+                return 1;
 		}
 	}
 	return 0;
 }
-
+// Return overlapping faces in pairs for given a shading group and its associated faces.
 void peltOverlap::numOverlapUVFaces(const MString& shadingGroup, MStringArray& flattenFaces)
-//
-// Description
-//     Return overlapping faces in pairs for given a shading group and its associated faces.
-//
 {
 	MFloatArray  face1Orig, face1Vec, face2Orig, face2Vec, center, radius;
+
 	// Loop through face i
 	unsigned int numOverlap = 0;
 	createBoundingCircle(flattenFaces, center, radius);
-	for(unsigned int i = 0; i < flattenFaces.length() && numOverlap < fNthPairs; i++) {
-	        if(!createRayGivenFace(flattenFaces[i], face1Orig, face1Vec)) continue;
+
+	for(unsigned int i = 0; i < flattenFaces.length() && numOverlap < fNthPairs; i++)
+    {
+        if(!createRayGivenFace(flattenFaces[i], face1Orig, face1Vec))
+            continue;
+
 		const float cui  = center[2*i];
 		const float cvi  = center[2*i+1];
 		const float ri  = radius[i];
 		// Exclude the degenerate face
 		// if(area(face1Orig) < 0.000001) continue;
 		// Loop through face j where j != i
-		for(unsigned int j = i+1; j < flattenFaces.length() && numOverlap < fNthPairs; j++) {
+		for(unsigned int j = i+1; j < flattenFaces.length() && numOverlap < fNthPairs; j++)
+		{
 			const float &cuj = center[2*j];
 			const float &cvj = center[2*j+1];
 			const float &rj  = radius[j];
 			float du = cuj - cui;
 			float dv = cvj - cvi;
 			float dsqr = du*du + dv*dv;
-			// Quick rejection if bounding circles don't overlap
-			if (dsqr >= (ri+rj)*(ri+rj)) continue;
 
-			if(!createRayGivenFace(flattenFaces[j], face2Orig, face2Vec)) continue;
+			// Quick rejection if bounding circles don't overlap
+			if (dsqr >= (ri+rj)*(ri+rj))
+                continue;
+
+			if(!createRayGivenFace(flattenFaces[j], face2Orig, face2Vec))
+                continue;
+
 			// Exclude the degenerate face
 			// if(area(face2Orig) < 0.000001) continue;
 			if (checkCrossingEdges(face1Orig, face1Vec, face2Orig, face2Vec)) {

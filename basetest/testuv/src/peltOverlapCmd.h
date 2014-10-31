@@ -52,7 +52,6 @@ private:
 	MStatus		parseArgs( const MArgList &args );
         void            createBoundingCircle(const MStringArray &flattenFaces, MFloatArray &center, MFloatArray &radius);
         bool            createRayGivenFace(const MString &face, MFloatArray &orig, MFloatArray &vec);
-        float           area(const MFloatArray &orig);
         unsigned int    checkCrossingEdges(MFloatArray &face1Orig,
 					   MFloatArray &face1Vec,
 					   MFloatArray &face2Orig,
