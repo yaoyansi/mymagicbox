@@ -85,6 +85,7 @@ MStatus TestDeformer::initialize()
 	driver_mesh = polyMeshAttr.create( "vertSnapInput", "vsnpin", MFnData::kMesh, &status );
 	CHECK_MSTATUS( status );
 	CHECK_MSTATUS( polyMeshAttr.setStorable( false ) );
+	CHECK_MSTATUS( polyMeshAttr.setArray(true) );
 	CHECK_MSTATUS( polyMeshAttr.setConnectable( true ) );
 	CHECK_MSTATUS( addAttribute(driver_mesh) );
 	CHECK_MSTATUS( attributeAffects(driver_mesh, outputGeom) );
@@ -128,15 +129,15 @@ MStatus TestDeformer::deform(MDataBlock& data,
 
     short initialized_mapping = data.inputValue( initialized_data, &status).asShort();
     CHECK_MSTATUS(status);
+    __debug("%s(), initialized_mapping=%d", __FUNCTION__, initialized_mapping);
 
     if( initialized_mapping == 1 )
     {
         initVertMapping(data, iter, localToWorldMatrix, mIndex);
 
-        MObject tObj  =  thisMObject();
-        MPlug setInitMode = MPlug( tObj, initialized_data  );
-        setInitMode.setShort( 2 );
-        iter.reset();
+//        MObject tObj  =  thisMObject();
+//        MPlug setInitMode = MPlug( tObj, initialized_data  );
+//        setInitMode.setShort( 2 );
 
 
         initialized_mapping = data.inputValue( initialized_data, &status ).asShort();
@@ -152,16 +153,37 @@ MStatus TestDeformer::deform(MDataBlock& data,
         MArrayDataHandle vertMapArrayData  = data.inputArrayValue( vert_map, &status  );
         CHECK_MSTATUS( status );
 
-        MDataHandle meshAttrHandle = data.inputValue( driver_mesh, &status );
+        MArrayDataHandle meshAttrHandle = data.inputArrayValue( driver_mesh, &status );
         CHECK_MSTATUS( status );
 
-        MObject meshMobj;
+        int numMeshes = meshAttrHandle.elementCount();
+        __debug("%s(), numMeshes=%d", __FUNCTION__, numMeshes);
 
-        meshMobj = meshAttrHandle.asMesh();
+        CHECK_MSTATUS(meshAttrHandle.jumpToElement(0));
+        for( int count=0; count < numMeshes; ++count )
+        {
+            __debug("%s(), count=%d", __FUNCTION__, count);
 
-        _deform_on_one_mesh(data, iter, localToWorldMatrix, mIndex,
-                            meshMobj,
-                            envelopeHandle, vertMapArrayData );
+            MDataHandle currentMesh = meshAttrHandle.inputValue(&status);
+            CHECK_MSTATUS( status );
+
+
+            MObject meshMobj;
+
+            meshMobj = currentMesh.asMesh();
+            __debugMeshInfo(__FUNCTION__, meshMobj);
+
+            _deform_on_one_mesh(data, iter, localToWorldMatrix, mIndex,
+                                meshMobj,
+                                envelopeHandle, vertMapArrayData );
+
+
+            if( !meshAttrHandle.next() )
+            {
+                break;
+            }
+
+        }
     }// if
 
 	return( MS::kSuccess );
@@ -179,6 +201,7 @@ void TestDeformer::initVertMapping(MDataBlock& data,
     MArrayDataHandle vertMapOutArrayData = data.outputArrayValue( vert_map, &status );
     CHECK_MSTATUS( status );
 
+    iter.reset();
     int count = iter.count();
     MArrayDataBuilder vertMapOutArrayBuilder( vert_map, count, &status );
     CHECK_MSTATUS( status );
@@ -212,16 +235,34 @@ void TestDeformer::initVertMapping(MDataBlock& data,
 
 
 
-    MDataHandle meshAttrHandle = data.inputValue( driver_mesh, &status );
+    MArrayDataHandle meshAttrHandle = data.inputArrayValue( driver_mesh, &status );
     CHECK_MSTATUS( status );
 
-    MObject meshMobj = meshAttrHandle.asMesh();
+    int numMeshes = meshAttrHandle.elementCount();
+    __debug("%s(), numMeshes=%d", __FUNCTION__, numMeshes);
 
+    CHECK_MSTATUS(meshAttrHandle.jumpToElement(0));
+    for( int meshIndex=0; meshIndex < numMeshes; ++meshIndex )
     {
-        _initVertMapping_on_one_mesh(meshMobj, vertMapOutArrayBuilder, allPts);// Note: vertMapOutArrayBuilder is updated in this function!
-        CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
-    }
+        __debug("%s(), meshIndex=%d", __FUNCTION__, meshIndex);
 
+        MDataHandle currentMesh = meshAttrHandle.inputValue(&status);
+        CHECK_MSTATUS(status);
+
+        MObject meshMobj = currentMesh.asMesh();
+        __debug("%s(), meshMobj.apiTypeStr()=%s", __FUNCTION__, meshMobj.apiTypeStr());
+
+        __debugMeshInfo(__FUNCTION__, meshMobj);
+        {
+            _initVertMapping_on_one_mesh(meshMobj, vertMapOutArrayBuilder, allPts);// Note: vertMapOutArrayBuilder is updated in this function!
+            CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
+        }
+
+        if( !meshAttrHandle.next() )
+        {
+            break;
+        }
+    }// for (mesh
 
 
 
@@ -251,16 +292,17 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
                                       MItGeometry& iter,
                                       const MMatrix& localToWorldMatrix,
                                       unsigned int mIndex,
-                                      MObject &meshMobj,
+                                      MObject &driver_mesh,
                                       const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData)
 {
     MStatus status;
 
     float env = envelopeHandle.asFloat();
 
-    MItMeshVertex vertIter( meshMobj, &status );
+    MItMeshVertex driver_meshVertIter( driver_mesh, &status );
     CHECK_MSTATUS( status );
 
+    iter.reset();
     while( !iter.isDone(&status) )
     {
         CHECK_MSTATUS( status );
@@ -270,6 +312,9 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
 
         if ( fabs(ww) > FLT_EPSILON )//if ( ww != 0 )
         {
+            __debug("%s(), vertMapArrayData.elementCount()=%d, iter.index()=%d",
+                    __FUNCTION__, vertMapArrayData.elementCount(), iter.index());
+
             CHECK_MSTATUS(vertMapArrayData.jumpToElement(iter.index()));
 
             int index_mapped = vertMapArrayData.inputValue(&status).asInt();
@@ -277,10 +322,12 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
 
             if( index_mapped >= 0 )
             {
-                int prevInt;
-                CHECK_MSTATUS( vertIter.setIndex(index_mapped, prevInt) );
+                __debug("index_mapped=%d", index_mapped);
 
-                MPoint mappedPt = vertIter.position( MSpace::kWorld, &status );
+                int prevInt;
+                CHECK_MSTATUS( driver_meshVertIter.setIndex(index_mapped, prevInt) );
+
+                MPoint mappedPt = driver_meshVertIter.position( MSpace::kWorld, &status );
                 CHECK_MSTATUS( status );
 
                 MPoint iterPt = iter.position(MSpace::kObject, &status) * localToWorldMatrix;
@@ -296,12 +343,12 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
 }
 
 //
-void TestDeformer::_initVertMapping_on_one_mesh( MObject &meshMobj, MArrayDataBuilder &vertMapOutArrayBuilder, const MPointArray& allPts)
+void TestDeformer::_initVertMapping_on_one_mesh( MObject &driver_mesh, MArrayDataBuilder &vertMapOutArrayBuilder, const MPointArray& allPts)
 {
     MStatus status;
 
 
-    MItMeshVertex vertIter( meshMobj, &status );
+    MItMeshVertex vertIter( driver_mesh, &status );
     CHECK_MSTATUS(status);
     CHECK_MSTATUS(vertIter.reset());
 
@@ -328,4 +375,49 @@ void TestDeformer::_initVertMapping_on_one_mesh( MObject &meshMobj, MArrayDataBu
         CHECK_MSTATUS(vertIter.next());
     }
 }
+//
+void TestDeformer::__debug(const char* format, ...) const
+{
+	va_list args;
+	char msg[ 1024 ];
 
+	va_start(args, format);
+
+	vsnprintf(msg, 1024, format, args);
+
+	fprintf(stdout, "Debug> %s\n", msg);
+
+	va_end(args);
+}
+//
+void TestDeformer::__debugMeshInfo(const char* msg, MObject &meshMobj)const
+{
+#ifdef _DEBUG
+
+        MStatus status;
+
+        MFnMesh fnMesh(meshMobj, &status);
+        CHECK_MSTATUS(status);
+
+        __debug("%s(), fnMesh.fullPathName=%s", msg, fnMesh.fullPathName().asChar());
+        __debug("%s(), fnMesh.name=%s", msg, fnMesh.name().asChar());
+
+        MDagPath path; CHECK_MSTATUS(fnMesh.getPath(path));
+        __debug("%s(), path=%s", msg, path.fullPathName().asChar());
+
+        MDagPath dagpath = fnMesh.dagPath(&status); CHECK_MSTATUS(status);
+        __debug("%s(), dagpath=%s", msg, dagpath.fullPathName().asChar());
+
+        MFnDependencyNode fnDNode(meshMobj, &status); CHECK_MSTATUS(status);//
+        __debug("%s(), name=%s", msg, fnDNode.name().asChar());
+
+        MFnDagNode fnDagNode(meshMobj, &status);
+        CHECK_MSTATUS(status);//
+
+        MDagPath path2; CHECK_MSTATUS(fnDagNode.getPath(path2));//
+        __debug("%s(), path2=%s", msg, path2.fullPathName().asChar());
+
+        MDagPath dagpath2 = fnDagNode.dagPath(&status); CHECK_MSTATUS(status);//
+        __debug("%s(), dagpath2=%s", msg, dagpath2.fullPathName().asChar());
+#endif
+}

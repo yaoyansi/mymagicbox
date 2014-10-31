@@ -40,6 +40,12 @@
 #include <maya/MItGeometry.h>
 #include <maya/MMatrix.h>
 #include <maya/MArrayDataBuilder.h>
+#include <maya/MFnMesh.h>
+#include <maya/MDagPath.h>
+#include <maya/MFnDependencyNode.h>
+#include <maya/MFnDagNode.h>
+
+//#define _DEBUG
 /////////////////////////////////
 // Plugin Lambert Shader Class //
 /////////////////////////////////
@@ -96,6 +102,8 @@ private:
 
     void _initVertMapping_on_one_mesh( MObject &meshMobj, MArrayDataBuilder &vertMapOutArrayBuilder, const MPointArray& allPts
                                       );
+    void __debug(const char* format, ...) const;
+    void __debugMeshInfo(const char* msg, MObject &object)const;
 
 protected:
 	static MTypeId   m_id;
