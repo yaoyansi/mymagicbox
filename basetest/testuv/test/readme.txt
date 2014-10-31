@@ -14,3 +14,4 @@ proc selectTheOverlapFaces(string $sgName)
 执行:
 selectTheOverlapFaces("initialShadingGroup");
 与shading group相连的mesh的uv如果有穿插, 那些面片就会被选择
+

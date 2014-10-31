@@ -28,9 +28,13 @@ public:
 	ObjectUV(const MString& name);
 	~ObjectUV();
 
+	void testUV();
+
 protected:
     ObjectUV(const ObjectUV& o);
     ObjectUV& operator=(const ObjectUV& o);
+
+    void getUV();
 
 protected:
     const MString m_objectname;

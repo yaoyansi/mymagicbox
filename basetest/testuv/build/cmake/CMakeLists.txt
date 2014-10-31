@@ -40,11 +40,13 @@ find_package(Maya REQUIRED)
 set(HDRS
 	../../src/testuv.h
 	../../src/objectuv.h
+	../../src/peltOverlapCmd.h
 )
 
 set(SRCS
 	../../src/testuv.cpp
 	../../src/objectuv.cpp
+	../../src/peltOverlapCmd.cpp
 	../../src/plugin.cpp
 )
 

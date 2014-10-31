@@ -21,6 +21,7 @@ MStatus TestUVCmd::doIt( const MArgList& args )
 		MString objname( args.asString(0) );
 
 		ObjectUV object(objname);
+		object.testUV();
 	} else {
 		cerr << "No Object name specified\n";
 	}
