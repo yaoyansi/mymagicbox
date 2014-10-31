@@ -1,4 +1,5 @@
 #include "testuv.h"
+#include "objectuv.h"
 
 TestUVCmd::~TestUVCmd() {}
 
@@ -17,10 +18,9 @@ MStatus TestUVCmd::doIt( const MArgList& args )
 
 	unsigned len = args.length();
 	if ( len > 0 ) {
-		MString object_name( args.asString(0) );
+		MString objname( args.asString(0) );
 
-		if ( MS::kSuccess != MGlobal::selectByName( object_name ) )
-			cerr << "Object " << object_name.asChar() << " not found\n";
+		ObjectUV object(objname);
 	} else {
 		cerr << "No Object name specified\n";
 	}

@@ -39,10 +39,12 @@ find_package(Maya REQUIRED)
  
 set(HDRS
 	../../src/testuv.h
+	../../src/objectuv.h
 )
 
 set(SRCS
 	../../src/testuv.cpp
+	../../src/objectuv.cpp
 	../../src/plugin.cpp
 )
 
