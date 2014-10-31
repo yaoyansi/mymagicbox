@@ -1,0 +1,36 @@
+proc string[] getSGsFromShape( string $shape )
+{
+  string $shadingEngines[];
+  if ( `objExists $shape` )
+  {
+    string $dest[] = `listConnections -destination true -source false
+      -plugs false -type "shadingEngine" $shape`;
+
+    // listConnections can return duplicates within its list.
+    // The select below is a quick trick to avoid dupes in the 
+    // returned array.
+    if ( size( $dest ) )
+    {
+      string $select[] = `ls -sl`;
+      select -r -ne $dest;
+      $shadingEngines = `ls -sl`;
+      select -r $select;
+    }
+  }
+  return $shadingEngines;
+}
+
+proc slectTheOverlapFaces(string $sgName)
+{
+    select -cl;
+    string $faces[] = `peltOverlap $sgName`;
+    select -cl;
+    for($f in $faces)
+    {
+        select -tgl $f;
+    }    
+}
+
+//Example:
+//string $shadingEngines[] = getSGsFromShape("pPlaneShape1");
+//slectTheOverlapFaces($shadingEngines[0]);
