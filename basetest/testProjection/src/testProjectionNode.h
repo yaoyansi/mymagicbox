@@ -68,6 +68,9 @@ public:
 	short loops;
 	short stacks;
     short shapeType;
+
+	double camRotateX;// rotate radian along X axis
+	double camRotateY;// rotate radian along Y axis
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -108,6 +111,9 @@ private:
 	static	MObject		slices;
 	static	MObject		loops;
 	static	MObject		stacks;
+
+	static	MObject		camRotateX;
+	static	MObject		camRotateY;
 
 public:
 	// Shape type id

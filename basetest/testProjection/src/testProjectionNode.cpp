@@ -95,6 +95,9 @@ MObject quadricShape::sweepAngle;
 MObject quadricShape::slices;
 MObject quadricShape::loops;
 MObject quadricShape::stacks;
+
+MObject quadricShape::camRotateX;
+MObject quadricShape::camRotateY;
 MTypeId quadricShape::id( 0x80111 );
 
 quadricShape::quadricShape()
@@ -109,6 +112,9 @@ quadricShape::quadricShape()
 	fGeometry->loops		= 6;
 	fGeometry->stacks		= 4;
     fGeometry->shapeType	= 0;
+
+	fGeometry->camRotateX	= 0.0;
+    fGeometry->camRotateY	= 0.0;
 }
 
 quadricShape::~quadricShape()
@@ -187,6 +193,14 @@ bool quadricShape::getInternalValue( const MPlug& plug,
 	}
 	else if ( plug == stacks ) {
 		datahandle.set( fGeometry->stacks );
+		isOk = true;
+	}
+	else if ( plug == camRotateX ) {
+		datahandle.set( fGeometry->camRotateX );
+		isOk = true;
+	}
+	else if ( plug == camRotateY ) {
+		datahandle.set( fGeometry->camRotateY );
 		isOk = true;
 	}
 	else {
@@ -281,6 +295,14 @@ bool quadricShape::setInternalValue( const MPlug& plug,
 		}
 		fGeometry->stacks = val;
 	}
+	else if ( plug == camRotateX ) {
+		double val = datahandle.asDouble();
+		fGeometry->camRotateX = val;
+	}
+	else if ( plug == camRotateY ) {
+		double val = datahandle.asDouble();
+		fGeometry->camRotateY = val;
+	}
 	else {
 		isOk = MPxSurfaceShape::setInternalValue( plug, datahandle );
 	}
@@ -348,6 +370,8 @@ MStatus quadricShape::initialize()
 	MAKE_NUMERIC_ATTR( loops, "lp", MFnNumericData::kShort, 6, true );
 	MAKE_NUMERIC_ATTR( stacks, "sk", MFnNumericData::kShort, 4, true );
 
+	MAKE_NUMERIC_ATTR( camRotateX, "camRotateX", MFnNumericData::kDouble, 0.0, true );
+	MAKE_NUMERIC_ATTR( camRotateY, "camRotateY", MFnNumericData::kDouble, 0.0, true );
 	return stat;
 }
 
@@ -369,6 +393,8 @@ quadricGeom* quadricShape::geometry()
 	plug.setAttribute( stacks );		plug.getValue( fGeometry->stacks );
 	plug.setAttribute( shapeType );		plug.getValue( fGeometry->shapeType );
 
+	plug.setAttribute( camRotateX );	plug.getValue( fGeometry->camRotateX );
+	plug.setAttribute( camRotateY );	plug.getValue( fGeometry->camRotateY );
 	return fGeometry;
 }
 
@@ -502,18 +528,15 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 		//gluPartialDisk( qobj, geom->radius1, geom->radius2, geom->slices,
 		//				geom->loops, geom->startAngle, geom->sweepAngle );
 		{
-			static float uvScale = 2.0f;
-			uvScale += 0.1f;
-			if(uvScale >4.0f){
-				uvScale = 2.0f;
-			}
+			double uScale = geom->camRotateX;
+			double vScale = geom->camRotateY;
 
 			glNormal3f( 0.0f, 1.0f, 0.0f);
 			glBegin(GL_QUADS);
 				glTexCoord2f(0.0f,		0.0f);		glVertex3f(-10.0f, 0.0f,  10.0f);
-				glTexCoord2f(uvScale,	0.0f);		glVertex3f( 10.0f, 0.0f,  10.0f);
-				glTexCoord2f(uvScale,	uvScale);	glVertex3f( 10.0f, 0.0f, -10.0f);
-				glTexCoord2f(0.0f,		uvScale);	glVertex3f(-10.0f, 0.0f, -10.0f);
+				glTexCoord2f(uScale,	0.0f);		glVertex3f( 10.0f, 0.0f,  10.0f);
+				glTexCoord2f(uScale,	vScale);	glVertex3f( 10.0f, 0.0f, -10.0f);
+				glTexCoord2f(0.0f,		vScale);	glVertex3f(-10.0f, 0.0f, -10.0f);
 			glEnd();
 		}
 		break;

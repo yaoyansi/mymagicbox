@@ -1,6 +1,6 @@
 //Maya ASCII 2014 scene
 //Name: test_proj.ma
-//Last modified: Sat, Nov 01, 2014 08:35:34 PM
+//Last modified: Sat, Nov 01, 2014 09:27:39 PM
 //Codeset: 936
 requires maya "2014";
 requires -nodeType "quadricShape" "quadricShape" "1.0.0";
@@ -12,15 +12,19 @@ fileInfo "cutIdentifier" "201310090514-890429";
 fileInfo "osv" "Microsoft Windows 7 Ultimate Edition, 64-bit Windows 7 Service Pack 1 (Build 7601)\n";
 createNode transform -s -n "persp";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" -41.724895425331042 34.203306929450299 0.72831075877221219 ;
-	setAttr ".r" -type "double3" -39.338352729603294 -89.000000000000085 -1.8224161194579975e-013 ;
+	setAttr ".t" -type "double3" -34.632578843973278 29.653834067027354 -28.854776857003582 ;
+	setAttr ".r" -type "double3" -33.338352729607905 -129.7999999999995 0 ;
+	setAttr ".rp" -type "double3" -3.7595255774949073e-017 9.42350410368587e-015 0 ;
+	setAttr ".rpt" -type "double3" 6.0095765636938593e-015 -2.1352146600588248e-015 
+		-1.4184230406653949e-016 ;
 createNode camera -s -n "perspShape" -p "persp";
 	setAttr -k off ".v" no;
-	setAttr ".fl" 34.999999999999993;
-	setAttr ".coi" 53.957052733876502;
+	setAttr ".fl" 34.999999999999979;
+	setAttr ".coi" 53.957052733876495;
 	setAttr ".imn" -type "string" "persp";
 	setAttr ".den" -type "string" "persp_depth";
 	setAttr ".man" -type "string" "persp_mask";
+	setAttr ".tp" -type "double3" -9.9475983006414026e-014 0 2.9420910152566648e-014 ;
 	setAttr ".hc" -type "string" "viewSet -p %camera";
 createNode transform -s -n "top";
 	setAttr ".v" no;
@@ -85,6 +89,7 @@ createNode mesh -n "pPlaneShape1" -p "pPlane1";
 	setAttr ".cdvm[0]"  0 1 1;
 createNode transform -n "camera1";
 	setAttr ".t" -type "double3" 0 13.814116038798073 6.3205848829887845 ;
+	setAttr ".r" -type "double3" 4.1513370883998073 1.9023255141709141 0.1017765150236308 ;
 createNode camera -n "cameraShape1" -p "camera1";
 	setAttr -k off ".v";
 	setAttr ".rnd" no;
@@ -184,6 +189,10 @@ createNode polyPlane -n "polyPlane1";
 	setAttr ".sw" 1;
 	setAttr ".sh" 1;
 	setAttr ".cuv" 2;
+createNode unitConversion -n "unitConversion1";
+	setAttr ".cf" 57.295779513082323;
+createNode unitConversion -n "unitConversion2";
+	setAttr ".cf" 57.295779513082323;
 select -ne :time1;
 	setAttr ".o" 1;
 	setAttr ".unw" 1;
@@ -213,6 +222,8 @@ select -ne :hardwareRenderingGlobals;
 select -ne :defaultHardwareRenderGlobals;
 	setAttr ".fn" -type "string" "im";
 	setAttr ".res" -type "string" "ntsc_4d 646 485 1.333";
+connectAttr "unitConversion1.o" "myTestPlaneShape.camRotateX";
+connectAttr "unitConversion2.o" "myTestPlaneShape.camRotateY";
 connectAttr "polyPlane1.out" "pPlaneShape1.i";
 relationship "link" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
 relationship "link" ":lightLinker1" ":initialParticleSE.message" ":defaultLightSet.message";
@@ -247,6 +258,8 @@ connectAttr "place2dTexture1.vt3" "file1.vt3";
 connectAttr "place2dTexture1.vc1" "file1.vc1";
 connectAttr "place2dTexture1.o" "file1.uv";
 connectAttr "place2dTexture1.ofs" "file1.fs";
+connectAttr "camera1.rx" "unitConversion1.i";
+connectAttr "camera1.ry" "unitConversion2.i";
 connectAttr "lambert2SG.pa" ":renderPartition.st" -na;
 connectAttr "lambert2.msg" ":defaultShaderList1.s" -na;
 connectAttr "file1.msg" ":defaultTextureList1.tx" -na;
