@@ -96,6 +96,7 @@ MObject quadricShape::slices;
 MObject quadricShape::loops;
 MObject quadricShape::stacks;
 
+MObject quadricShape::camTranslateZ;
 MObject quadricShape::camRotateX;
 MObject quadricShape::camRotateY;
 MTypeId quadricShape::id( 0x80111 );
@@ -113,6 +114,7 @@ quadricShape::quadricShape()
 	fGeometry->stacks		= 4;
     fGeometry->shapeType	= 0;
 
+	fGeometry->camTranslateZ	= 0.0;
 	fGeometry->camRotateX	= 0.0;
     fGeometry->camRotateY	= 0.0;
 }
@@ -193,6 +195,10 @@ bool quadricShape::getInternalValue( const MPlug& plug,
 	}
 	else if ( plug == stacks ) {
 		datahandle.set( fGeometry->stacks );
+		isOk = true;
+	}
+	else if ( plug == camTranslateZ ) {
+		datahandle.set( fGeometry->camTranslateZ );
 		isOk = true;
 	}
 	else if ( plug == camRotateX ) {
@@ -295,6 +301,10 @@ bool quadricShape::setInternalValue( const MPlug& plug,
 		}
 		fGeometry->stacks = val;
 	}
+	else if ( plug == camTranslateZ ) {
+		double val = datahandle.asDouble();
+		fGeometry->camTranslateZ = val;
+	}
 	else if ( plug == camRotateX ) {
 		double val = datahandle.asDouble();
 		fGeometry->camRotateX = val;
@@ -370,6 +380,7 @@ MStatus quadricShape::initialize()
 	MAKE_NUMERIC_ATTR( loops, "lp", MFnNumericData::kShort, 6, true );
 	MAKE_NUMERIC_ATTR( stacks, "sk", MFnNumericData::kShort, 4, true );
 
+	MAKE_NUMERIC_ATTR( camTranslateZ, "camTranslateZ", MFnNumericData::kDouble, 0.0, true );
 	MAKE_NUMERIC_ATTR( camRotateX, "camRotateX", MFnNumericData::kDouble, 0.0, true );
 	MAKE_NUMERIC_ATTR( camRotateY, "camRotateY", MFnNumericData::kDouble, 0.0, true );
 	return stat;
@@ -393,6 +404,7 @@ quadricGeom* quadricShape::geometry()
 	plug.setAttribute( stacks );		plug.getValue( fGeometry->stacks );
 	plug.setAttribute( shapeType );		plug.getValue( fGeometry->shapeType );
 
+	plug.setAttribute( camTranslateZ );	plug.getValue( fGeometry->camTranslateZ );
 	plug.setAttribute( camRotateX );	plug.getValue( fGeometry->camRotateX );
 	plug.setAttribute( camRotateY );	plug.getValue( fGeometry->camRotateY );
 	return fGeometry;
@@ -539,7 +551,7 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 			MMatrix mPerspective;
 			getPerspectiveMatrix(fovy, aspect, zNear, zFar, mPerspective);
 
-			MPoint cam(0.0, 0.0, geom->camRotateX);
+			MPoint cam(0.0, 0.0, geom->camTranslateZ);
 
 			MPoint p0(  0.0f,  0.0f,  -0.5f);
 			MPoint p1( 10.0f,  0.0f,  -0.5f);
@@ -563,7 +575,7 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 			double zDepthFactor2 = zDepthFactor(p2_p.z, zNear, zFar);
 			double zDepthFactor3 = zDepthFactor(p3_p.z, zNear, zFar);
 
-			// p0_p --> screen point:p0_s
+			// p0_p --> screen point: p0_s
 			MPoint p0_s(p0_p.x * zDepthFactor0 , p0_p.y * zDepthFactor0, 1.0f );
 			MPoint p1_s(p1_p.x * zDepthFactor1 , p1_p.y * zDepthFactor1, 1.0f );
 			MPoint p2_s(p2_p.x * zDepthFactor2 , p2_p.y * zDepthFactor2, 1.0f );

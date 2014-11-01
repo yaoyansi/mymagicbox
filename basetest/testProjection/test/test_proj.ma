@@ -1,6 +1,6 @@
 //Maya ASCII 2014 scene
 //Name: test_proj.ma
-//Last modified: Sun, Nov 02, 2014 01:49:03 AM
+//Last modified: Sun, Nov 02, 2014 01:59:04 AM
 //Codeset: 936
 requires maya "2014";
 requires -nodeType "quadricShape" "quadricShape" "1.0.0";
@@ -88,7 +88,7 @@ createNode mesh -n "pPlaneShape1" -p "pPlane1";
 	setAttr ".covm[0]"  0 1 1;
 	setAttr ".cdvm[0]"  0 1 1;
 createNode transform -n "camera1";
-	setAttr ".t" -type "double3" 2.7106399621653159 1.2719757142748715 2.2318450405869572 ;
+	setAttr ".t" -type "double3" 2.7106399621653159 1.2719757142748715 6.8794080541402565 ;
 	setAttr ".r" -type "double3" 12.312370636298519 1.9023255141708648 0.10177651502363183 ;
 createNode camera -n "cameraShape1" -p "camera1";
 	setAttr -k off ".v";
@@ -224,6 +224,7 @@ select -ne :defaultHardwareRenderGlobals;
 	setAttr ".res" -type "string" "ntsc_4d 646 485 1.333";
 connectAttr "unitConversion1.o" "myTestPlaneShape.camRotateX";
 connectAttr "unitConversion2.o" "myTestPlaneShape.camRotateY";
+connectAttr "camera1.tz" "myTestPlaneShape.camTranslateZ";
 connectAttr "polyPlane1.out" "pPlaneShape1.i";
 relationship "link" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
 relationship "link" ":lightLinker1" ":initialParticleSE.message" ":defaultLightSet.message";

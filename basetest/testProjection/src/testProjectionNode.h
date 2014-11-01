@@ -72,6 +72,7 @@ public:
 	short stacks;
     short shapeType;
 
+	double camTranslateZ;// translate camera along Z axis
 	double camRotateX;// rotate radian along X axis
 	double camRotateY;// rotate radian along Y axis
 };
@@ -115,6 +116,7 @@ private:
 	static	MObject		loops;
 	static	MObject		stacks;
 
+	static	MObject		camTranslateZ;
 	static	MObject		camRotateX;
 	static	MObject		camRotateY;
 
