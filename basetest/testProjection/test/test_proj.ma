@@ -1,6 +1,6 @@
 //Maya ASCII 2014 scene
 //Name: test_proj.ma
-//Last modified: Sat, Nov 01, 2014 08:16:33 PM
+//Last modified: Sat, Nov 01, 2014 08:35:34 PM
 //Codeset: 936
 requires maya "2014";
 requires -nodeType "quadricShape" "quadricShape" "1.0.0";
@@ -83,6 +83,17 @@ createNode mesh -n "pPlaneShape1" -p "pPlane1";
 	setAttr ".dcc" -type "string" "Ambient+Diffuse";
 	setAttr ".covm[0]"  0 1 1;
 	setAttr ".cdvm[0]"  0 1 1;
+createNode transform -n "camera1";
+	setAttr ".t" -type "double3" 0 13.814116038798073 6.3205848829887845 ;
+createNode camera -n "cameraShape1" -p "camera1";
+	setAttr -k off ".v";
+	setAttr ".rnd" no;
+	setAttr ".cap" -type "double2" 1.41732 0.94488 ;
+	setAttr ".ff" 0;
+	setAttr ".ow" 30;
+	setAttr ".imn" -type "string" "camera1";
+	setAttr ".den" -type "string" "camera1_depth";
+	setAttr ".man" -type "string" "camera1_mask";
 createNode lightLinker -s -n "lightLinker1";
 	setAttr -s 3 ".lnk";
 	setAttr -s 3 ".slnk";
@@ -100,6 +111,9 @@ createNode materialInfo -n "materialInfo1";
 createNode file -n "file1";
 	setAttr ".ftn" -type "string" "R:/MyDocuments/maya/projects/default//sourceimages/test_er_file_0005.png";
 createNode place2dTexture -n "place2dTexture1";
+	setAttr ".wu" no;
+	setAttr ".wv" no;
+	setAttr ".of" -type "float2" 0.5 0.5 ;
 createNode script -n "uiConfigurationScriptNode";
 	setAttr ".b" -type "string" (
 		"// Maya Mel UI Configuration File.\n//\n//  This script is machine generated.  Edit at your own risk.\n//\n//\n\nglobal string $gMainPane;\nif (`paneLayout -exists $gMainPane`) {\n\n\tglobal int $gUseScenePanelConfig;\n\tint    $useSceneConfig = $gUseScenePanelConfig;\n\tint    $menusOkayInPanels = `optionVar -q allowMenusInPanels`;\tint    $nVisPanes = `paneLayout -q -nvp $gMainPane`;\n\tint    $nPanes = 0;\n\tstring $editorName;\n\tstring $panelName;\n\tstring $itemFilterName;\n\tstring $panelConfig;\n\n\t//\n\t//  get current state of the UI\n\t//\n\tsceneUIReplacement -update $gMainPane;\n\n\t$panelName = `sceneUIReplacement -getNextPanel \"modelPanel\" (localizedPanelLabel(\"Top View\")) `;\n\tif (\"\" == $panelName) {\n\t\tif ($useSceneConfig) {\n\t\t\t$panelName = `modelPanel -unParent -l (localizedPanelLabel(\"Top View\")) -mbv $menusOkayInPanels `;\n\t\t\t$editorName = $panelName;\n            modelEditor -e \n                -camera \"top\" \n                -useInteractiveMode 0\n                -displayLights \"default\" \n                -displayAppearance \"wireframe\" \n"
