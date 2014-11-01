@@ -576,17 +576,19 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 			double zDepthFactor3 = zDepthFactor(p3_p.z, zNear, zFar);
 
 			// p0_p --> screen point: p0_s
-			MPoint p0_s(p0_p.x * zDepthFactor0 , p0_p.y * zDepthFactor0, 1.0f );
-			MPoint p1_s(p1_p.x * zDepthFactor1 , p1_p.y * zDepthFactor1, 1.0f );
-			MPoint p2_s(p2_p.x * zDepthFactor2 , p2_p.y * zDepthFactor2, 1.0f );
-			MPoint p3_s(p3_p.x * zDepthFactor3 , p3_p.y * zDepthFactor3, 1.0f );
+			const double screen_width  = p1.x - p0.x;
+			const double screen_height = p2.y - p0.y;
+			MPoint p0_s((p0_p.x-screen_width/2) * zDepthFactor0 , (p0_p.y-screen_height/2) * zDepthFactor0, 1.0f );
+			MPoint p1_s((p1_p.x-screen_width/2) * zDepthFactor1 , (p1_p.y-screen_height/2) * zDepthFactor1, 1.0f );
+			MPoint p2_s((p2_p.x-screen_width/2) * zDepthFactor2 , (p2_p.y-screen_height/2) * zDepthFactor2, 1.0f );
+			MPoint p3_s((p3_p.x-screen_width/2) * zDepthFactor3 , (p3_p.y-screen_height/2) * zDepthFactor3, 1.0f );
 
 			glNormal3f( 0.0f, 0.0f, 1.0f);
 			glBegin(GL_QUADS);
-				glTexCoord2f(p0_s.x,	p0_s.y);	glVertex3f(p0.x, p0.y, p0.z);
-				glTexCoord2f(p1_s.x,	p1_s.y);	glVertex3f(p1.x, p1.y, p1.z);
-				glTexCoord2f(p2_s.x,	p2_s.y);	glVertex3f(p2.x, p2.y, p2.z);
-				glTexCoord2f(p3_s.x,	p3_s.y);	glVertex3f(p3.x, p3.y, p3.z);
+				glTexCoord2f(p0_s.x+0.5f,	p0_s.y+0.5f);	glVertex3f(p0.x, p0.y, p0.z);
+				glTexCoord2f(p1_s.x+0.5f,	p1_s.y+0.5f);	glVertex3f(p1.x, p1.y, p1.z);
+				glTexCoord2f(p2_s.x+0.5f,	p2_s.y+0.5f);	glVertex3f(p2.x, p2.y, p2.z);
+				glTexCoord2f(p3_s.x+0.5f,	p3_s.y+0.5f);	glVertex3f(p3.x, p3.y, p3.z);
 			glEnd();
 		}
 		break;
