@@ -1,6 +1,6 @@
 //Maya ASCII 2014 scene
 //Name: test_proj.ma
-//Last modified: Sat, Nov 01, 2014 08:11:58 PM
+//Last modified: Sat, Nov 01, 2014 08:16:33 PM
 //Codeset: 936
 requires maya "2014";
 requires -nodeType "quadricShape" "quadricShape" "1.0.0";
@@ -63,8 +63,8 @@ createNode camera -s -n "sideShape" -p "side";
 	setAttr ".man" -type "string" "side_mask";
 	setAttr ".hc" -type "string" "viewSet -s %camera";
 	setAttr ".o" yes;
-createNode transform -n "quadric1";
-createNode quadricShape -n "quadricShape1" -p "quadric1";
+createNode transform -n "myTestPlane";
+createNode quadricShape -n "myTestPlaneShape" -p "myTestPlane";
 	setAttr -k off ".v";
 	setAttr ".covm[0]"  0 1 1;
 	setAttr ".cdvm[0]"  0 1 1;
@@ -210,7 +210,7 @@ connectAttr "layerManager.dli[0]" "defaultLayer.id";
 connectAttr "renderLayerManager.rlmi[0]" "defaultRenderLayer.rlid";
 connectAttr "file1.oc" "lambert2.c";
 connectAttr "lambert2.oc" "lambert2SG.ss";
-connectAttr "quadricShape1.iog" "lambert2SG.dsm" -na;
+connectAttr "myTestPlaneShape.iog" "lambert2SG.dsm" -na;
 connectAttr "pPlaneShape1.iog" "lambert2SG.dsm" -na;
 connectAttr "lambert2SG.msg" "materialInfo1.sg";
 connectAttr "lambert2.msg" "materialInfo1.m";
