@@ -1,4 +1,4 @@
-+ testProjection any /home/user0/dev/mymagicbox/basetest/testProjection
++ testProjection any E:/dev/mymagicbox/basetest/testProjection
 
 PATH +:= bin
 XBMLANGPATH +:= icons
