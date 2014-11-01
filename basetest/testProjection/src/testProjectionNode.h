@@ -46,6 +46,9 @@
 #include <maya/MSelectionList.h>
 #include <maya/MDagPath.h>
 #include <maya/MMaterial.h>
+#include <maya/MMatrix.h>
+#include <maya/MVector.h>
+#include <maya/MPoint.h>
 #if defined(OSMac_MachO_)
 #include <OpenGL/glu.h>
 #else
@@ -166,4 +169,6 @@ private:
 		kDrawFlatShaded,
 		kLastToken
 	};
+	void getPerspectiveMatrix(double fovy, double aspect, double zNear, GLdouble zFar, MMatrix &mm)const;
+	double zDepthFactor(double z, double _near, double _far)const;
 };

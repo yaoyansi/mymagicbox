@@ -531,12 +531,50 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 			double uScale = geom->camRotateX;
 			double vScale = geom->camRotateY;
 
-			glNormal3f( 0.0f, 1.0f, 0.0f);
+
+			double fovy = 90.0f;//degree;
+			double aspect = 800.0/600; 
+			double zNear = 0.1f;
+			double zFar = 40.0f;
+			MMatrix mPerspective;
+			getPerspectiveMatrix(fovy, aspect, zNear, zFar, mPerspective);
+
+			MPoint cam(0.0, 0.0, geom->camRotateX);
+
+			MPoint p0(  0.0f,  0.0f,  -0.5f);
+			MPoint p1( 10.0f,  0.0f,  -0.5f);
+			MPoint p2( 10.0f, 10.0f,  -0.5f);
+			MPoint p3(  0.0f, 10.0f,  -0.5f);
+
+			// p0 --> projected point:p0_p, ...
+			MPoint p0_p = (p0 - cam) * mPerspective;
+			MPoint p1_p = (p1 - cam) * mPerspective;
+			MPoint p2_p = (p2 - cam) * mPerspective;
+			MPoint p3_p = (p3 - cam) * mPerspective;
+
+			std::cout<< "----------------------------------------"<< mPerspective <<std::endl;
+			std::cout<< "p0_p="<< p0_p <<std::endl;
+			std::cout<< "p1_p="<< p1_p <<std::endl;
+			std::cout<< "p2_p="<< p2_p <<std::endl;
+			std::cout<< "p3_p="<< p3_p <<std::endl;
+
+			double zDepthFactor0 = zDepthFactor(p0_p.z, zNear, zFar);
+			double zDepthFactor1 = zDepthFactor(p1_p.z, zNear, zFar);
+			double zDepthFactor2 = zDepthFactor(p2_p.z, zNear, zFar);
+			double zDepthFactor3 = zDepthFactor(p3_p.z, zNear, zFar);
+
+			// p0_p --> screen point:p0_s
+			MPoint p0_s(p0_p.x * zDepthFactor0 , p0_p.y * zDepthFactor0, 1.0f );
+			MPoint p1_s(p1_p.x * zDepthFactor1 , p1_p.y * zDepthFactor1, 1.0f );
+			MPoint p2_s(p2_p.x * zDepthFactor2 , p2_p.y * zDepthFactor2, 1.0f );
+			MPoint p3_s(p3_p.x * zDepthFactor3 , p3_p.y * zDepthFactor3, 1.0f );
+
+			glNormal3f( 0.0f, 0.0f, 1.0f);
 			glBegin(GL_QUADS);
-				glTexCoord2f(0.0f,		0.0f);		glVertex3f(-10.0f, 0.0f,  10.0f);
-				glTexCoord2f(uScale,	0.0f);		glVertex3f( 10.0f, 0.0f,  10.0f);
-				glTexCoord2f(uScale,	vScale);	glVertex3f( 10.0f, 0.0f, -10.0f);
-				glTexCoord2f(0.0f,		vScale);	glVertex3f(-10.0f, 0.0f, -10.0f);
+				glTexCoord2f(p0_s.x,	p0_s.y);	glVertex3f(p0.x, p0.y, p0.z);
+				glTexCoord2f(p1_s.x,	p1_s.y);	glVertex3f(p1.x, p1.y, p1.z);
+				glTexCoord2f(p2_s.x,	p2_s.y);	glVertex3f(p2.x, p2.y, p2.z);
+				glTexCoord2f(p3_s.x,	p3_s.y);	glVertex3f(p3.x, p3.y, p3.z);
 			glEnd();
 		}
 		break;
@@ -646,4 +684,35 @@ void quadricShapeUI::getDrawRequestsShaded( MDrawRequest& request,
 		wireRequest.setDisplayStyle( M3dView::kWireFrame );
 		queue.add( wireRequest );
 	}
+}
+
+//
+void quadricShapeUI::getPerspectiveMatrix(double fovy, double aspect, double zNear, GLdouble zFar, MMatrix &mm)const
+{
+	mm.setToIdentity();
+
+    double sine, cotangent, deltaZ;
+    double radians = fovy / 2.0f * M_PI / 180.0f;
+
+    deltaZ = zFar - zNear;
+    sine = sin(radians);
+    if ((deltaZ == 0) || (sine == 0) || (aspect == 0)) {
+		return;
+    }
+    cotangent = cos(radians) / sine;
+
+
+    mm[0][0] = cotangent / aspect;
+    mm[1][1] = cotangent;
+    mm[2][2] = -(zFar + zNear) / deltaZ;
+    mm[2][3] = -1;
+    mm[3][2] = -2 * zNear * zFar / deltaZ;
+    mm[3][3] = 0;
+
+
+}
+
+double quadricShapeUI::zDepthFactor(double z, double _near, double _far)const
+{
+	return (z - _near)/(_far - _near);
 }
