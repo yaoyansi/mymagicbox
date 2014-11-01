@@ -11,7 +11,6 @@
 *.exp
 *.ilk
 *.pdb
-*.mll
 *.idb
 *.manifest
 *.res
