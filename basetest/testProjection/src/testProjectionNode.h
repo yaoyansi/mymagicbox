@@ -49,6 +49,8 @@
 #include <maya/MMatrix.h>
 #include <maya/MVector.h>
 #include <maya/MPoint.h>
+#include <maya/MEulerRotation.h>
+
 #if defined(OSMac_MachO_)
 #include <OpenGL/glu.h>
 #else

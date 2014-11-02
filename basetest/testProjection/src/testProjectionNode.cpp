@@ -553,22 +553,44 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 
 			MPoint cam(0.0, 0.0, geom->camTranslateZ);
 
-			MPoint p0(  0.0f,  0.0f,  -0.5f);
-			MPoint p1( 10.0f,  0.0f,  -0.5f);
-			MPoint p2( 10.0f, 10.0f,  -0.5f);
-			MPoint p3(  0.0f, 10.0f,  -0.5f);
+			// test plane vertex
+			MPoint p0(  0.0f,  0.0f,  0.0);
+			MPoint p1( 10.0f,  0.0f,  0.0);
+			MPoint p2( 10.0f, 10.0f,  0.0);
+			MPoint p3(  0.0f, 10.0f,  0.0);
+
+			MMatrix camRotateIve;
+			{
+				MMatrix camRotate;
+
+				MTransformationMatrix mRotX0;
+				mRotX0.setToRotationAxis( MVector(1.0, 0, 0), uScale * M_PI/180.0f );// rotate around X axis
+				MTransformationMatrix mRotY0;
+				mRotY0.setToRotationAxis( MVector(0, 1.0, 0), vScale * M_PI/180.0f );// rotate around Y axis
+
+				camRotate = mRotX0.asMatrix() * mRotY0.asMatrix();
+
+				//MEulerRotation mRot1(geom->camRotateX, geom->camRotateY, 0.0);
+				//camRotate = mRot1.asMatrix();
+
+				camRotateIve = camRotate.inverse();
+			}
+
+
 
 			// p0 --> projected point:p0_p, ...
-			MPoint p0_p = (p0 - cam) * mPerspective;
-			MPoint p1_p = (p1 - cam) * mPerspective;
-			MPoint p2_p = (p2 - cam) * mPerspective;
-			MPoint p3_p = (p3 - cam) * mPerspective;
+			MPoint p0_p = (p0 - cam) * camRotateIve * mPerspective;
+			MPoint p1_p = (p1 - cam) * camRotateIve * mPerspective;
+			MPoint p2_p = (p2 - cam) * camRotateIve * mPerspective;
+			MPoint p3_p = (p3 - cam) * camRotateIve * mPerspective;
 
+#ifdef _DEBUG
 			std::cout<< "----------------------------------------"<< mPerspective <<std::endl;
 			std::cout<< "p0_p="<< p0_p <<std::endl;
 			std::cout<< "p1_p="<< p1_p <<std::endl;
 			std::cout<< "p2_p="<< p2_p <<std::endl;
 			std::cout<< "p3_p="<< p3_p <<std::endl;
+#endif
 
 			double zDepthFactor0 = zDepthFactor(p0_p.z, zNear, zFar);
 			double zDepthFactor1 = zDepthFactor(p1_p.z, zNear, zFar);
@@ -583,12 +605,13 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 			MPoint p2_s((p2_p.x-screen_width/2) * zDepthFactor2 , (p2_p.y-screen_height/2) * zDepthFactor2, 1.0f );
 			MPoint p3_s((p3_p.x-screen_width/2) * zDepthFactor3 , (p3_p.y-screen_height/2) * zDepthFactor3, 1.0f );
 
+			// draw the test plane
 			glNormal3f( 0.0f, 0.0f, 1.0f);
 			glBegin(GL_QUADS);
-				glTexCoord2f(p0_s.x+0.5f,	p0_s.y+0.5f);	glVertex3f(p0.x, p0.y, p0.z);
-				glTexCoord2f(p1_s.x+0.5f,	p1_s.y+0.5f);	glVertex3f(p1.x, p1.y, p1.z);
-				glTexCoord2f(p2_s.x+0.5f,	p2_s.y+0.5f);	glVertex3f(p2.x, p2.y, p2.z);
-				glTexCoord2f(p3_s.x+0.5f,	p3_s.y+0.5f);	glVertex3f(p3.x, p3.y, p3.z);
+				glTexCoord2d(p0_s.x+0.5f,	p0_s.y+0.5f);	glVertex3d(p0.x, p0.y, p0.z);
+				glTexCoord2d(p1_s.x+0.5f,	p1_s.y+0.5f);	glVertex3d(p1.x, p1.y, p1.z);
+				glTexCoord2d(p2_s.x+0.5f,	p2_s.y+0.5f);	glVertex3d(p2.x, p2.y, p2.z);
+				glTexCoord2d(p3_s.x+0.5f,	p3_s.y+0.5f);	glVertex3d(p3.x, p3.y, p3.z);
 			glEnd();
 		}
 		break;

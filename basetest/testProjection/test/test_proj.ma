@@ -1,6 +1,6 @@
 //Maya ASCII 2014 scene
 //Name: test_proj.ma
-//Last modified: Sun, Nov 02, 2014 02:17:29 AM
+//Last modified: Sun, Nov 02, 2014 11:51:46 AM
 //Codeset: 936
 requires maya "2014";
 requires -nodeType "quadricShape" "quadricShape" "1.0.0";
@@ -12,15 +12,15 @@ fileInfo "cutIdentifier" "201310090514-890429";
 fileInfo "osv" "Microsoft Windows 7 Ultimate Edition, 64-bit Windows 7 Service Pack 1 (Build 7601)\n";
 createNode transform -s -n "persp";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" 11.342121260441914 11.997831865275746 13.211503985478851 ;
-	setAttr ".r" -type "double3" -37.538352729613749 31.400000000000514 -1.8631314572116742e-015 ;
+	setAttr ".t" -type "double3" 7.555012485099498 3.7446590650978053 18.8162373183882 ;
+	setAttr ".r" -type "double3" -11.73835272961376 13.400000000000539 4.0869571716226394e-016 ;
 	setAttr ".rp" -type "double3" -3.7595255774949073e-017 9.42350410368587e-015 0 ;
 	setAttr ".rpt" -type "double3" 6.0095765636938593e-015 -2.1352146600588248e-015 
 		-1.4184230406653949e-016 ;
 createNode camera -s -n "perspShape" -p "persp";
 	setAttr -k off ".v" no;
 	setAttr ".fl" 34.999999999999979;
-	setAttr ".coi" 20.335543730792701;
+	setAttr ".coi" 20.335543730793042;
 	setAttr ".imn" -type "string" "persp";
 	setAttr ".den" -type "string" "persp_depth";
 	setAttr ".man" -type "string" "persp_mask";
@@ -89,7 +89,7 @@ createNode mesh -n "pPlaneShape1" -p "pPlane1";
 	setAttr ".cdvm[0]"  0 1 1;
 createNode transform -n "camera1";
 	setAttr ".t" -type "double3" 6.1350555708597208 1.2719757142748715 10.319133656797224 ;
-	setAttr ".r" -type "double3" 12.312370636298519 1.9023255141708648 0.10177651502363183 ;
+	setAttr ".r" -type "double3" 7.8477842685183719 -5.2842723921111681 -1.4693891164604966 ;
 createNode camera -n "cameraShape1" -p "camera1";
 	setAttr -k off ".v";
 	setAttr ".rnd" no;
