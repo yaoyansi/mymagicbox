@@ -793,8 +793,7 @@ void quadricShapeUI::test2_rtt(const quadricGeom *geom)const
 		rtt_inited = true;
 	}
 
-
-	display();
+	display(geom->camRotateX, geom->camRotateY);
 
 	glPopAttrib();
 }
