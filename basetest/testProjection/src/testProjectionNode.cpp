@@ -780,6 +780,8 @@ void quadricShapeUI::test1_manipulateUV(const quadricGeom *geom)const
 //
 void quadricShapeUI::test2_rtt(const quadricGeom *geom)const
 {
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
 	static bool rtt_inited = false;
 	if( !rtt_inited )
 	{
@@ -790,6 +792,9 @@ void quadricShapeUI::test2_rtt(const quadricGeom *geom)const
 		init();
 		rtt_inited = true;
 	}
+
+
 	display();
 
+	glPopAttrib();
 }
