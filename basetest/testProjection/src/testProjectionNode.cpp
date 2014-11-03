@@ -35,7 +35,15 @@
 
 #include "testProjectionNode.h"
 
-#include <maya/MIOStream.h>
+
+
+
+// #if defined(OSMac_MachO_)
+// #include <OpenGL/glu.h>
+// #else
+// #include <GL/glu.h>
+// #end
+//#include <maya/MIOStream.h>
 #include <maya/MPxSurfaceShape.h>
 #include <maya/MPxSurfaceShapeUI.h>
 #include <maya/MFnNumericAttribute.h>
@@ -48,11 +56,9 @@
 #include <maya/MSelectionList.h>
 #include <maya/MDagPath.h>
 #include <maya/MMaterial.h>
-#if defined(OSMac_MachO_)
-#include <OpenGL/glu.h>
-#else
-#include <GL/glu.h>
-#endif
+
+#include "texture.h"
+#include "NeHeGL.h"
 
 /////////////////////////////////////////////////////////////////////
 
@@ -414,8 +420,16 @@ quadricGeom* quadricShape::geometry()
 // UI IMPLEMENTATION
 /////////////////////////////////////////////////////////////////////
 
-quadricShapeUI::quadricShapeUI() {}
-quadricShapeUI::~quadricShapeUI() {}
+quadricShapeUI::quadricShapeUI() 
+{
+	g_Texture = 0;
+	g_Texture = LoadTexture("texture.bmp");
+}
+//
+quadricShapeUI::~quadricShapeUI() 
+{
+
+}
 
 void* quadricShapeUI::creator()
 {
@@ -474,10 +488,14 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 // which quadric to draw and with what values.
 //
 {
+	//
+
 	MDrawData data = request.drawData();
 	quadricGeom * geom = (quadricGeom*)data.geometry();
 	int token = request.token();
 	bool drawTexture = false;
+
+
 
 	view.beginGL();
 
@@ -540,79 +558,8 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 		//gluPartialDisk( qobj, geom->radius1, geom->radius2, geom->slices,
 		//				geom->loops, geom->startAngle, geom->sweepAngle );
 		{
-			double uScale = geom->camRotateX;
-			double vScale = geom->camRotateY;
-
-
-			double fovy = 90.0f;//degree;
-			double aspect = 800.0/600; 
-			double zNear = 0.1f;
-			double zFar = 40.0f;
-			MMatrix mPerspective;
-			getPerspectiveMatrix(fovy, aspect, zNear, zFar, mPerspective);
-
-			MPoint cam(0.0, 0.0, geom->camTranslateZ);
-
-			// test plane vertex
-			MPoint p0(  0.0f,  0.0f,  0.0);
-			MPoint p1( 10.0f,  0.0f,  0.0);
-			MPoint p2( 10.0f, 10.0f,  0.0);
-			MPoint p3(  0.0f, 10.0f,  0.0);
-
-			MMatrix camRotateIve;
-			{
-				MMatrix camRotate;
-
-				MTransformationMatrix mRotX0;
-				mRotX0.setToRotationAxis( MVector(1.0, 0, 0), uScale * M_PI/180.0f );// rotate around X axis
-				MTransformationMatrix mRotY0;
-				mRotY0.setToRotationAxis( MVector(0, 1.0, 0), vScale * M_PI/180.0f );// rotate around Y axis
-
-				camRotate = mRotX0.asMatrix() * mRotY0.asMatrix();
-
-				//MEulerRotation mRot1(geom->camRotateX, geom->camRotateY, 0.0);
-				//camRotate = mRot1.asMatrix();
-
-				camRotateIve = camRotate.inverse();
-			}
-
-
-
-			// p0 --> projected point:p0_p, ...
-			MPoint p0_p = (p0 - cam) * camRotateIve * mPerspective;
-			MPoint p1_p = (p1 - cam) * camRotateIve * mPerspective;
-			MPoint p2_p = (p2 - cam) * camRotateIve * mPerspective;
-			MPoint p3_p = (p3 - cam) * camRotateIve * mPerspective;
-
-#ifdef _DEBUG
-			std::cout<< "----------------------------------------"<< mPerspective <<std::endl;
-			std::cout<< "p0_p="<< p0_p <<std::endl;
-			std::cout<< "p1_p="<< p1_p <<std::endl;
-			std::cout<< "p2_p="<< p2_p <<std::endl;
-			std::cout<< "p3_p="<< p3_p <<std::endl;
-#endif
-
-			double zDepthFactor0 = zDepthFactor(p0_p.z, zNear, zFar);
-			double zDepthFactor1 = zDepthFactor(p1_p.z, zNear, zFar);
-			double zDepthFactor2 = zDepthFactor(p2_p.z, zNear, zFar);
-			double zDepthFactor3 = zDepthFactor(p3_p.z, zNear, zFar);
-
-			// p0_p --> screen point: p0_s
-			const double screen_width  = p1.x - p0.x;
-			const double screen_height = p2.y - p0.y;
-			MPoint p0_s((p0_p.x-screen_width/2) * zDepthFactor0 , (p0_p.y-screen_height/2) * zDepthFactor0, 1.0f );
-			MPoint p1_s((p1_p.x-screen_width/2) * zDepthFactor1 , (p1_p.y-screen_height/2) * zDepthFactor1, 1.0f );
-			MPoint p2_s((p2_p.x-screen_width/2) * zDepthFactor2 , (p2_p.y-screen_height/2) * zDepthFactor2, 1.0f );
-			MPoint p3_s((p3_p.x-screen_width/2) * zDepthFactor3 , (p3_p.y-screen_height/2) * zDepthFactor3, 1.0f );
-
-			// draw the test plane
-			glNormal3f( 0.0f, 0.0f, 1.0f);
-			glBegin(GL_QUADS);
-				glTexCoord2d(p0_s.x+0.5f,	p0_s.y+0.5f);	glVertex3d(p0.x, p0.y, p0.z);
-				glTexCoord2d(p1_s.x+0.5f,	p1_s.y+0.5f);	glVertex3d(p1.x, p1.y, p1.z);
-				glTexCoord2d(p2_s.x+0.5f,	p2_s.y+0.5f);	glVertex3d(p2.x, p2.y, p2.z);
-				glTexCoord2d(p3_s.x+0.5f,	p3_s.y+0.5f);	glVertex3d(p3.x, p3.y, p3.z);
-			glEnd();
+			//test1_manipulateUV(geom);
+			test2_rtt(geom);
 		}
 		break;
 	case kDrawSphere :
@@ -748,8 +695,101 @@ void quadricShapeUI::getPerspectiveMatrix(double fovy, double aspect, double zNe
 
 
 }
-
+//
 double quadricShapeUI::zDepthFactor(double z, double _near, double _far)const
 {
 	return (z - _near)/(_far - _near);
+}
+//
+void quadricShapeUI::test1_manipulateUV(const quadricGeom *geom)const
+{
+	double uScale = geom->camRotateX;
+	double vScale = geom->camRotateY;
+
+
+	double fovy = 90.0f;//degree;
+	double aspect = 800.0/600; 
+	double zNear = 0.1f;
+	double zFar = 40.0f;
+	MMatrix mPerspective;
+	getPerspectiveMatrix(fovy, aspect, zNear, zFar, mPerspective);
+
+	MPoint cam(0.0, 0.0, geom->camTranslateZ);
+
+	// test plane vertex
+	MPoint p0(  0.0f,  0.0f,  0.0);
+	MPoint p1( 10.0f,  0.0f,  0.0);
+	MPoint p2( 10.0f, 10.0f,  0.0);
+	MPoint p3(  0.0f, 10.0f,  0.0);
+
+	MMatrix camRotateIve;
+	{
+		MMatrix camRotate;
+
+		MTransformationMatrix mRotX0;
+		mRotX0.setToRotationAxis( MVector(1.0, 0, 0), uScale * M_PI/180.0f );// rotate around X axis
+		MTransformationMatrix mRotY0;
+		mRotY0.setToRotationAxis( MVector(0, 1.0, 0), vScale * M_PI/180.0f );// rotate around Y axis
+
+		camRotate = mRotX0.asMatrix() * mRotY0.asMatrix();
+
+		//MEulerRotation mRot1(geom->camRotateX, geom->camRotateY, 0.0);
+		//camRotate = mRot1.asMatrix();
+
+		camRotateIve = camRotate.inverse();
+	}
+
+
+
+	// p0 --> projected point:p0_p, ...
+	MPoint p0_p = (p0 - cam) * camRotateIve * mPerspective;
+	MPoint p1_p = (p1 - cam) * camRotateIve * mPerspective;
+	MPoint p2_p = (p2 - cam) * camRotateIve * mPerspective;
+	MPoint p3_p = (p3 - cam) * camRotateIve * mPerspective;
+
+#ifdef _DEBUG
+	std::cout<< "----------------------------------------"<< mPerspective <<std::endl;
+	std::cout<< "p0_p="<< p0_p <<std::endl;
+	std::cout<< "p1_p="<< p1_p <<std::endl;
+	std::cout<< "p2_p="<< p2_p <<std::endl;
+	std::cout<< "p3_p="<< p3_p <<std::endl;
+#endif
+
+	double zDepthFactor0 = zDepthFactor(p0_p.z, zNear, zFar);
+	double zDepthFactor1 = zDepthFactor(p1_p.z, zNear, zFar);
+	double zDepthFactor2 = zDepthFactor(p2_p.z, zNear, zFar);
+	double zDepthFactor3 = zDepthFactor(p3_p.z, zNear, zFar);
+
+	// p0_p --> screen point: p0_s
+	const double screen_width  = p1.x - p0.x;
+	const double screen_height = p2.y - p0.y;
+	MPoint p0_s((p0_p.x-screen_width/2) * zDepthFactor0 , (p0_p.y-screen_height/2) * zDepthFactor0, 1.0f );
+	MPoint p1_s((p1_p.x-screen_width/2) * zDepthFactor1 , (p1_p.y-screen_height/2) * zDepthFactor1, 1.0f );
+	MPoint p2_s((p2_p.x-screen_width/2) * zDepthFactor2 , (p2_p.y-screen_height/2) * zDepthFactor2, 1.0f );
+	MPoint p3_s((p3_p.x-screen_width/2) * zDepthFactor3 , (p3_p.y-screen_height/2) * zDepthFactor3, 1.0f );
+
+	// draw the test plane
+	glNormal3f( 0.0f, 0.0f, 1.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2d(p0_s.x+0.5f,	p0_s.y+0.5f);	glVertex3d(p0.x, p0.y, p0.z);
+	glTexCoord2d(p1_s.x+0.5f,	p1_s.y+0.5f);	glVertex3d(p1.x, p1.y, p1.z);
+	glTexCoord2d(p2_s.x+0.5f,	p2_s.y+0.5f);	glVertex3d(p2.x, p2.y, p2.z);
+	glTexCoord2d(p3_s.x+0.5f,	p3_s.y+0.5f);	glVertex3d(p3.x, p3.y, p3.z);
+	glEnd();
+}
+//
+void quadricShapeUI::test2_rtt(const quadricGeom *geom)const
+{
+	static bool rtt_inited = false;
+	if( !rtt_inited )
+	{
+		if (GLEW_OK != glewInit()) {
+			std::cout << "Couldn't initialize GLEW" << std::endl;
+			//exit(0);
+		}
+		init();
+		rtt_inited = true;
+	}
+	display();
+
 }

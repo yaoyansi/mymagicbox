@@ -15,11 +15,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\bmpLoader.c" />
+    <ClCompile Include="..\..\src\NeHeGL.cpp" />
+    <ClCompile Include="..\..\src\pcxLoader.c" />
     <ClCompile Include="..\..\src\plugin.cpp" />
     <ClCompile Include="..\..\src\testProjectionNode.cpp" />
+    <ClCompile Include="..\..\src\texture.cpp" />
+    <ClCompile Include="..\..\src\tgaLoader.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\bmpLoader.h" />
+    <ClInclude Include="..\..\src\NeHeGL.h" />
+    <ClInclude Include="..\..\src\pcxLoader.h" />
     <ClInclude Include="..\..\src\testProjectionNode.h" />
+    <ClInclude Include="..\..\src\texture.h" />
+    <ClInclude Include="..\..\src\tgaLoader.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <Keyword>Win32Proj</Keyword>
@@ -54,30 +64,33 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>../../plug-ins/</OutDir>
     <TargetExt>.mll</TargetExt>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;_USRDLL;NT_PLUGIN;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;_SECURE_SCL_DEPRECATE=0;_CRT_SECURE_NO_DEPRECATE;TBB_USE_DEBUG=0;__TBB_LIB_NAME=tbb.lib;REQUIRE_IOSTREAM;AW_NEW_IOSTREAMS;Bits64_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;D:\Program Files\Autodesk\Maya2014\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;_WIN32;_USRDLL;NT_PLUGIN;_BOOL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;_SECURE_SCL_DEPRECATE=0;_CRT_SECURE_NO_DEPRECATE;REQUIRE_IOSTREAM;AW_NEW_IOSTREAMS;Bits64_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;D:\Program Files\Autodesk\Maya2014\include;E:\dev\tools\glew-1.11.0\include;E:\dev\tools\glut-3.7.6-bin;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>D:\Program Files\Autodesk\Maya2014\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenMaya.lib;OpenMayaUI.lib;Foundation.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Program Files\Autodesk\Maya2014\lib;E:\dev\tools\glut-3.7.6-bin;E:\dev\tools\glew-1.11.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenMaya.lib;OpenMayaUI.lib;Foundation.lib;opengl32.lib;glu32.lib;E:\dev\tools\glew-1.11.0\lib\Release\x64/glew32.lib;glut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/export:initializePlugin /export:uninitializePlugin %(AdditionalOptions)</AdditionalOptions>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <ImportLibrary>
+      </ImportLibrary>
+      <AssemblyDebug>true</AssemblyDebug>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDebug|x64'">

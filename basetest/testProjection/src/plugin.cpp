@@ -1,7 +1,9 @@
+#include "testProjectionNode.h"
+
 #include <maya/MFnPlugin.h>
 #include <maya/MStatus.h>
 
-#include "testProjectionNode.h"
+
 
 // These methods load and unload the plugin, registerNode registers the
 // new node type with maya

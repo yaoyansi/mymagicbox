@@ -32,30 +32,31 @@
 //       stacks		: cylinder, sphere stacks
 //
 ////////////////////////////////////////////////////////////////////////////////
+#pragma once
 
-#include <maya/MIOStream.h>
+//#include <windows.h>
+#include <GL/glew.h>
+
+// #include <maya/MIOStream.h>
 #include <maya/MPxSurfaceShape.h>
 #include <maya/MPxSurfaceShapeUI.h>
-#include <maya/MFnNumericAttribute.h>
-#include <maya/MFnEnumAttribute.h>
+// #include <maya/MFnNumericAttribute.h>
+// #include <maya/MFnEnumAttribute.h>
 #include <maya/MPoint.h>
-#include <maya/MPlug.h>
-#include <maya/MDrawData.h>
-#include <maya/MDrawRequest.h>
-#include <maya/MSelectionMask.h>
-#include <maya/MSelectionList.h>
-#include <maya/MDagPath.h>
-#include <maya/MMaterial.h>
+// #include <maya/MPlug.h>
+// #include <maya/MDrawData.h>
+// #include <maya/MDrawRequest.h>
+// #include <maya/MSelectionMask.h>
+// #include <maya/MSelectionList.h>
+// #include <maya/MDagPath.h>
+// #include <maya/MMaterial.h>
 #include <maya/MMatrix.h>
 #include <maya/MVector.h>
-#include <maya/MPoint.h>
-#include <maya/MEulerRotation.h>
+// #include <maya/MPoint.h>
+// #include <maya/MEulerRotation.h>
 
-#if defined(OSMac_MachO_)
-#include <OpenGL/glu.h>
-#else
-#include <GL/glu.h>
-#endif
+
+
 
 /////////////////////////////////////////////////////////////////////
 //
@@ -173,6 +174,11 @@ private:
 		kDrawFlatShaded,
 		kLastToken
 	};
+	void test1_manipulateUV(const quadricGeom *geom)const;
+	void test2_rtt(const quadricGeom *geom)const;
+
 	void getPerspectiveMatrix(double fovy, double aspect, double zNear, GLdouble zFar, MMatrix &mm)const;
 	double zDepthFactor(double z, double _near, double _far)const;
+
+	mutable unsigned int g_Texture;
 };
