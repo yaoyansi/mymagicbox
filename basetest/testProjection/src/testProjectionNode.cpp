@@ -35,15 +35,6 @@
 
 #include "testProjectionNode.h"
 
-
-
-
-// #if defined(OSMac_MachO_)
-// #include <OpenGL/glu.h>
-// #else
-// #include <GL/glu.h>
-// #end
-//#include <maya/MIOStream.h>
 #include <maya/MPxSurfaceShape.h>
 #include <maya/MPxSurfaceShapeUI.h>
 #include <maya/MFnNumericAttribute.h>
@@ -106,45 +97,24 @@ quadricShape::~quadricShape()
 {
 	delete fGeometry;
 }
-
-/* override */
+//
 void quadricShape::postConstructor()
-//
-// Description
-//
-//    When instances of this node are created internally, the MObject associated
-//    with the instance is not created until after the constructor of this class
-//    is called. This means that no member functions of MPxSurfaceShape can
-//    be called in the constructor.
-//    The postConstructor solves this problem. Maya will call this function
-//    after the internal object has been created.
-//    As a general rule do all of your initialization in the postConstructor.
-//
 {
 	// This call allows the shape to have shading groups assigned
 	//
 	setRenderable( true );
 }
-
-/* override */
+//
 MStatus quadricShape::compute( const MPlug& /*plug*/, MDataBlock& /*datablock*/ )
-//
-// Since there are no output attributes this is not necessary but
-// if we wanted to compute an output mesh for rendering it would
-// be done here base on the inputs.
-//
 {
 	return MS::kUnknownParameter;
 }
-
-/* override */
-bool quadricShape::getInternalValue( const MPlug& plug,
-									 MDataHandle& datahandle )
 //
 // Handle internal attributes.
 // In order to impose limits on our attribute values we
 // mark them internal and use the values in fGeometry intead.
-//
+bool quadricShape::getInternalValue( const MPlug& plug,
+									 MDataHandle& datahandle )
 {
 	bool isOk = true;
 
@@ -166,17 +136,17 @@ bool quadricShape::getInternalValue( const MPlug& plug,
 
 	return isOk;
 }
-/* override */
-bool quadricShape::setInternalValue( const MPlug& plug,
-									 const MDataHandle& datahandle )
-//
 // Handle internal attributes.
 // In order to impose limits on our attribute values we
-// mark them internal and use the values in fGeometry intead.
-//
+// mark them internal and use the values in fGeometry instead.
+bool quadricShape::setInternalValue( const MPlug& plug,
+									 const MDataHandle& datahandle )
 {
 	bool isOk = true;
 
+	// In the case of a disk or partial disk the inner radius must
+	// never exceed the outer radius and the minimum radius is 0
+	//
 	if ( plug == camTranslateZ ) {
 		double val = datahandle.asDouble();
 		fGeometry->camTranslateZ = val;
@@ -230,23 +200,20 @@ MStatus quadricShape::initialize()
 {
 	MStatus				stat;
     MFnNumericAttribute	numericAttr;
-    MFnEnumAttribute	enumAttr;
 
 	MAKE_NUMERIC_ATTR( camTranslateZ, "camTranslateZ", MFnNumericData::kDouble, 0.0, true );
 	MAKE_NUMERIC_ATTR( camRotateX, "camRotateX", MFnNumericData::kDouble, 0.0, true );
 	MAKE_NUMERIC_ATTR( camRotateY, "camRotateY", MFnNumericData::kDouble, 0.0, true );
 	return stat;
 }
-
-quadricGeom* quadricShape::geometry()
-//
 // This function gets the values of all the attributes and
 // assigns them to the fGeometry. Calling MPlug::getValue
 // will ensure that the values are up-to-date.
-//
+quadricGeom* quadricShape::geometry()
 {
 	MObject this_object = thisMObject();
 	MPlug plug( this_object, camTranslateZ );	plug.getValue( fGeometry->camTranslateZ );
+
 	plug.setAttribute( camRotateX );	plug.getValue( fGeometry->camRotateX );
 	plug.setAttribute( camRotateY );	plug.getValue( fGeometry->camRotateY );
 	return fGeometry;
@@ -269,13 +236,12 @@ quadricShapeUI::~quadricShapeUI()
 {
 
 }
-
+//
 void* quadricShapeUI::creator()
 {
 	return new quadricShapeUI();
 }
-
-/* override */
+//
 void quadricShapeUI::getDrawRequests( const MDrawInfo & info,
 							 bool /*objectAndActiveOnly*/,
 							 MDrawRequestQueue & queue )
@@ -319,22 +285,15 @@ void quadricShapeUI::getDrawRequests( const MDrawInfo & info,
 			break;
 	}
 }
-
-/* override */
-void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 //
 // From the given draw request, get the draw data and determine
 // which quadric to draw and with what values.
-//
+void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 {
-	//
-
 	MDrawData data = request.drawData();
 	quadricGeom * geom = (quadricGeom*)data.geometry();
 	int token = request.token();
 	bool drawTexture = false;
-
-
 
 	view.beginGL();
 
@@ -362,50 +321,12 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 		}
 	}
 
-// 	GLUquadricObj* qobj = gluNewQuadric();
-// 
-// 	switch( token )
-// 	{
-// 		case kDrawWireframe :
-// 		case kDrawWireframeOnShaded :
-// 			gluQuadricDrawStyle( qobj, GLU_LINE );
-// 			break;
-// 
-// 		case kDrawSmoothShaded :
-// 			gluQuadricNormals( qobj, GLU_SMOOTH );
-// 			gluQuadricTexture( qobj, true );
-// 			gluQuadricDrawStyle( qobj, GLU_FILL );
-// 			break;
-// 
-// 		case kDrawFlatShaded :
-// 			gluQuadricNormals( qobj, GLU_FLAT );
-// 			gluQuadricTexture( qobj, true );
-// 			gluQuadricDrawStyle( qobj, GLU_FILL );
-// 			break;
-// 	}
 
-// 	switch ( geom->shapeType )
-// 	{
-// 	case kDrawCylinder :
-// 		gluCylinder( qobj, geom->radius1, geom->radius2, geom->height,
-// 					 geom->slices, geom->stacks );
-// 		break;
-// 	case kDrawDisk :
-// 		gluDisk( qobj, geom->radius1, geom->radius2, geom->slices, geom->loops );
-// 		break;
-// 	case kDrawPartialDisk :
-		//gluPartialDisk( qobj, geom->radius1, geom->radius2, geom->slices,
-		//				geom->loops, geom->startAngle, geom->sweepAngle );
-		{
-			//test1_manipulateUV(geom);
-			test2_rtt(geom);
-		}
-// 		break;
-// 	case kDrawSphere :
-// 	default :
-// 		gluSphere( qobj, geom->radius1, geom->slices, geom->stacks );
-// 		break;
-// 	}
+		
+	//test1_manipulateUV(geom);
+	test2_rtt(geom);
+		
+
 
 	// Turn off texture mode
 	//
@@ -519,7 +440,7 @@ void quadricShapeUI::__debug(const char* format, ...)
 
 	vsnprintf(msg, 1024, format, args);
 
-	fprintf(stdout, "Debug> testProjection> %s\n", msg);
+	fprintf(stdout, "testProjection> Debug> %s\n", msg);
 
 	va_end(args);
 }

@@ -10,7 +10,7 @@
 //
 MStatus initializePlugin( MObject obj )
 {
-    printf("\nplugin is loaded -----------------------\n");
+    printf("\n testProjection plugin is loaded -----------------------\n");
 
 	MFnPlugin plugin( obj, "yaoyu", "1.0.0", "Any" );
 
