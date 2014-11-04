@@ -175,6 +175,9 @@ private:
 		kLastToken
 	};
 
+	//
+	static void __debug(const char* format, ...);
+
 	// way1: manipulate UV
 	void test1_manipulateUV(const quadricGeom *geom)const;
 	void getPerspectiveMatrix(double fovy, double aspect, double zNear, GLdouble zFar, MMatrix &mm)const;
@@ -182,11 +185,9 @@ private:
 
 	// way2: RTT
 	void test2_rtt(const quadricGeom *geom)const;
-	void init()const;
-	void display (const double camRotateX, const double camRotateY)const;
 	void initFrameBufferDepthBuffer()const;
 	void initFrameBufferTexture(void)const;
-	void initFrameBuffer(void)const;
+	void initRTTFrameBuffer()const;
 	void renderTeapotScene(const double camRotateX, const double camRotateY)const;
 
 	mutable unsigned int fbo; // The frame buffer object

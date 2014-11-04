@@ -671,34 +671,18 @@ void quadricShapeUI::getDrawRequestsShaded( MDrawRequest& request,
 }
 
 //
-void quadricShapeUI::getPerspectiveMatrix(double fovy, double aspect, double zNear, GLdouble zFar, MMatrix &mm)const
+void quadricShapeUI::__debug(const char* format, ...)
 {
-	mm.setToIdentity();
+	va_list args;
+	char msg[ 1024 ];
 
-    double sine, cotangent, deltaZ;
-    double radians = fovy / 2.0f * M_PI / 180.0f;
+	va_start(args, format);
 
-    deltaZ = zFar - zNear;
-    sine = sin(radians);
-    if ((deltaZ == 0) || (sine == 0) || (aspect == 0)) {
-		return;
-    }
-    cotangent = cos(radians) / sine;
+	vsnprintf(msg, 1024, format, args);
 
+	fprintf(stdout, "Debug> testProjection> %s\n", msg);
 
-    mm[0][0] = cotangent / aspect;
-    mm[1][1] = cotangent;
-    mm[2][2] = -(zFar + zNear) / deltaZ;
-    mm[2][3] = -1;
-    mm[3][2] = -2 * zNear * zFar / deltaZ;
-    mm[3][3] = 0;
-
-
-}
-//
-double quadricShapeUI::zDepthFactor(double z, double _near, double _far)const
-{
-	return (z - _near)/(_far - _near);
+	va_end(args);
 }
 //
 void quadricShapeUI::test1_manipulateUV(const quadricGeom *geom)const
@@ -748,7 +732,7 @@ void quadricShapeUI::test1_manipulateUV(const quadricGeom *geom)const
 	MPoint p3_p = (p3 - cam) * camRotateIve * mPerspective;
 
 #ifdef _DEBUG
-	std::cout<< "----------------------------------------"<< mPerspective <<std::endl;
+	__debug("---------------------------------------- %f", mPerspective);
 	std::cout<< "p0_p="<< p0_p <<std::endl;
 	std::cout<< "p1_p="<< p1_p <<std::endl;
 	std::cout<< "p2_p="<< p2_p <<std::endl;
@@ -778,30 +762,82 @@ void quadricShapeUI::test1_manipulateUV(const quadricGeom *geom)const
 	glEnd();
 }
 //
+void quadricShapeUI::getPerspectiveMatrix(double fovy, double aspect, double zNear, GLdouble zFar, MMatrix &mm)const
+{
+	mm.setToIdentity();
+
+    double sine, cotangent, deltaZ;
+    double radians = fovy / 2.0f * M_PI / 180.0f;
+
+    deltaZ = zFar - zNear;
+    sine = sin(radians);
+    if ((deltaZ == 0) || (sine == 0) || (aspect == 0)) {
+		return;
+    }
+    cotangent = cos(radians) / sine;
+
+
+    mm[0][0] = cotangent / aspect;
+    mm[1][1] = cotangent;
+    mm[2][2] = -(zFar + zNear) / deltaZ;
+    mm[2][3] = -1;
+    mm[3][2] = -2 * zNear * zFar / deltaZ;
+    mm[3][3] = 0;
+
+
+}
+//
+double quadricShapeUI::zDepthFactor(double z, double _near, double _far)const
+{
+	return (z - _near)/(_far - _near);
+}
+//
 void quadricShapeUI::test2_rtt(const quadricGeom *geom)const
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 
 	static bool rtt_inited = false;
-	if( !rtt_inited )
+	if( !rtt_inited )// initialize RTT buffers if it is not initialized
 	{
-		if (GLEW_OK != glewInit()) {
-			std::cout << "Couldn't initialize GLEW" << std::endl;
-			//exit(0);
+		if (GLEW_OK != glewInit())
+		{
+			__debug("Couldn't initialize GLEW");
 		}
-		init();
+		initRTTFrameBuffer();
 		rtt_inited = true;
 	}
 
-	display(geom->camRotateX, geom->camRotateY);
+	
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	renderTeapotScene(geom->camRotateX, geom->camRotateY); // Render our teapot scene into our frame buffer
+	glPopAttrib();
+
+
+	glBindTexture(GL_TEXTURE_2D, fbo_texture); // Bind our frame buffer texture
+
+	glNormal3f( 0.0f, 0.0f, 1.0f);
+	glBegin(GL_QUADS);
+
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-10.0f, -10.0f, -2.0f); // The bottom left corner
+
+	glTexCoord2f(1.0f, 0.0f);
+	glVertex3f(10.0f, -10.0f, -2.0f); // The bottom right corner
+
+	glTexCoord2f(1.0f, 1.0f);
+	glVertex3f(10.0f, 10.0f, -2.0f); // The top right corner
+
+	glTexCoord2f(0.0f, 1.0f);
+	glVertex3f(-10.0f, 10.0f, -2.0f); // The top left corner
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, 0); // Unbind any textures
 
 	glPopAttrib();
 }
 //
-
 void quadricShapeUI::initFrameBufferDepthBuffer() const
 {
-
 	glGenRenderbuffersEXT(1, &fbo_depth); // Generate one render buffer and store the ID in fbo_depth
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fbo_depth); // Bind the fbo_depth render buffer
 
@@ -812,7 +848,7 @@ void quadricShapeUI::initFrameBufferDepthBuffer() const
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0); // Unbind the render buffer
 }
 
-void quadricShapeUI::initFrameBufferTexture(void) const
+void quadricShapeUI::initFrameBufferTexture() const
 {
 	glGenTextures(1, &fbo_texture); // Generate one texture
 	glBindTexture(GL_TEXTURE_2D, fbo_texture); // Bind the texture fbo_texture
@@ -829,7 +865,7 @@ void quadricShapeUI::initFrameBufferTexture(void) const
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void quadricShapeUI::initFrameBuffer(void) const
+void quadricShapeUI::initRTTFrameBuffer() const
 {
 	initFrameBufferDepthBuffer(); // Initialize our frame buffer depth buffer
 
@@ -846,33 +882,23 @@ void quadricShapeUI::initFrameBuffer(void) const
 
 	if (status != GL_FRAMEBUFFER_COMPLETE_EXT) // If the frame buffer does not report back as complete
 	{
-		std::cout << "Couldn't create frame buffer" << std::endl; // Output an error to the console
-		//exit(0); // Exit the application
+		__debug("Couldn't create frame buffer"); // Output an error to the console
 	}
 
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); // Unbind our frame buffer
-}
-
-void quadricShapeUI::init(void)const
-{
-	//glEnable(GL_TEXTURE_2D); // Enable texturing so we can bind our frame buffer texture
-	//glEnable(GL_DEPTH_TEST); // Enable depth testing
-
-	initFrameBuffer(); // Create our frame buffer object
 }
 //
 void quadricShapeUI::renderTeapotScene(const double camRotateX, const double camRotateY)const 
 {
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo); // Bind our frame buffer for rendering
 
-	glPushAttrib(GL_ALL_ATTRIB_BITS);//glPushAttrib(GL_VIEWPORT_BIT | GL_ENABLE_BIT); // Push our glEnable and glViewport states
+	glPushAttrib(GL_ALL_ATTRIB_BITS); // Push our glEnable and glViewport states
 	glViewport(0, 0, window_width, window_height); // Set the size of the frame buffer view port
 
-	//glClearColor (0.0f, 0.0f, 1.0f, 1.0f); // Set the clear colour
 	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the depth and colour buffers
 
 	glPushMatrix();
-	glLoadIdentity(); // Reset the modelview matrix
+	glLoadIdentity(); // Reset the model-view matrix
 
 
 	glTranslatef(0.0f, 0.0f, -5.0f); // Translate back 5 units
@@ -893,43 +919,5 @@ void quadricShapeUI::renderTeapotScene(const double camRotateX, const double cam
 	glPopAttrib(); // Restore our glEnable and glViewport states
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); // Unbind our texture
 }
+//
 
-void quadricShapeUI::display (const double camRotateX, const double camRotateY)const
-{
-	//keyOperations(); // Perform any key presses
-
-	{
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		renderTeapotScene(camRotateX, camRotateY); // Render our teapot scene into our frame buffer
-		glPopAttrib();
-
-		//glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red
-		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the colour buffer (more buffers later on)
-		//glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations
-		//glMatrixMode(GL_MODELVIEW);
-
-		glBindTexture(GL_TEXTURE_2D, fbo_texture); // Bind our frame buffer texture
-
-		glNormal3f( 0.0f, 0.0f, 1.0f);
-		glBegin(GL_QUADS);
-
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(-10.0f, -10.0f, -2.0f); // The bottom left corner
-
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(10.0f, -10.0f, -2.0f); // The bottom right corner
-
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(10.0f, 10.0f, -2.0f); // The top right corner
-
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(-10.0f, 10.0f, -2.0f); // The top left corner
-		glEnd();
-
-		glBindTexture(GL_TEXTURE_2D, 0); // Unbind any textures
-	}
-
-
-
-	//glutSwapBuffers();
-}
