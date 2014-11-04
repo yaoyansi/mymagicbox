@@ -65,16 +65,6 @@
 class quadricGeom
 {
 public:
-	double radius1;
-	double radius2;
-	double height;
-	double startAngle;
-	double sweepAngle;
-	short slices;
-	short loops;
-	short stacks;
-    short shapeType;
-
 	double camTranslateZ;// translate camera along Z axis
 	double camRotateX;// rotate radian along X axis
 	double camRotateY;// rotate radian along Y axis
@@ -97,8 +87,8 @@ public:
     virtual bool			setInternalValue( const MPlug&,
 											  const MDataHandle& );
 
-	virtual bool            isBounded() const;
-	virtual MBoundingBox    boundingBox() const;
+	//virtual bool            isBounded() const;
+	//virtual MBoundingBox    boundingBox() const;
 
 	static  void *		creator();
 	static  MStatus		initialize();
@@ -108,17 +98,6 @@ private:
 	quadricGeom*		fGeometry;
 
 	// Attributes
-	//
-    static  MObject     shapeType;
-	static	MObject		radius1;
-	static	MObject		radius2;
-	static	MObject		height;
-	static	MObject		startAngle;
-	static	MObject		sweepAngle;
-	static	MObject		slices;
-	static	MObject		loops;
-	static	MObject		stacks;
-
 	static	MObject		camTranslateZ;
 	static	MObject		camRotateX;
 	static	MObject		camRotateY;

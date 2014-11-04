@@ -89,16 +89,6 @@
 // SHAPE NODE IMPLEMENTATION
 /////////////////////////////////////////////////////////////////////
 
-MObject quadricShape::shapeType;
-MObject quadricShape::radius1;
-MObject quadricShape::radius2;
-MObject quadricShape::height;
-MObject quadricShape::startAngle;
-MObject quadricShape::sweepAngle;
-MObject quadricShape::slices;
-MObject quadricShape::loops;
-MObject quadricShape::stacks;
-
 MObject quadricShape::camTranslateZ;
 MObject quadricShape::camRotateX;
 MObject quadricShape::camRotateY;
@@ -107,16 +97,6 @@ MTypeId quadricShape::id( 0x80111 );
 quadricShape::quadricShape()
 {
 	fGeometry = new quadricGeom;
-	fGeometry->radius1		= 1.0;
-	fGeometry->radius2		= 1.0;
-	fGeometry->height		= 2.0;
-	fGeometry->startAngle	= 0.0;
-	fGeometry->sweepAngle	= 90.0;
-	fGeometry->slices		= 8;
-	fGeometry->loops		= 6;
-	fGeometry->stacks		= 4;
-    fGeometry->shapeType	= 0;
-
 	fGeometry->camTranslateZ	= 0.0;
 	fGeometry->camRotateX	= 0.0;
     fGeometry->camRotateY	= 0.0;
@@ -168,39 +148,7 @@ bool quadricShape::getInternalValue( const MPlug& plug,
 {
 	bool isOk = true;
 
-	if ( plug == radius1 ) {
-		datahandle.set( fGeometry->radius1 );
-		isOk = true;
-	}
-	else if ( plug == radius2 ) {
-		datahandle.set( fGeometry->radius2 );
-		isOk = true;
-	}
-	else if ( plug == height ) {
-		datahandle.set( fGeometry->height );
-		isOk = true;
-	}
-	else if ( plug == startAngle ) {
-		datahandle.set( fGeometry->startAngle );
-		isOk = true;
-	}
-	else if ( plug == sweepAngle ) {
-		datahandle.set( fGeometry->sweepAngle );
-		isOk = true;
-	}
-	else if ( plug == slices ) {
-		datahandle.set( fGeometry->slices );
-		isOk = true;
-	}
-	else if ( plug == loops ) {
-		datahandle.set( fGeometry->loops );
-		isOk = true;
-	}
-	else if ( plug == stacks ) {
-		datahandle.set( fGeometry->stacks );
-		isOk = true;
-	}
-	else if ( plug == camTranslateZ ) {
+	if ( plug == camTranslateZ ) {
 		datahandle.set( fGeometry->camTranslateZ );
 		isOk = true;
 	}
@@ -229,82 +177,7 @@ bool quadricShape::setInternalValue( const MPlug& plug,
 {
 	bool isOk = true;
 
-	// In the case of a disk or partial disk the inner radius must
-	// never exceed the outer radius and the minimum radius is 0
-	//
-	if ( plug == radius1 ) {
-		double innerRadius = datahandle.asDouble();
-		double outerRadius = fGeometry->radius2;
-
-		if ( innerRadius > outerRadius ) {
-			outerRadius = innerRadius;
-		}
-
-		if ( innerRadius < 0 ) {
-			innerRadius = 0;
-		}
-
-		fGeometry->radius1 = innerRadius;
-		fGeometry->radius2 = outerRadius;
-		isOk = true;
-	}
-	else if ( plug == radius2 ) {
-		double outerRadius = datahandle.asDouble();
-		double innerRadius = fGeometry->radius1;
-
-		if ( outerRadius <= 0 ) {
-			outerRadius = 0.1;
-		}
-
-		if ( innerRadius > outerRadius ) {
-			innerRadius = outerRadius;
-		}
-
-		if ( innerRadius < 0 ) {
-			innerRadius = 0;
-		}
-
-		fGeometry->radius1 = innerRadius;
-		fGeometry->radius2 = outerRadius;
-		isOk = true;
-	}
-	else if ( plug == height ) {
-		double val = datahandle.asDouble();
-		if ( val <= 0 ) {
-			val = 0.1;
-		}
-		fGeometry->height = val;
-	}
-	else if ( plug == startAngle ) {
-		double val = datahandle.asDouble();
-		fGeometry->startAngle = val;
-	}
-	else if ( plug == sweepAngle ) {
-		double val = datahandle.asDouble();
-		fGeometry->sweepAngle = val;
-	}
-	else if ( plug == slices ) {
-		short val = datahandle.asShort();
-		if ( val < 3 ) {
-			val = 3;
-		}
-		fGeometry->slices = val;
-	}
-	else if ( plug == loops ) {
-		short val = datahandle.asShort();
-		if ( val < 3 ) {
-			val = 3;
-		}
-		fGeometry->loops = val;
-	}
-	else if ( plug == stacks ) {
-		short val = datahandle.asShort();
-		if ( val < 2 ) {
-			val = 2;
-		}
-		fGeometry->stacks = val;
-	}
-	else if ( plug == camTranslateZ ) {
+	if ( plug == camTranslateZ ) {
 		double val = datahandle.asDouble();
 		fGeometry->camTranslateZ = val;
 	}
@@ -324,29 +197,29 @@ bool quadricShape::setInternalValue( const MPlug& plug,
 }
 
 /* override */
-bool quadricShape::isBounded() const { return true; }
-
-/* override */
-MBoundingBox quadricShape::boundingBox() const
+//bool quadricShape::isBounded() const { return true; }
 //
-// Returns the bounding box for the shape.
-// In this case just use the radius and height attributes
-// to determine the bounding box.
+///* override */
+//MBoundingBox quadricShape::boundingBox() const
+////
+//// Returns the bounding box for the shape.
+//// In this case just use the radius and height attributes
+//// to determine the bounding box.
+////
+//{
+//	MBoundingBox result;
+//	quadricShape* nonConstThis = const_cast <quadricShape*> (this);
+//	quadricGeom* geom = nonConstThis->geometry();
 //
-{
-	MBoundingBox result;
-	quadricShape* nonConstThis = const_cast <quadricShape*> (this);
-	quadricGeom* geom = nonConstThis->geometry();
-
-	double r = geom->radius1;
-	result.expand( MPoint(r,r,r) );	result.expand( MPoint(-r,-r,-r) );
-	r = geom->radius2;
-	result.expand( MPoint(r,r,r) );	result.expand( MPoint(-r,-r,-r) );
-	r = geom->height;
-	result.expand( MPoint(r,r,r) );	result.expand( MPoint(-r,-r,-r) );
-
-    return result;
-}
+//	double r = geom->radius1;
+//	result.expand( MPoint(r,r,r) );	result.expand( MPoint(-r,-r,-r) );
+//	r = geom->radius2;
+//	result.expand( MPoint(r,r,r) );	result.expand( MPoint(-r,-r,-r) );
+//	r = geom->height;
+//	result.expand( MPoint(r,r,r) );	result.expand( MPoint(-r,-r,-r) );
+//
+//    return result;
+//}
 
 void* quadricShape::creator()
 {
@@ -358,30 +231,6 @@ MStatus quadricShape::initialize()
 	MStatus				stat;
     MFnNumericAttribute	numericAttr;
     MFnEnumAttribute	enumAttr;
-
-	// QUADRIC type enumerated attribute
-	//
-	shapeType = enumAttr.create( "shapeType", "st", 0, &stat );
-	MCHECKERROR( stat, "create shapeType attribute" );
-		enumAttr.addField( "cylinder", 0 );
-		enumAttr.addField( "disk", 1 );
-		enumAttr.addField( "partialDisk", 2 );
-		enumAttr.addField( "sphere", 3 );
-	enumAttr.setHidden( false );
-	enumAttr.setKeyable( true );
-	stat = addAttribute( shapeType );
-	MCHECKERROR( stat, "Error adding shapeType attribute." );
-
-	// QUADRIC ATTRIBUTES
-	//
-	MAKE_NUMERIC_ATTR( radius1, "r1", MFnNumericData::kDouble, 1.0, true );
-	MAKE_NUMERIC_ATTR( radius2, "r2", MFnNumericData::kDouble, 1.0, true );
-	MAKE_NUMERIC_ATTR( height, "ht", MFnNumericData::kDouble, 2.0, true );
-	MAKE_NUMERIC_ATTR( startAngle, "sta", MFnNumericData::kDouble, 0.0, true );
-	MAKE_NUMERIC_ATTR( sweepAngle, "swa", MFnNumericData::kDouble, 90.0, true );
-	MAKE_NUMERIC_ATTR( slices, "sl", MFnNumericData::kShort, 8, true );
-	MAKE_NUMERIC_ATTR( loops, "lp", MFnNumericData::kShort, 6, true );
-	MAKE_NUMERIC_ATTR( stacks, "sk", MFnNumericData::kShort, 4, true );
 
 	MAKE_NUMERIC_ATTR( camTranslateZ, "camTranslateZ", MFnNumericData::kDouble, 0.0, true );
 	MAKE_NUMERIC_ATTR( camRotateX, "camRotateX", MFnNumericData::kDouble, 0.0, true );
@@ -397,17 +246,7 @@ quadricGeom* quadricShape::geometry()
 //
 {
 	MObject this_object = thisMObject();
-	MPlug plug( this_object, radius1 );	plug.getValue( fGeometry->radius1 );
-	plug.setAttribute( radius2 );		plug.getValue( fGeometry->radius2 );
-	plug.setAttribute( height );		plug.getValue( fGeometry->height );
-	plug.setAttribute( startAngle );	plug.getValue( fGeometry->startAngle );
-	plug.setAttribute( sweepAngle );	plug.getValue( fGeometry->sweepAngle );
-	plug.setAttribute( slices );		plug.getValue( fGeometry->slices );
-	plug.setAttribute( loops );			plug.getValue( fGeometry->loops );
-	plug.setAttribute( stacks );		plug.getValue( fGeometry->stacks );
-	plug.setAttribute( shapeType );		plug.getValue( fGeometry->shapeType );
-
-	plug.setAttribute( camTranslateZ );	plug.getValue( fGeometry->camTranslateZ );
+	MPlug plug( this_object, camTranslateZ );	plug.getValue( fGeometry->camTranslateZ );
 	plug.setAttribute( camRotateX );	plug.getValue( fGeometry->camRotateX );
 	plug.setAttribute( camRotateY );	plug.getValue( fGeometry->camRotateY );
 	return fGeometry;
@@ -523,50 +362,50 @@ void quadricShapeUI::draw( const MDrawRequest & request, M3dView & view ) const
 		}
 	}
 
-	GLUquadricObj* qobj = gluNewQuadric();
+// 	GLUquadricObj* qobj = gluNewQuadric();
+// 
+// 	switch( token )
+// 	{
+// 		case kDrawWireframe :
+// 		case kDrawWireframeOnShaded :
+// 			gluQuadricDrawStyle( qobj, GLU_LINE );
+// 			break;
+// 
+// 		case kDrawSmoothShaded :
+// 			gluQuadricNormals( qobj, GLU_SMOOTH );
+// 			gluQuadricTexture( qobj, true );
+// 			gluQuadricDrawStyle( qobj, GLU_FILL );
+// 			break;
+// 
+// 		case kDrawFlatShaded :
+// 			gluQuadricNormals( qobj, GLU_FLAT );
+// 			gluQuadricTexture( qobj, true );
+// 			gluQuadricDrawStyle( qobj, GLU_FILL );
+// 			break;
+// 	}
 
-	switch( token )
-	{
-		case kDrawWireframe :
-		case kDrawWireframeOnShaded :
-			gluQuadricDrawStyle( qobj, GLU_LINE );
-			break;
-
-		case kDrawSmoothShaded :
-			gluQuadricNormals( qobj, GLU_SMOOTH );
-			gluQuadricTexture( qobj, true );
-			gluQuadricDrawStyle( qobj, GLU_FILL );
-			break;
-
-		case kDrawFlatShaded :
-			gluQuadricNormals( qobj, GLU_FLAT );
-			gluQuadricTexture( qobj, true );
-			gluQuadricDrawStyle( qobj, GLU_FILL );
-			break;
-	}
-
-	switch ( geom->shapeType )
-	{
-	case kDrawCylinder :
-		gluCylinder( qobj, geom->radius1, geom->radius2, geom->height,
-					 geom->slices, geom->stacks );
-		break;
-	case kDrawDisk :
-		gluDisk( qobj, geom->radius1, geom->radius2, geom->slices, geom->loops );
-		break;
-	case kDrawPartialDisk :
+// 	switch ( geom->shapeType )
+// 	{
+// 	case kDrawCylinder :
+// 		gluCylinder( qobj, geom->radius1, geom->radius2, geom->height,
+// 					 geom->slices, geom->stacks );
+// 		break;
+// 	case kDrawDisk :
+// 		gluDisk( qobj, geom->radius1, geom->radius2, geom->slices, geom->loops );
+// 		break;
+// 	case kDrawPartialDisk :
 		//gluPartialDisk( qobj, geom->radius1, geom->radius2, geom->slices,
 		//				geom->loops, geom->startAngle, geom->sweepAngle );
 		{
 			//test1_manipulateUV(geom);
 			test2_rtt(geom);
 		}
-		break;
-	case kDrawSphere :
-	default :
-		gluSphere( qobj, geom->radius1, geom->slices, geom->stacks );
-		break;
-	}
+// 		break;
+// 	case kDrawSphere :
+// 	default :
+// 		gluSphere( qobj, geom->radius1, geom->slices, geom->stacks );
+// 		break;
+// 	}
 
 	// Turn off texture mode
 	//
