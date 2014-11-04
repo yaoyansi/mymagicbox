@@ -1,9 +1,9 @@
 //Maya ASCII 2014 scene
 //Name: test_proj.ma
-//Last modified: Tue, Nov 04, 2014 10:53:56 AM
+//Last modified: Tue, Nov 04, 2014 11:41:43 AM
 //Codeset: 936
 requires maya "2014";
-requires -nodeType "quadricShape" "quadricShape" "1.0.0";
+requires -nodeType "quadricShape" "testProjection" "1.0.0";
 currentUnit -l centimeter -a degree -t film;
 fileInfo "application" "maya";
 fileInfo "product" "Maya 2014";
@@ -85,7 +85,7 @@ createNode mesh -n "pPlaneShape1" -p "pPlane1";
 	setAttr ".cdvm[0]"  0 1 1;
 createNode transform -n "testCamera";
 	setAttr ".t" -type "double3" 2.6020852139652106e-018 2.5462183275422534 24.567729819052666 ;
-	setAttr ".r" -type "double3" 22.471540762624066 -0.63500526108285882 -0.26217359978378968 ;
+	setAttr ".r" -type "double3" 23.424003034094021 -0.63500526108285915 -0.26217359978378951 ;
 createNode camera -n "testCameraShape" -p "testCamera";
 	setAttr -k off ".v";
 	setAttr ".rnd" no;
