@@ -16,7 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\bmpLoader.c" />
-    <ClCompile Include="..\..\src\NeHeGL.cpp" />
     <ClCompile Include="..\..\src\pcxLoader.c" />
     <ClCompile Include="..\..\src\plugin.cpp" />
     <ClCompile Include="..\..\src\testProjectionNode.cpp" />
@@ -25,7 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\bmpLoader.h" />
-    <ClInclude Include="..\..\src\NeHeGL.h" />
     <ClInclude Include="..\..\src\pcxLoader.h" />
     <ClInclude Include="..\..\src\testProjectionNode.h" />
     <ClInclude Include="..\..\src\texture.h" />

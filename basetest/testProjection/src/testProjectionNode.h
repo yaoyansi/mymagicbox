@@ -174,11 +174,24 @@ private:
 		kDrawFlatShaded,
 		kLastToken
 	};
-	void test1_manipulateUV(const quadricGeom *geom)const;
-	void test2_rtt(const quadricGeom *geom)const;
 
+	// way1: manipulate UV
+	void test1_manipulateUV(const quadricGeom *geom)const;
 	void getPerspectiveMatrix(double fovy, double aspect, double zNear, GLdouble zFar, MMatrix &mm)const;
 	double zDepthFactor(double z, double _near, double _far)const;
 
-	mutable unsigned int g_Texture;
+	// way2: RTT
+	void test2_rtt(const quadricGeom *geom)const;
+	void init()const;
+	void display (const double camRotateX, const double camRotateY)const;
+	void initFrameBufferDepthBuffer()const;
+	void initFrameBufferTexture(void)const;
+	void initFrameBuffer(void)const;
+	void renderTeapotScene(const double camRotateX, const double camRotateY)const;
+
+	mutable unsigned int fbo; // The frame buffer object
+	mutable unsigned int fbo_depth; // The depth buffer for the frame buffer object
+	mutable unsigned int fbo_texture; // The texture object to write our frame buffer object to
+	mutable int window_width; // The width of our rtt buffer
+	mutable int window_height; // The height of our rtt buffer
 };

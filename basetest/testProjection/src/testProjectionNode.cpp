@@ -57,9 +57,6 @@
 #include <maya/MDagPath.h>
 #include <maya/MMaterial.h>
 
-#include "texture.h"
-#include "NeHeGL.h"
-
 /////////////////////////////////////////////////////////////////////
 
 #define MCHECKERROR(STAT,MSG)       \
@@ -422,8 +419,11 @@ quadricGeom* quadricShape::geometry()
 
 quadricShapeUI::quadricShapeUI() 
 {
-	g_Texture = 0;
-	g_Texture = LoadTexture("texture.bmp");
+	fbo				= 0;
+	fbo_depth		= 0;
+	fbo_texture		= 0;
+	window_width	= 500; // The width of our window
+	window_height	= 500; // The height of our window
 }
 //
 quadricShapeUI::~quadricShapeUI() 
@@ -796,4 +796,140 @@ void quadricShapeUI::test2_rtt(const quadricGeom *geom)const
 	display(geom->camRotateX, geom->camRotateY);
 
 	glPopAttrib();
+}
+//
+
+void quadricShapeUI::initFrameBufferDepthBuffer() const
+{
+
+	glGenRenderbuffersEXT(1, &fbo_depth); // Generate one render buffer and store the ID in fbo_depth
+	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, fbo_depth); // Bind the fbo_depth render buffer
+
+	glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, window_width, window_height); // Set the render buffer storage to be a depth component, with a width and height of the window
+
+	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbo_depth); // Set the render buffer of this buffer to the depth buffer
+
+	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0); // Unbind the render buffer
+}
+
+void quadricShapeUI::initFrameBufferTexture(void) const
+{
+	glGenTextures(1, &fbo_texture); // Generate one texture
+	glBindTexture(GL_TEXTURE_2D, fbo_texture); // Bind the texture fbo_texture
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL); // Create a standard texture with the width and height of our window
+
+	// Setup the basic texture parameters
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	// Unbind the texture
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void quadricShapeUI::initFrameBuffer(void) const
+{
+	initFrameBufferDepthBuffer(); // Initialize our frame buffer depth buffer
+
+	initFrameBufferTexture(); // Initialize our frame buffer texture
+
+	glGenFramebuffersEXT(1, &fbo); // Generate one frame buffer and store the ID in fbo
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo); // Bind our frame buffer
+
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, fbo_texture, 0); // Attach the texture fbo_texture to the color buffer in our frame buffer
+
+	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, fbo_depth); // Attach the depth buffer fbo_depth to our frame buffer
+
+	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT); // Check that status of our generated frame buffer
+
+	if (status != GL_FRAMEBUFFER_COMPLETE_EXT) // If the frame buffer does not report back as complete
+	{
+		std::cout << "Couldn't create frame buffer" << std::endl; // Output an error to the console
+		//exit(0); // Exit the application
+	}
+
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); // Unbind our frame buffer
+}
+
+void quadricShapeUI::init(void)const
+{
+	//glEnable(GL_TEXTURE_2D); // Enable texturing so we can bind our frame buffer texture
+	//glEnable(GL_DEPTH_TEST); // Enable depth testing
+
+	initFrameBuffer(); // Create our frame buffer object
+}
+//
+void quadricShapeUI::renderTeapotScene(const double camRotateX, const double camRotateY)const 
+{
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fbo); // Bind our frame buffer for rendering
+
+	glPushAttrib(GL_ALL_ATTRIB_BITS);//glPushAttrib(GL_VIEWPORT_BIT | GL_ENABLE_BIT); // Push our glEnable and glViewport states
+	glViewport(0, 0, window_width, window_height); // Set the size of the frame buffer view port
+
+	//glClearColor (0.0f, 0.0f, 1.0f, 1.0f); // Set the clear colour
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the depth and colour buffers
+
+	glPushMatrix();
+	glLoadIdentity(); // Reset the modelview matrix
+
+
+	glTranslatef(0.0f, 0.0f, -5.0f); // Translate back 5 units
+
+	glRotatef(camRotateX, 1.0f, 0.0f, 0.0f); // Rotate around X axis
+	glRotatef(camRotateY, 0.0f, 1.0f, 0.0f); // Rotate around Y axis
+
+	// render a plane with context texture
+	glNormal3f( 0.0f, 1.0f, 0.0f);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f);	glVertex3f(-1.0f, 0.0f,  1.0f);
+	glTexCoord2f(1.0f, 0.0f);	glVertex3f( 1.0f, 0.0f,  1.0f);
+	glTexCoord2f(1.0f, 1.0f);	glVertex3f( 1.0f, 0.0f, -1.0f);
+	glTexCoord2f(0.0f, 1.0f);	glVertex3f(-1.0f, 0.0f, -1.0f);
+	glEnd();
+
+	glPopMatrix();
+	glPopAttrib(); // Restore our glEnable and glViewport states
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); // Unbind our texture
+}
+
+void quadricShapeUI::display (const double camRotateX, const double camRotateY)const
+{
+	//keyOperations(); // Perform any key presses
+
+	{
+		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		renderTeapotScene(camRotateX, camRotateY); // Render our teapot scene into our frame buffer
+		glPopAttrib();
+
+		//glClearColor(1.0f, 0.0f, 0.0f, 1.0f); // Clear the background of our window to red
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the colour buffer (more buffers later on)
+		//glLoadIdentity(); // Load the Identity Matrix to reset our drawing locations
+		//glMatrixMode(GL_MODELVIEW);
+
+		glBindTexture(GL_TEXTURE_2D, fbo_texture); // Bind our frame buffer texture
+
+		glNormal3f( 0.0f, 0.0f, 1.0f);
+		glBegin(GL_QUADS);
+
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(-10.0f, -10.0f, -2.0f); // The bottom left corner
+
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(10.0f, -10.0f, -2.0f); // The bottom right corner
+
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(10.0f, 10.0f, -2.0f); // The top right corner
+
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(-10.0f, 10.0f, -2.0f); // The top left corner
+		glEnd();
+
+		glBindTexture(GL_TEXTURE_2D, 0); // Unbind any textures
+	}
+
+
+
+	//glutSwapBuffers();
 }
