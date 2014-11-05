@@ -157,17 +157,18 @@ MStatus TestDeformer::deform(MDataBlock& data,
         CHECK_MSTATUS( status );
 
 
-        // iter --> tempOutputPts
-        MPointArray tempOutputPts;// positions in Local Space
+        /// 1. init tempOutputPts to zero points
+        MPointArray tempOutputPts;
         iter.reset();
         while( !iter.isDone(&status) )
         {
-            CHECK_MSTATUS(tempOutputPts.append(iter.position(MSpace::kObject, &status)));
+            CHECK_MSTATUS(tempOutputPts.append(MPoint(0, 0, 0)));
             CHECK_MSTATUS(iter.next());
         }
         assert(tempOutputPts.length() == iter.count());
 
 
+        /// 2. set tempOutputPts to deform values which comes from each driver meshe
         iter.reset();
 
         int numMeshes = meshAttrHandle.elementCount();
@@ -199,12 +200,16 @@ MStatus TestDeformer::deform(MDataBlock& data,
 
         }// for each driver mesh
 
-        // tempOutputPts --> iter
+
+        /// 3. add deform value to this geometry
         int i = 0;
         iter.reset();
         while( !iter.isDone(&status) )
         {
-            CHECK_MSTATUS(iter.setPosition( tempOutputPts[i]/numMeshes ));
+            MPoint p = iter.position(MSpace::kObject, &status);
+            CHECK_MSTATUS(status);
+
+            CHECK_MSTATUS(iter.setPosition( p + tempOutputPts[i]/numMeshes ));
 
             CHECK_MSTATUS(iter.next());
             ++i;
@@ -321,7 +326,7 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
                                       const MMatrix& localToWorldMatrix,
                                       unsigned int mIndex,
                                       MObject &driver_mesh,
-                                      const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData, MPointArray &outputPtr)
+                                      const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData, MPointArray &tempOutputPts)
 {
     MStatus status;
 
@@ -365,9 +370,8 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
                 MPoint pt = iterPt + ((mappedPt - iterPt) * ww );
                 pt = pt * localToWorldMatrix.inverse();
 
-                outputPtr[i] += pt;
-
-                //CHECK_MSTATUS(iter.setPosition( pt ));
+                /// put the deform points to tempOutputPts
+                tempOutputPts[i] += pt;
             }
         }//if
         CHECK_MSTATUS(iter.next());
