@@ -2,7 +2,7 @@
 #include "testDeformer.h"
 
 #include <cfloat>
-
+#include <cassert>
 // For local testing of nodes you can use any identifier between
 // 0x00000000 and 0x0007ffff, but for any node that you plan to use for
 // more permanent purposes, you should get a universally unique id from
@@ -129,15 +129,15 @@ MStatus TestDeformer::deform(MDataBlock& data,
 
     short initialized_mapping = data.inputValue( initialized_data, &status).asShort();
     CHECK_MSTATUS(status);
-    __debug("%s(), initialized_mapping=%d", __FUNCTION__, initialized_mapping);
+    __debug("%s(), initialized_mapping=%d, mIndex=%d", __FUNCTION__, initialized_mapping, mIndex);
 
     if( initialized_mapping == 1 )
     {
         initVertMapping(data, iter, localToWorldMatrix, mIndex);
 
-//        MObject tObj  =  thisMObject();
-//        MPlug setInitMode = MPlug( tObj, initialized_data  );
-//        setInitMode.setShort( 2 );
+        MObject tObj  =  thisMObject();
+        MPlug setInitMode = MPlug( tObj, initialized_data  );
+        setInitMode.setShort( 2 );
 
 
         initialized_mapping = data.inputValue( initialized_data, &status ).asShort();
@@ -155,6 +155,20 @@ MStatus TestDeformer::deform(MDataBlock& data,
 
         MArrayDataHandle meshAttrHandle = data.inputArrayValue( driver_mesh, &status );
         CHECK_MSTATUS( status );
+
+
+        // iter --> tempOutputPts
+        MPointArray tempOutputPts;// positions in Local Space
+        iter.reset();
+        while( !iter.isDone(&status) )
+        {
+            CHECK_MSTATUS(tempOutputPts.append(iter.position(MSpace::kObject, &status)));
+            CHECK_MSTATUS(iter.next());
+        }
+        assert(tempOutputPts.length() == iter.count());
+
+
+        iter.reset();
 
         int numMeshes = meshAttrHandle.elementCount();
         __debug("%s(), numMeshes=%d", __FUNCTION__, numMeshes);
@@ -175,7 +189,7 @@ MStatus TestDeformer::deform(MDataBlock& data,
 
             _deform_on_one_mesh(data, iter, localToWorldMatrix, mIndex,
                                 meshMobj,
-                                envelopeHandle, vertMapArrayData );
+                                envelopeHandle, vertMapArrayData, tempOutputPts );
 
 
             if( !meshAttrHandle.next() )
@@ -183,7 +197,19 @@ MStatus TestDeformer::deform(MDataBlock& data,
                 break;
             }
 
+        }// for each driver mesh
+
+        // tempOutputPts --> iter
+        int i = 0;
+        iter.reset();
+        while( !iter.isDone(&status) )
+        {
+            CHECK_MSTATUS(iter.setPosition( tempOutputPts[i]/numMeshes ));
+
+            CHECK_MSTATUS(iter.next());
+            ++i;
         }
+        assert(tempOutputPts.length() == iter.count());
     }// if
 
 	return( MS::kSuccess );
@@ -212,6 +238,8 @@ void TestDeformer::initVertMapping(MDataBlock& data,
     MPointArray allPts;// world vertex position of the driven mesh
     allPts.clear();
     // walk through the driven mesh
+
+    /// copy MItGeometry's vertex to vertMapOutArrayData
     int i = 0;
     while( !iter.isDone(&status) )
     {
@@ -234,7 +262,7 @@ void TestDeformer::initVertMapping(MDataBlock& data,
 
 
 
-
+    /// Append more vertex from each driver mesh to vertMapOutArrayData
     MArrayDataHandle meshAttrHandle = data.inputArrayValue( driver_mesh, &status );
     CHECK_MSTATUS( status );
 
@@ -255,7 +283,7 @@ void TestDeformer::initVertMapping(MDataBlock& data,
         __debugMeshInfo(__FUNCTION__, meshMobj);
         {
             _initVertMapping_on_one_mesh(meshMobj, vertMapOutArrayBuilder, allPts);// Note: vertMapOutArrayBuilder is updated in this function!
-            CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
+            //CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
         }
 
         if( !meshAttrHandle.next() )
@@ -263,7 +291,7 @@ void TestDeformer::initVertMapping(MDataBlock& data,
             break;
         }
     }// for (mesh
-
+    CHECK_MSTATUS(vertMapOutArrayData.set( vertMapOutArrayBuilder ));
 
 
 
@@ -293,7 +321,7 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
                                       const MMatrix& localToWorldMatrix,
                                       unsigned int mIndex,
                                       MObject &driver_mesh,
-                                      const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData)
+                                      const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData, MPointArray &outputPtr)
 {
     MStatus status;
 
@@ -302,6 +330,7 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
     MItMeshVertex driver_meshVertIter( driver_mesh, &status );
     CHECK_MSTATUS( status );
 
+    int i = 0;
     iter.reset();
     while( !iter.isDone(&status) )
     {
@@ -335,10 +364,14 @@ void TestDeformer::_deform_on_one_mesh(MDataBlock& data,
 
                 MPoint pt = iterPt + ((mappedPt - iterPt) * ww );
                 pt = pt * localToWorldMatrix.inverse();
-                CHECK_MSTATUS(iter.setPosition( pt ));
+
+                outputPtr[i] += pt;
+
+                //CHECK_MSTATUS(iter.setPosition( pt ));
             }
         }//if
         CHECK_MSTATUS(iter.next());
+        ++i;
     }//while
 }
 

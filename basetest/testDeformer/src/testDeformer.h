@@ -98,7 +98,7 @@ private:
                               const MMatrix& localToWorldMatrix,
                               unsigned int mIndex,
                               MObject &meshMobj,
-                              const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData);
+                              const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData, MPointArray &outputPtr);
 
     void _initVertMapping_on_one_mesh( MObject &meshMobj, MArrayDataBuilder &vertMapOutArrayBuilder, const MPointArray& allPts
                                       );
