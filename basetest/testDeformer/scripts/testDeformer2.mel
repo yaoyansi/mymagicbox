@@ -1,0 +1,72 @@
+//
+global proc string[] xxu_getShapes( string $xform )
+{
+   string $shapes[];
+
+   $shapes[0] = $xform;
+
+   if ( "transform" == `nodeType $xform` )
+   // If given node is not a transform, assume it is a shape
+   // and pass it through
+   {
+      $shapes = `listRelatives -fullPath -shapes -ni $xform`;
+   }
+
+   return $shapes;
+}
+global proc string xxu_getShape( string $xform )
+{
+	string $shapes[];
+	$shapes = xxu_getShapes($xform);
+
+	return $shapes[0];
+}
+//
+/////////////////////////////////////////////////////
+//
+global string $g_testDeformerNodeName = "";
+
+global proc testDeformer_getDeformerNodeFromSelection()
+{
+	global string $g_testDeformerNodeName;
+
+	$selected = `ls -sl`;// select an object
+	$shape = xxu_getShape($selected[0]);// extend to shape node
+	$deformNode = `listConnections -s on ($shape+".inMesh")`;
+
+	$g_testDeformerNodeName = $deformNode[0];
+}
+// delete driver mesh
+global proc testDeformer_deleteDriverMesh(string $xform)
+{
+	$shape = xxu_getShape($xform);// extend to shape node
+	$driver_mesh_plug = `listConnections -d on -plugs on ($shape+".worldMesh[0]")`;
+	// break the connection, and delete the driver mesh element 
+	// form deform node plug(it is an array plug)
+	removeMultiInstance -b true $driver_mesh_plug;//
+}
+global proc testDeformer_deleteSelectedDriverMesh()
+{
+	$selected = `ls -sl`;// select an object
+	testDeformer_deleteDriverMesh($selected[0]);
+}
+/////////////////////////////////////////////////////
+// add driver mesh
+global proc testDeformer_addDriverMesh(string $xform)
+{
+	global string $g_testDeformerNodeName;
+
+	$shape = xxu_getShape($xform);// extend to shape node
+	$i = `getAttr -size ($g_testDeformerNodeName+".vertSnapInput")`;// get the next available index
+	// connect driver mesh to deform node
+	connectAttr ($shape+".worldMesh[0]") ($g_testDeformerNodeName+".vertSnapInput["+$i+"]");
+}
+global proc testDeformer_addSelectedDriverMesh()
+{
+	$selected = `ls -sl`;// select an object
+	testDeformer_addDriverMesh($selected[0]);
+}
+
+
+
+
