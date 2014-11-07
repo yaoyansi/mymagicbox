@@ -1,0 +1,57 @@
+source testDeformer2.mel;
+
+////////////////////////////////////////////
+proc testDeformer_loadPlugin()
+{
+	if( ! `pluginInfo -q -l testDeformer` ){
+		eval "catch (`loadPlugin -qt testDeformer`)";
+	}
+}
+//
+global string $g_testDeformerNodeName = "";//print($g_testDeformerNodeName);
+proc testDeformer_createDeformerNode()
+{
+    global string $g_testDeformerNodeName;
+    
+    string $selected[] = `ls -sl`;
+    
+    string $defr[]= `deformer -type testDeformer $selected[0]`;
+    $g_testDeformerNodeName = $defr[0];    
+}
+//
+proc testDeformer_ShowTheDeformEffect()
+{
+    global string $g_testDeformerNodeName;
+    setAttr ($g_testDeformerNodeName+".initialize") 1;
+}
+////////////////////////////////////////////
+global proc testDeformer_ui()
+{
+    window -width 150;
+    columnLayout -adjustableColumn true;
+        button 
+        -label "Load Plugin"
+        -command "testDeformer_loadPlugin";
+        
+        button 
+        -label "Create Deformer Node"
+        -annotation "Select the driven mesh and press this button to create the deform node"
+        -command "testDeformer_createDeformerNode";   
+        
+        button
+        -label "Add Driver Mesh(es)" 
+        -annotation "Select the driver mesh and press this button to connect to the deform node"
+        -command "testDeformer_addSelectedDriverMesh";
+  
+        button
+        -label "Remove Driver Mesh(es)"
+        -annotation "Select the driver mesh and press this button to disconnect from the deform node"
+        -command "testDeformer_deleteSelectedDriverMesh";
+    
+        button
+        -label "Show the deform effect" 
+        -annotation "setAttr \"testDeformer1.initialize\" 1"
+        -command "testDeformer_ShowTheDeformEffect";
+
+    showWindow;
+}
