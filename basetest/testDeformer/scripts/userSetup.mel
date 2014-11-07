@@ -1,0 +1,2 @@
+source "testDeformer_ui.mel";
+source "testDeformer.mel";

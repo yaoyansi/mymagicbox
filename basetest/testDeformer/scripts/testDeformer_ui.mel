@@ -1,7 +1,7 @@
-source testDeformer2.mel;
+source testDeformer.mel;
 
 ////////////////////////////////////////////
-proc testDeformer_loadPlugin()
+global proc testDeformer_loadPlugin()
 {
 	if( ! `pluginInfo -q -l testDeformer` ){
 		eval "catch (`loadPlugin -qt testDeformer`)";
@@ -9,7 +9,7 @@ proc testDeformer_loadPlugin()
 }
 //
 global string $g_testDeformerNodeName = "";//print($g_testDeformerNodeName);
-proc testDeformer_createDeformerNode()
+global proc testDeformer_createDeformerNode()
 {
     global string $g_testDeformerNodeName;
     
@@ -19,7 +19,7 @@ proc testDeformer_createDeformerNode()
     $g_testDeformerNodeName = $defr[0];    
 }
 //
-proc testDeformer_ShowTheDeformEffect()
+global proc testDeformer_ShowTheDeformEffect()
 {
     global string $g_testDeformerNodeName;
     setAttr ($g_testDeformerNodeName+".initialize") 1;
