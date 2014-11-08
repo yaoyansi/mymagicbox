@@ -1,0 +1,3001 @@
+cscope 15 $HOME/dev/mymagicbox/basetest/testDeformer/build/cmake_build               0000017439
+	@/home/user0/dev/mymagicbox/basetest/testDeformer/build/cmake/CMakeLists.txt
+
+2 
+	$cmake_möimum_ªquúed
+(
+VERSION
+ 2.6)
+
+4 
+	$£t
+(
+MY_PROJECT_NAME
+ 
+ã°Def‹mî
+)
+
+6 
+	`¥oje˘
+(
+$
+{
+MY_PROJECT_NAME
+})
+
+10 if(
+	gUNIX
+)
+
+11 if(
+	gEXISTS
+ "${CMAKE_CURRENT_SOURCE_DIR}/Modules/")
+
+13 
+£t
+(
+CMAKE_MODULE_PATH
+ "${CMAKE_CURRENT_SOURCE_DIR}/Modules/")
+
+16 
+	`mesßge
+(
+SEND_ERROR
+ "FailedÅo find moduleÖath: ${CMAKE_CURRENT_SOURCE_DIR}/Modules/")
+
+17 
+	$ídif
+()
+
+18 
+	$ídif
+(
+UNIX
+)
+
+20 i‡(
+CMAKE_BUILD_TYPE
+ 
+STREQUAL
+ "")
+
+21 #CMakê
+deÁu…s
+ 
+to
+ 
+Àavög
+ 
+CMAKE_BUILD_TYPE
+ 
+em±y
+. 
+This
+ 
+s¸ews
+ 
+up
+
+
+22 #dif„ª¡üti⁄ 
+bëwìn
+ 
+debug
+ 
+™d
+ 
+ªÀa£
+ 
+buûds
+.
+
+23 
+	`£t
+(
+CMAKE_BUILD_TYPE
+ "Debug"
+
+24 
+CACHE
+ 
+STRING
+
+
+26 
+FORCE
+
+
+28 
+	$ídif
+ ()
+
+30 #£t(
+CMAKE_INSTALL_PREFIX
+ "${CMAKE_CURRENT_BINARY_DIR}/dist")
+
+32 
+	$föd_∑ckage
+(
+Maya
+ 
+REQUIRED
+)
+
+34 #if(
+NOT
+ "${OGRE_VERSION_NAME}" 
+STREQUAL
+ "Cthugha")
+
+35 #mesßge(
+SEND_ERROR
+ "YouÇeed Ogre 1.7 CthughaÅo buildÅhis.")
+
+38 #Föd 
+Boo°
+
+
+40 
+	`£t
+(
+HDRS
+
+
+41 ../../
+§c
+/
+ã°Def‹mî
+.
+h
+
+
+44 
+	`£t
+(
+SRCS
+
+
+45 ../../
+§c
+/
+ã°Def‹mî
+.
+˝p
+
+
+46 ../../
+§c
+/
+∂ugö
+.
+˝p
+
+
+49 
+	`ö˛ude_dúe˘‹õs
+(
+
+50 
+$
+{
+MAYA_INCLUDE_DIR
+}
+
+53 
+ADD_LIBRARY
+–
+$
+{
+MY_PROJECT_NAME
+}
+
+54 
+SHARED
+
+
+55 
+$
+{
+HDRS
+}
+
+56 
+$
+{
+SRCS
+}
+
+61 
+TARGET_LINK_LIBRARIES
+–
+$
+{
+MY_PROJECT_NAME
+}
+
+62 
+$
+{
+MAYA_Found©i⁄_LIBRARY
+}
+
+63 
+$
+{
+MAYA_O≥nMaya_LIBRARY
+}
+
+64 
+$
+{
+MAYA_O≥nMayaUI_LIBRARY
+}
+
+65 
+$
+{
+MAYA_O≥nMayaAnim_LIBRARY
+}
+
+68 
+£t
+(
+MAYA_EXTENSION
+ ".so")
+
+70 
+	$£t
+(
+MAYA_COMPILE_DEFINITIONS
+
+
+71 
+REQUIRE_IOSTREAM
+ 
+_BOOL
+ 
+LINUX
+ 
+_LINUX
+ 
+LINUX_64
+)
+
+73 
+	`£t
+(
+MAYA_COMPILE_FLAGS
+
+
+76 
+	`£t
+(
+MAYA_LINK_FLAGS
+
+
+79 
+	`SET_TARGET_PROPERTIES
+–
+$
+{
+MY_PROJECT_NAME
+}
+
+80 
+PROPERTIES
+
+
+81 
+	gCOMPILE_DEFINITIONS
+ "${MAYA_COMPILE_DEFINITIONS}"
+
+82 
+	gCOMPILE_FLAGS
+ "${MAYA_COMPILE_FLAGS}"
+
+83 
+	gLINK_FLAGS
+ "${MAYA_LINK_FLAGS}"
+
+84 
+	gPREFIX
+ ""
+
+85 
+SUFFIX
+ 
+	g$
+{
+	gMAYA_EXTENSION
+}
+
+87 
+OUTPUT_NAME
+ 
+	g$
+{
+	gMY_PROJECT_NAME
+}
+
+88 
+LIBRARY_OUTPUT_DIRECTORY
+ 
+	g$
+{
+	gCMAKE_CURRENT_SOURCE_DIR
+}/../../
+	g∂ug
+-
+	gös
+
+
+89 #RUNTIME_OUTPUT_DIRECTORY 
+$
+{
+CMAKE_CURRENT_SOURCE_DIR
+}/../../
+∂ug
+-
+ös
+
+
+90 #EXECUTABLE_OUTPUT_PATH 
+$
+{
+CMAKE_CURRENT_SOURCE_DIR
+}/../../
+∂ug
+-
+ös
+
+
+	@/home/user0/dev/mymagicbox/basetest/testDeformer/build/cmake/Modules/FindMaya.cmake
+
+5 #Gë 
+∑th
+, 
+c⁄vît
+ 
+back¶ashes
+ 
+as
+ 
+$
+{
+ENV_$
+{
+v¨
+}}
+
+6 
+	$IF
+(
+UNIX
+)
+
+7 
+	`FIND_PATH
+(
+MAYA_BASE_DIR
+ 
+ö˛ude
+/
+maya
+/
+MFn
+.
+h
+
+
+8 
+PATH
+
+
+9 
+ENV
+ 
+MAYA_LOCATION
+
+
+11 
+	$ENDIF
+(
+UNIX
+)
+
+15 
+	`FIND_PATH
+(
+MAYA_INCLUDE_DIR
+ 
+maya
+/
+MFn
+.
+h
+
+
+16 
+PATHS
+
+
+17 
+ENV
+ 
+MAYA_LOCATION
+
+
+18 
+$
+{
+MAYA_BASE_DIR
+}
+
+19 
+	gPATH_SUFFIXES
+
+
+20 ../../
+	gdevkô
+/
+	gö˛ude
+/
+
+21 
+	gö˛ude
+/
+
+22 
+	gDOC
+ "Maya's devkit headersÖath"
+
+24 
+LIST
+(
+APPEND
+ 
+MAYA_INCLUDE_DIRS
+ 
+$
+{
+MAYA_INCLUDE_DIR
+})
+
+28 
+FIND_PATH
+(
+MAYA_LIBRARY_DIR
+ 
+libO≥nMaya
+.
+so
+
+
+29 
+PATHS
+
+
+30 
+ENV
+ 
+MAYA_LOCATION
+
+
+31 
+$
+{
+MAYA_BASE_DIR
+}
+
+32 
+PATH_SUFFIXES
+
+
+33 
+lib
+/
+
+34 
+DOC
+ "Maya'sÜibrariesÖath"
+
+40 #MESSAGE(
+STATUS
+ "-MAYA_INCLUDE_DIR" 
+$
+{
+MAYA_INCLUDE_DIR
+})
+
+43 
+	$FOREACH
+(
+MAYA_LIB
+
+
+44 
+O≥nMaya
+
+
+45 
+O≥nMayaAnim
+
+
+46 
+O≥nMayaFX
+
+
+47 
+O≥nMayaRídî
+
+
+48 
+O≥nMayaUI
+
+
+49 
+Image
+
+
+50 
+Found©i⁄
+
+
+51 
+IMFba£
+
+
+52 
+tbb
+
+
+53 
+cg
+
+
+54 
+cgGL
+
+
+56 
+	`FIND_LIBRARY
+(
+MAYA_$
+{
+MAYA_LIB
+}_LIBRARY ${MAYA_LIB}
+
+57 
+PATHS
+
+
+58 
+ENV
+ 
+MAYA_LOCATION
+
+
+59 
+	g$
+{
+	gMAYA_BASE_DIR
+}
+
+60 
+PATH_SUFFIXES
+
+
+61 
+	gMacOS
+/
+
+62 
+	glib
+/
+
+63 
+	gDOC
+ "Maya's ${MAYA_LIB}ÜibraryÖath"
+
+66 
+LIST
+(
+APPEND
+ 
+$
+{
+MAYA_LIBRARIES
+} 
+MAYA_$
+{
+MAYA_LIB
+}
+_LIBRARY
+)
+
+67 
+	$ENDFOREACH
+(
+MAYA_LIB
+)
+
+69 #MESSAGE(
+STATUS
+ "-MAYA_LIBRARIES" 
+$
+{
+MAYA_LIBRARIES
+})
+
+	@/home/user0/dev/mymagicbox/basetest/testDeformer/src/plugin.cpp
+
+1 
+	~<maya/MFnPlugö.h
+>
+
+2 
+	~<maya/MSètus.h
+>
+
+4 
+	~"ã°Def‹mî.h
+"
+
+9 
+MSètus
+ 
+	$öôülizePlugö
+–
+MObje˘
+ 
+obj
+ )
+
+11 
+	`¥ötf
+("\nplugin isÜoaded -----------------------\n");
+
+13 
+MFnPlugö
+ 
+	`∂ugö
+–
+obj
+, "yaoyu", "1.0.1", "Any" );
+
+15 
+	`CHECK_MSTATUS
+(
+
+16 
+∂ugö
+.
+	`ªgi°îNode
+(
+
+17 
+Te°Def‹mî
+::
+	`cTy≥Name
+(),
+
+18 
+Te°Def‹mî
+::
+	`cTy≥Id
+(),
+
+19 
+Te°Def‹mî
+::
+¸ót‹
+,
+
+20 
+Te°Def‹mî
+::
+öôülize
+,
+
+21 
+Te°Def‹mî
+::
+	`cTy≥
+(),
+
+22 &
+Te°Def‹mî
+::
+	`cCœssifiˇti⁄
+()
+
+25 
+MSåög
+ 
+	`comm™d
+( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
+
+26 
+comm™d
+ +
+Te°Def‹mî
+::
+	`cCœssifiˇti⁄
+();
+
+27 
+comm™d
+ += "\");}\n";
+
+29 
+	`CHECK_MSTATUS
+–
+MGlobÆ
+::
+	`execuãComm™d
+–
+comm™d
+ ) );
+
+31 –
+MS
+::
+kSuc˚ss
+ );
+
+32 
+	}
+}
+
+34 
+MSètus
+ 
+	$unöôülizePlugö
+–
+MObje˘
+ 
+obj
+ )
+
+36 
+MFnPlugö
+ 
+	`∂ugö
+–
+obj
+ );
+
+38 
+	`CHECK_MSTATUS
+–
+∂ugö
+.
+	`dîegi°îNode
+–
+Te°Def‹mî
+::
+	`cTy≥Id
+() ) );
+
+40 
+MSåög
+ 
+	`comm™d
+( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
+
+41 
+comm™d
+ +
+Te°Def‹mî
+::
+	`cCœssifiˇti⁄
+();
+
+42 
+comm™d
+ += "\");}\n";
+
+44 
+	`CHECK_MSTATUS
+–
+MGlobÆ
+::
+	`execuãComm™d
+–
+comm™d
+ ) );
+
+46  
+MS
+::
+kSuc˚ss
+;
+
+47 
+	}
+}
+
+	@/home/user0/dev/mymagicbox/basetest/testDeformer/src/testDeformer.cpp
+
+2 
+	~"ã°Def‹mî.h
+"
+
+4 
+	~<cÊﬂt
+>
+
+12 
+MTy≥Id
+ 
+	gTe°Def‹mî
+::
+m_id
+( 0x7269b );
+
+13 
+MSåög
+ 
+	gTe°Def‹mî
+::
+m_˛assifiˇti⁄
+("utility/general");
+
+19 
+MObje˘
+ 
+	gTe°Def‹mî
+::
+drivî_mesh
+;
+
+20 
+MObje˘
+ 
+	gTe°Def‹mî
+::
+öôülized_d©a
+;
+
+21 
+MObje˘
+ 
+	gTe°Def‹mî
+::
+vît_m≠
+;
+
+23 
+	gTe°Def‹mî
+::
+	$po°C⁄°ru˘‹
+( )
+
+30 
+	`£tMPSa„
+–
+åue
+ );
+
+31 
+	}
+}
+
+33 
+MSåög
+ 
+	gTe°Def‹mî
+::
+	$cTy≥Name
+()
+
+36 
+	}
+}
+
+38 
+MTy≥Id
+ 
+	gTe°Def‹mî
+::
+	$cTy≥Id
+()
+
+40  
+Te°Def‹mî
+::
+m_id
+;
+
+41 
+	}
+}
+
+43 
+	gMPxNode
+::
+Ty≥
+ 
+Te°Def‹mî
+::
+	$cTy≥
+()
+
+45  
+MPxNode
+::
+kDef‹mîNode
+;
+
+46 
+	}
+}
+
+48 c⁄° 
+	gMSåög
+& 
+	gTe°Def‹mî
+::
+	$cCœssifiˇti⁄
+()
+
+50  
+m_˛assifiˇti⁄
+;
+
+51 
+	}
+}
+
+53 
+	gTe°Def‹mî
+::
+	$Te°Def‹mî
+()
+
+54 : 
+	$MPxDef‹mîNode
+()
+
+56 
+	}
+}
+
+58 
+Te°Def‹mî
+::~
+	$Te°Def‹mî
+()
+
+60 
+	}
+}
+
+62 * 
+Te°Def‹mî
+::
+	$¸ót‹
+()
+
+64  
+√w
+ 
+	`Te°Def‹mî
+();
+
+65 
+	}
+}
+
+67 
+MSètus
+ 
+	gTe°Def‹mî
+::
+	$öôülize
+()
+
+69 
+MFnNumîicAâribuã
+ 
+numîicAâr
+;
+
+70 
+MFnTy≥dAâribuã
+ 
+pﬁyMeshAâr
+;
+
+71 
+MFnEnumAâribuã
+ 
+íumAâr
+;
+
+73 
+MSètus
+ 
+°©us
+;
+
+85 
+drivî_mesh
+ = 
+pﬁyMeshAâr
+.
+	`¸óã
+–"vîtS«pI≈ut", "v¢pö", 
+MFnD©a
+::
+kMesh
+, &
+°©us
+ );
+
+86 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+87 
+	`CHECK_MSTATUS
+–
+pﬁyMeshAâr
+.
+	`£tSt‹abÀ
+–
+Ál£
+ ) );
+
+88 
+	`CHECK_MSTATUS
+–
+pﬁyMeshAâr
+.
+	`£tAºay
+(
+åue
+) );
+
+89 
+	`CHECK_MSTATUS
+–
+pﬁyMeshAâr
+.
+	`£tC⁄√˘abÀ
+–
+åue
+ ) );
+
+90 
+	`CHECK_MSTATUS
+–
+	`addAâribuã
+(
+drivî_mesh
+) );
+
+91 
+	`CHECK_MSTATUS
+–
+	`©åibuãAf„˘s
+(
+drivî_mesh
+, 
+ouçutGeom
+) );
+
+94 
+öôülized_d©a
+ = 
+íumAâr
+.
+	`¸óã
+–"öôülize", "öl", 0 , &
+°©us
+ );
+
+95 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+96 
+	`CHECK_MSTATUS
+–
+íumAâr
+.
+	`addFõld
+( "Off", 0) );
+
+97 
+	`CHECK_MSTATUS
+–
+íumAâr
+.
+	`addFõld
+( "Re-Set Bind", 1) );
+
+98 
+	`CHECK_MSTATUS
+–
+íumAâr
+.
+	`addFõld
+( "Bound", 2) );
+
+99 
+	`CHECK_MSTATUS
+–
+íumAâr
+.
+	`£tKeyabÀ
+(
+åue
+) );
+
+100 
+	`CHECK_MSTATUS
+–
+íumAâr
+.
+	`£tSt‹abÀ
+(
+åue
+) );
+
+101 
+	`CHECK_MSTATUS
+–
+íumAâr
+.
+	`£tRódabÀ
+(
+åue
+) );
+
+102 
+	`CHECK_MSTATUS
+–
+íumAâr
+.
+	`£tWrôabÀ
+(
+åue
+) );
+
+103 
+	`CHECK_MSTATUS
+–
+íumAâr
+.
+	`£tDeÁu…
+(0) );
+
+104 
+	`CHECK_MSTATUS
+–
+	`addAâribuã
+–
+öôülized_d©a
+ ) );
+
+105 
+	`CHECK_MSTATUS
+–
+	`©åibuãAf„˘s
+–
+öôülized_d©a
+, 
+ouçutGeom
+ ) );
+
+108 
+vît_m≠
+ = 
+numîicAâr
+.
+	`¸óã
+–"vtxIndexM≠", "vtximp", 
+MFnNumîicD©a
+::
+kL⁄g
+, 0 , &
+°©us
+ );
+
+109 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+110 
+	`CHECK_MSTATUS
+–
+numîicAâr
+.
+	`£tKeyabÀ
+(
+Ál£
+) );
+
+111 
+	`CHECK_MSTATUS
+–
+numîicAâr
+.
+	`£tAºay
+(
+åue
+) );
+
+112 
+	`CHECK_MSTATUS
+–
+numîicAâr
+.
+	`£tSt‹abÀ
+(
+åue
+) );
+
+113 
+	`CHECK_MSTATUS
+–
+numîicAâr
+.
+	`£tRódabÀ
+(
+åue
+) );
+
+114 
+	`CHECK_MSTATUS
+–
+numîicAâr
+.
+	`£tWrôabÀ
+(
+åue
+) );
+
+115 
+	`CHECK_MSTATUS
+–
+	`addAâribuã
+–
+vît_m≠
+ ) );
+
+116 
+	`CHECK_MSTATUS
+–
+	`©åibuãAf„˘s
+–
+vît_m≠
+, 
+ouçutGeom
+ ) );
+
+118 
+	`CHECK_MSTATUS
+–
+MGlobÆ
+::
+	`execuãPyth⁄Comm™d
+("imp‹àmaya.cmds; maya.cmds.makePaöèbÀ('"+
+Te°Def‹mî
+::
+	`cTy≥Name
+()+"', 'weights',áttrType='multiFloat')") );
+
+120 –
+MS
+::
+kSuc˚ss
+ );
+
+121 
+	}
+}
+
+123 
+MSètus
+ 
+	gTe°Def‹mî
+::
+	$def‹m
+(
+MD©aBlock
+& 
+d©a
+,
+
+124 
+MItGeomëry
+& 
+ôî
+,
+
+125 c⁄° 
+MM©rix
+& 
+loˇlToW‹ldM©rix
+,
+
+126 
+mIndex
+)
+
+128 
+MSètus
+ 
+°©us
+;
+
+130 
+öôülized_m≠pög
+ = 
+d©a
+.
+	`öputVÆue
+–
+öôülized_d©a
+, &
+°©us
+).
+	`asSh‹t
+();
+
+131 
+	`CHECK_MSTATUS
+(
+°©us
+);
+
+132 
+	`__debug
+(
+__FUNCTION__
+, "öôülized_m≠pög=%d", 
+öôülized_m≠pög
+);
+
+134 if–
+öôülized_m≠pög
+ == 1 )
+
+136 
+	`öôVîtM≠pög
+(
+d©a
+, 
+ôî
+, 
+loˇlToW‹ldM©rix
+, 
+mIndex
+);
+
+142 
+ôî
+.
+	`ª£t
+();
+
+145 
+öôülized_m≠pög
+ = 
+d©a
+.
+	`öputVÆue
+–
+öôülized_d©a
+, &
+°©us
+ ).
+	`asSh‹t
+();
+
+146 
+	`CHECK_MSTATUS
+(
+°©us
+);
+
+149 if–
+öôülized_m≠pög
+ == 2 )
+
+151 
+ívñ›e
+ = 
+MPxDef‹mîNode
+::envelope;
+
+152 
+MD©aH™dÀ
+ 
+ívñ›eH™dÀ
+ = 
+d©a
+.
+	`öputVÆue
+–
+ívñ›e
+, &
+°©us
+ );
+
+153 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+155 
+MAºayD©aH™dÀ
+ 
+vîtM≠AºayD©a
+ = 
+d©a
+.
+	`öputAºayVÆue
+–
+vît_m≠
+, &
+°©us
+ );
+
+156 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+158 
+MAºayD©aH™dÀ
+ 
+meshAârH™dÀ
+ = 
+d©a
+.
+	`öputAºayVÆue
+–
+drivî_mesh
+, &
+°©us
+ );
+
+159 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+161 
+numMeshes
+ = 
+meshAârH™dÀ
+.
+	`ñemítCou¡
+();
+
+162 
+	`__debug
+(
+__FUNCTION__
+, "numMeshes=%d", 
+numMeshes
+);
+
+164 
+	`CHECK_MSTATUS
+(
+meshAârH™dÀ
+.
+	`jumpToEÀmít
+(0));
+
+165  
+cou¡
+=0; cou¡ < 
+numMeshes
+; ++count )
+
+167 
+	`__debug
+(
+__FUNCTION__
+, "cou¡=%d", 
+cou¡
+);
+
+169 
+MD©aH™dÀ
+ 
+cuºítMesh
+ = 
+meshAârH™dÀ
+.
+	`öputVÆue
+(&
+°©us
+);
+
+170 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+173 
+MObje˘
+ 
+meshMobj
+;
+
+175 
+meshMobj
+ = 
+cuºítMesh
+.
+	`asMesh
+();
+
+176 
+	`__debugMeshInfo
+(
+__FUNCTION__
+, 
+meshMobj
+);
+
+178 
+	`_def‹m_⁄_⁄e_mesh
+(
+d©a
+, 
+ôî
+, 
+loˇlToW‹ldM©rix
+, 
+mIndex
+,
+
+179 
+meshMobj
+,
+
+180 
+ívñ›eH™dÀ
+, 
+vîtM≠AºayD©a
+ );
+
+183 if–!
+meshAârH™dÀ
+.
+	`√xt
+() )
+
+191 –
+MS
+::
+kSuc˚ss
+ );
+
+192 
+	}
+}
+
+195 
+	gTe°Def‹mî
+::
+	$öôVîtM≠pög
+(
+MD©aBlock
+& 
+d©a
+,
+
+196 
+MItGeomëry
+& 
+ôî
+,
+
+197 c⁄° 
+MM©rix
+& 
+loˇlToW‹ldM©rix
+,
+
+198 
+mIndex
+)
+
+200 
+MSètus
+ 
+°©us
+;
+
+203 
+MAºayD©aH™dÀ
+ 
+vîtM≠OutAºayD©a
+ = 
+d©a
+.
+	`ouçutAºayVÆue
+–
+vît_m≠
+, &
+°©us
+ );
+
+204 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+206 
+cou¡
+ = 
+ôî
+.
+	`cou¡
+();
+
+207 
+MAºayD©aBuûdî
+ 
+	`vîtM≠OutAºayBuûdî
+–
+vît_m≠
+, 
+cou¡
+, &
+°©us
+ );
+
+208 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+213 
+MPoötAºay
+ 
+ÆlPts
+;
+
+214 
+ÆlPts
+.
+	`˛ór
+();
+
+216 
+i
+ = 0;
+
+217  !
+ôî
+.
+	`isD⁄e
+(&
+°©us
+) )
+
+219 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+221 
+MD©aH™dÀ
+ 
+öôIndexD©aHnd
+ = 
+vîtM≠OutAºayBuûdî
+.
+	`addEÀmít
+–
+i
+, &
+°©us
+ );
+
+222 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+224 
+√gIndex
+ = -1;
+
+226 
+öôIndexD©aHnd
+.
+	`£tI¡
+–
+√gIndex
+ );
+
+227 
+öôIndexD©aHnd
+.
+	`£tCÀ™
+();
+
+229 
+	`CHECK_MSTATUS
+(
+ÆlPts
+.
+	`≠≥nd
+–
+ôî
+.
+	`posôi⁄
+(Ë* 
+loˇlToW‹ldM©rix
+ ));
+
+230 
+i
+ = i+1;
+
+231 
+ôî
+.
+	`√xt
+();
+
+233 
+	`CHECK_MSTATUS
+(
+vîtM≠OutAºayD©a
+.
+	`£t
+–
+vîtM≠OutAºayBuûdî
+ ));
+
+239 
+MAºayD©aH™dÀ
+ 
+meshAârH™dÀ
+ = 
+d©a
+.
+	`öputAºayVÆue
+–
+drivî_mesh
+, &
+°©us
+ );
+
+240 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+242 
+numMeshes
+ = 
+meshAârH™dÀ
+.
+	`ñemítCou¡
+();
+
+243 
+	`__debug
+("%s(),ÇumMeshes=%d", 
+__FUNCTION__
+, 
+numMeshes
+);
+
+245 
+	`CHECK_MSTATUS
+(
+meshAârH™dÀ
+.
+	`jumpToEÀmít
+(0));
+
+246  
+meshIndex
+=0; meshIndex < 
+numMeshes
+; ++meshIndex )
+
+248 
+	`__debug
+("%s(), meshIndex=%d", 
+__FUNCTION__
+, 
+meshIndex
+);
+
+250 
+MD©aH™dÀ
+ 
+cuºítMesh
+ = 
+meshAârH™dÀ
+.
+	`öputVÆue
+(&
+°©us
+);
+
+251 
+	`CHECK_MSTATUS
+(
+°©us
+);
+
+253 
+MObje˘
+ 
+meshMobj
+ = 
+cuºítMesh
+.
+	`asMesh
+();
+
+254 
+	`__debug
+("%s(), meshMobj.≠iTy≥Så()=%s", 
+__FUNCTION__
+, 
+meshMobj
+.
+	`≠iTy≥Så
+());
+
+256 
+	`__debugMeshInfo
+(
+__FUNCTION__
+, 
+meshMobj
+);
+
+258 
+	`_öôVîtM≠pög_⁄_⁄e_mesh
+(
+meshMobj
+, 
+vîtM≠OutAºayBuûdî
+, 
+ÆlPts
+);
+
+259 
+	`CHECK_MSTATUS
+(
+vîtM≠OutAºayD©a
+.
+	`£t
+–
+vîtM≠OutAºayBuûdî
+ ));
+
+262 if–!
+meshAârH™dÀ
+.
+	`√xt
+() )
+
+271 
+	}
+}
+
+273 
+	gTe°Def‹mî
+::
+	$gëClo£°Pt
+(c⁄° 
+MPoöt
+ &
+±
+, c⁄° 
+MPoötAºay
+ &
+poöts
+)
+
+275 
+±Index
+=0;
+
+276 
+cuºítDi°™˚
+ = 9e99;
+
+277 
+fuπhe°Di°™˚SoF¨
+ = 9e99;
+
+279 
+i
+ = 0; i < 
+poöts
+.
+	`Àngth
+(); ++i)
+
+281 
+cuºítDi°™˚
+ = 
+±
+.
+	`di°™˚To
+–
+poöts
+[
+i
+] );
+
+282 if(
+cuºítDi°™˚
+ < 
+fuπhe°Di°™˚SoF¨
+ )
+
+284 
+±Index
+ = 
+i
+;
+
+285 
+fuπhe°Di°™˚SoF¨
+ = 
+cuºítDi°™˚
+;
+
+289  
+±Index
+;
+
+290 
+	}
+}
+
+292 
+	gTe°Def‹mî
+::
+	$_def‹m_⁄_⁄e_mesh
+(
+MD©aBlock
+& 
+d©a
+,
+
+293 
+MItGeomëry
+& 
+ôî
+,
+
+294 c⁄° 
+MM©rix
+& 
+loˇlToW‹ldM©rix
+,
+
+295 
+mIndex
+,
+
+296 
+MObje˘
+ &
+meshMobj
+,
+
+297 c⁄° 
+MD©aH™dÀ
+ &
+ívñ›eH™dÀ
+, 
+MAºayD©aH™dÀ
+ &
+vîtM≠AºayD©a
+)
+
+299 
+MSètus
+ 
+°©us
+;
+
+301 
+ív
+ = 
+ívñ›eH™dÀ
+.
+	`asFlﬂt
+();
+
+303 
+MItMeshVîãx
+ 
+	`vîtIãr
+–
+meshMobj
+, &
+°©us
+ );
+
+304 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+306  !
+ôî
+.
+	`isD⁄e
+(&
+°©us
+) )
+
+308 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+310 
+weight
+ = 
+	`weightVÆue
+–
+d©a
+, 
+mIndex
+, 
+ôî
+.
+	`ödex
+() );
+
+311 
+ww
+ = 
+weight
+ * 
+ív
+;
+
+313 i‡–
+	`Ábs
+(
+ww
+Ë> 
+FLT_EPSILON
+ )
+
+315 
+	`__debug
+("%s(), vertMapArrayData.elementCount()=%d, iter.index()=%d",
+
+316 
+__FUNCTION__
+, 
+vîtM≠AºayD©a
+.
+	`ñemítCou¡
+(), 
+ôî
+.
+	`ödex
+());
+
+318 
+	`CHECK_MSTATUS
+(
+vîtM≠AºayD©a
+.
+	`jumpToEÀmít
+(
+ôî
+.
+	`ödex
+()));
+
+320 
+ödex_m≠≥d
+ = 
+vîtM≠AºayD©a
+.
+	`öputVÆue
+(&
+°©us
+).
+	`asI¡
+();
+
+321 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+323 if–
+ödex_m≠≥d
+ >= 0 )
+
+325 
+¥evI¡
+;
+
+326 
+	`CHECK_MSTATUS
+–
+vîtIãr
+.
+	`£tIndex
+(
+ödex_m≠≥d
+, 
+¥evI¡
+) );
+
+328 
+MPoöt
+ 
+m≠≥dPt
+ = 
+vîtIãr
+.
+	`posôi⁄
+–
+MS∑˚
+::
+kW‹ld
+, &
+°©us
+ );
+
+329 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+331 
+MPoöt
+ 
+ôîPt
+ = 
+ôî
+.
+	`posôi⁄
+(
+MS∑˚
+::
+kObje˘
+, &
+°©us
+Ë* 
+loˇlToW‹ldM©rix
+;
+
+332 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+334 
+MPoöt
+ 
+±
+ = 
+ôîPt
+ + ((
+m≠≥dPt
+ - iãrPtË* 
+ww
+ );
+
+335 
+±
+ =Öà* 
+loˇlToW‹ldM©rix
+.
+	`övî£
+();
+
+336 
+	`CHECK_MSTATUS
+(
+ôî
+.
+	`£tPosôi⁄
+–
+±
+ ));
+
+339 
+	`CHECK_MSTATUS
+(
+ôî
+.
+	`√xt
+());
+
+341 
+	}
+}
+
+344 
+	gTe°Def‹mî
+::
+	$_öôVîtM≠pög_⁄_⁄e_mesh
+–
+MObje˘
+ &
+meshMobj
+, 
+MAºayD©aBuûdî
+ &
+vîtM≠OutAºayBuûdî
+, c⁄° 
+MPoötAºay
+& 
+ÆlPts
+)
+
+346 
+MSètus
+ 
+°©us
+;
+
+349 
+MItMeshVîãx
+ 
+	`vîtIãr
+–
+meshMobj
+, &
+°©us
+ );
+
+350 
+	`CHECK_MSTATUS
+(
+°©us
+);
+
+351 
+	`CHECK_MSTATUS
+(
+vîtIãr
+.
+	`ª£t
+());
+
+355  !
+vîtIãr
+.
+	`isD⁄e
+(&
+°©us
+) )
+
+357 
+	`CHECK_MSTATUS
+(
+°©us
+);
+
+360 
+MPoöt
+ 
+drivî_±
+;
+
+361 
+drivî_±
+ = 
+vîtIãr
+.
+	`posôi⁄
+–
+MS∑˚
+::
+kW‹ld
+, &
+°©us
+ );
+
+362 
+	`CHECK_MSTATUS
+(
+°©us
+);
+
+365 
+˛o£°_±_ödex
+ = 
+	`gëClo£°Pt
+–
+drivî_±
+, 
+ÆlPts
+ );
+
+368 
+MD©aH™dÀ
+ 
+¢≠D©aHnd
+ = 
+vîtM≠OutAºayBuûdî
+.
+	`addEÀmít
+–
+˛o£°_±_ödex
+, &
+°©us
+ );
+
+369 
+	`CHECK_MSTATUS
+–
+°©us
+ );
+
+370 
+¢≠D©aHnd
+.
+	`£tI¡
+–
+vîtIãr
+.
+	`ödex
+() );
+
+371 
+¢≠D©aHnd
+.
+	`£tCÀ™
+();
+
+373 
+	`CHECK_MSTATUS
+(
+vîtIãr
+.
+	`√xt
+());
+
+375 
+	}
+}
+
+377 
+	gTe°Def‹mî
+::
+	$__debug
+(c⁄° * 
+f‹m©
+, ...) const
+
+379 
+va_li°
+ 
+¨gs
+;
+
+380 
+msg
+[ 1024 ];
+
+382 
+	`va_°¨t
+(
+¨gs
+, 
+f‹m©
+);
+
+384 
+	`v¢¥ötf
+(
+msg
+, 1024, 
+f‹m©
+, 
+¨gs
+);
+
+386 
+	`Ârötf
+(
+°dout
+, "Debug> %s\n", 
+msg
+);
+
+388 
+	`va_íd
+(
+¨gs
+);
+
+389 
+	}
+}
+
+391 
+	gTe°Def‹mî
+::
+	$__debugMeshInfo
+(c⁄° * 
+msg
+, 
+MObje˘
+ &
+meshMobj
+)const
+
+393 #ifde‡
+_DEBUG
+
+
+395 
+MSètus
+ 
+°©us
+;
+
+397 
+MFnMesh
+ 
+	`‚Mesh
+(
+meshMobj
+, &
+°©us
+);
+
+398 
+	`CHECK_MSTATUS
+(
+°©us
+);
+
+400 
+	`__debug
+("%s(), fnMesh.fuŒP©hName=%s", 
+msg
+, 
+‚Mesh
+.
+	`fuŒP©hName
+().
+	`asCh¨
+());
+
+401 
+	`__debug
+("%s(), fnMesh.«me=%s", 
+msg
+, 
+‚Mesh
+.
+	`«me
+().
+	`asCh¨
+());
+
+403 
+MDagP©h
+ 
+∑th
+; 
+	`CHECK_MSTATUS
+(
+‚Mesh
+.
+	`gëP©h
+(path));
+
+404 
+	`__debug
+("%s(),Ö©h=%s", 
+msg
+, 
+∑th
+.
+	`fuŒP©hName
+().
+	`asCh¨
+());
+
+406 
+MDagP©h
+ 
+dag∑th
+ = 
+‚Mesh
+.
+	`dagP©h
+(&
+°©us
+); 
+	`CHECK_MSTATUS
+(status);
+
+407 
+	`__debug
+("%s(), dag∑th=%s", 
+msg
+, 
+dag∑th
+.
+	`fuŒP©hName
+().
+	`asCh¨
+());
+
+409 
+MFnDïídícyNode
+ 
+	`‚DNode
+(
+meshMobj
+, &
+°©us
+); 
+	`CHECK_MSTATUS
+(status);
+
+410 
+	`__debug
+("%s(),Çame=%s", 
+msg
+, 
+‚DNode
+.
+	`«me
+().
+	`asCh¨
+());
+
+412 
+MFnDagNode
+ 
+	`‚DagNode
+(
+meshMobj
+, &
+°©us
+);
+
+413 
+	`CHECK_MSTATUS
+(
+°©us
+);
+
+415 
+MDagP©h
+ 
+∑th2
+; 
+	`CHECK_MSTATUS
+(
+‚DagNode
+.
+	`gëP©h
+(path2));
+
+416 
+	`__debug
+("%s(),Ö©h2=%s", 
+msg
+, 
+∑th2
+.
+	`fuŒP©hName
+().
+	`asCh¨
+());
+
+418 
+MDagP©h
+ 
+dag∑th2
+ = 
+‚DagNode
+.
+	`dagP©h
+(&
+°©us
+); 
+	`CHECK_MSTATUS
+(status);
+
+419 
+	`__debug
+("%s(), dag∑th2=%s", 
+msg
+, 
+dag∑th2
+.
+	`fuŒP©hName
+().
+	`asCh¨
+());
+
+421 
+	}
+}
+
+	@/home/user0/dev/mymagicbox/basetest/testDeformer/src/testDeformer.h
+
+23 #¥agm®
+⁄˚
+
+
+25 
+	~<maya/MIOSåóm.h
+>
+
+26 
+	~<maya/MPxDef‹mîNode.h
+>
+
+27 
+	~<maya/MSåög.h
+>
+
+28 
+	~<maya/MTy≥Id.h
+>
+
+29 
+	~<maya/MPlug.h
+>
+
+30 
+	~<maya/MD©aBlock.h
+>
+
+31 
+	~<maya/MD©aH™dÀ.h
+>
+
+32 
+	~<maya/MAºayD©aH™dÀ.h
+>
+
+33 
+	~<maya/MFnNumîicAâribuã.h
+>
+
+34 
+	~<maya/MFnTy≥dAâribuã.h
+>
+
+35 
+	~<maya/MFnEnumAâribuã.h
+>
+
+36 
+	~<maya/MFlﬂtVe˘‹.h
+>
+
+37 
+	~<maya/MGlobÆ.h
+>
+
+38 
+	~<maya/MPoötAºay.h
+>
+
+39 
+	~<maya/MItMeshVîãx.h
+>
+
+40 
+	~<maya/MItGeomëry.h
+>
+
+41 
+	~<maya/MM©rix.h
+>
+
+42 
+	~<maya/MAºayD©aBuûdî.h
+>
+
+43 
+	~<maya/MFnMesh.h
+>
+
+44 
+	~<maya/MDagP©h.h
+>
+
+45 
+	~<maya/MFnDïídícyNode.h
+>
+
+46 
+	~<maya/MFnDagNode.h
+>
+
+55 ˛as†
+	cTe°Def‹mî
+ : 
+public
+ 
+MPxDef‹mîNode
+
+
+57 
+public
+:
+
+58 
+Te°Def‹mî
+();
+
+59 
+	mvútuÆ
+ ~
+Te°Def‹mî
+();
+
+61 * 
+¸ót‹
+();
+
+63 
+MSètus
+ 
+öôülize
+();
+
+78 
+vútuÆ
+ 
+po°C⁄°ru˘‹
+();
+
+79 
+vútuÆ
+ 
+MSètus
+ 
+def‹m
+(
+MD©aBlock
+& 
+d©a
+,
+
+80 
+MItGeomëry
+& 
+ôî
+,
+
+81 c⁄° 
+MM©rix
+& 
+loˇlToW‹ldM©rix
+,
+
+82 
+mIndex
+);
+
+84 
+MSåög
+ 
+cTy≥Name
+();
+
+85 
+MTy≥Id
+ 
+cTy≥Id
+();
+
+86 
+	mMPxNode
+::
+Ty≥
+ 
+cTy≥
+();
+
+87 c⁄° 
+	mMSåög
+& 
+cCœssifiˇti⁄
+();
+
+89 
+	m¥iv©e
+:
+
+90 
+öôVîtM≠pög
+(
+MD©aBlock
+& 
+d©a
+,
+
+91 
+MItGeomëry
+& 
+ôî
+,
+
+92 c⁄° 
+MM©rix
+& 
+loˇlToW‹ldM©rix
+,
+
+93 
+mIndex
+);
+
+94 
+gëClo£°Pt
+(c⁄° 
+MPoöt
+ &
+±
+, c⁄° 
+MPoötAºay
+ &
+poöts
+);
+
+96 
+_def‹m_⁄_⁄e_mesh
+(
+MD©aBlock
+& 
+d©a
+,
+
+97 
+MItGeomëry
+& 
+ôî
+,
+
+98 c⁄° 
+MM©rix
+& 
+loˇlToW‹ldM©rix
+,
+
+99 
+mIndex
+,
+
+100 
+MObje˘
+ &
+meshMobj
+,
+
+101 c⁄° 
+MD©aH™dÀ
+ &
+ívñ›eH™dÀ
+, 
+MAºayD©aH™dÀ
+ &
+vîtM≠AºayD©a
+);
+
+103 
+_öôVîtM≠pög_⁄_⁄e_mesh
+–
+MObje˘
+ &
+meshMobj
+, 
+MAºayD©aBuûdî
+ &
+vîtM≠OutAºayBuûdî
+, c⁄° 
+MPoötAºay
+& 
+ÆlPts
+
+
+105 
+	$__debug
+(c⁄° * 
+f‹m©
+, ...) const;
+
+106 
+	$__debugMeshInfo
+(c⁄° * 
+msg
+, 
+MObje˘
+ &
+obje˘
+)const;
+
+108 
+¥Ÿe˘ed
+:
+
+109 
+MTy≥Id
+ 
+m_id
+;
+
+110 
+MSåög
+ 
+m_˛assifiˇti⁄
+;
+
+112 
+MObje˘
+ 
+drivî_mesh
+;
+
+113 
+MObje˘
+ 
+öôülized_d©a
+;
+
+114 
+MObje˘
+ 
+vît_m≠
+;
+
+	@
+1
+.
+1
+/usr/include
+5
+362
+/home/user0/dev/mymagicbox/basetest/testDeformer/build/cmake/CMakeLists.txt
+/home/user0/dev/mymagicbox/basetest/testDeformer/build/cmake/Modules/FindMaya.cmake
+/home/user0/dev/mymagicbox/basetest/testDeformer/src/plugin.cpp
+/home/user0/dev/mymagicbox/basetest/testDeformer/src/testDeformer.cpp
+/home/user0/dev/mymagicbox/basetest/testDeformer/src/testDeformer.h
