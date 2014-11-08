@@ -44,7 +44,7 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 
 		initialized_mapping = data.inputValue( self.initialized_data ).asShort();
 		
-		if( initialized_mapping == 1 ):
+		if( initialized_mapping == 1 ):#初始化相关数组, 然后将initialized_mapping设置为2
 			self.initVertMapping(data, iter, localToWorldMatrix, mIndex)
 			initialized_mapping = data.inputValue( self.initialized_data ).asShort()
 	
@@ -56,12 +56,13 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 			
 			vertMapArrayData  = data.inputArrayValue( self.vert_map )
 			
-			meshAttrHandle = data.inputValue( self.driver_mesh )
+			meshAttrHandle = data.inputValue( self.driver_mesh )#得到driver mesh
 			meshMobj = OpenMaya.MObject()
 			
 			meshMobj = meshAttrHandle.asMesh()
 			vertIter = OpenMaya.MItMeshVertex( meshMobj )
 			
+			# 对于driven mesh上的一个点, 找到其权重值weight, 并做变形
 			while( iter.isDone() == False ):
 				weight = self.weightValue( data, mIndex, iter.index() ) #//painted weight
 				ww = weight * env;
@@ -90,8 +91,10 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 
 
 	def initVertMapping( self, data, iter, localToWorldMatrix, mIndex):
+
 		meshAttrHandle = data.inputValue( self.driver_mesh  )
 		meshMobj = meshAttrHandle.asMesh()
+
 		vertIter = OpenMaya.MItMeshVertex( meshMobj )
 		vertIter.reset()
 		count = iter.count()
@@ -102,6 +105,7 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 		allPts = OpenMaya.MPointArray()
 		allPts.clear()
 		
+		# 遍历driven mesh, 将driven mesh的顶点的世界坐标存放到allPts里, 同时初始化vertMapOutArrayData,确定其长度
 		i = 0
 		while( iter.isDone() == False ):
 			initIndexDataHnd = vertMapOutArrayBuilder.addElement( i )
@@ -117,11 +121,16 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 			
 		vertMapOutArrayData.set( vertMapOutArrayBuilder )
 		
+		# 遍历driver mesh 的顶点, 
+		# 查找driven mesh里"距离driver mesh上的某个点"最近的点,
+		# 并把这些点附加到vertMapOutArrayData里
 		while( vertIter.isDone() == False ):
 			driver_pt = OpenMaya.MPoint()
 			driver_pt = vertIter.position( OpenMaya.MSpace.kWorld )
+
 			closest_pt_index = self.getClosestPt( driver_pt, allPts )
 			
+
 			snapDataHnd = vertMapOutArrayBuilder.addElement( closest_pt_index )
 			snapDataHnd.setInt( vertIter.index() )
 			
@@ -132,12 +141,13 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 	
 		tObj  =  self.thisMObject()
 		
+		#更新节点状态
 		setInitMode = OpenMaya.MPlug( tObj, self.initialized_data  )
 		setInitMode.setShort( 2 ) 
 	
 		iter.reset()
 
-	def getClosestPt( self, pt, points ):
+	def getClosestPt( self, pt, points ):#在points里查找距离pt最近的点, 返回该点的序号
 		ptIndex=0
 		currentDistance = 9e99
 		furthestDistanceSoFar = 9e99
@@ -162,13 +172,14 @@ def nodeInitializer():
 	polyMeshAttr = OpenMaya.MFnTypedAttribute()
 	enumAttr = OpenMaya.MFnEnumAttribute()
 	
-	
+	# 存放 driver mesh数据
 	testDeformer.driver_mesh = polyMeshAttr.create( "vertSnapInput", "vsnpin", OpenMaya.MFnData.kMesh )
 	polyMeshAttr.setStorable(False)
 	polyMeshAttr.setConnectable(True)
 	testDeformer.addAttribute( testDeformer.driver_mesh )
 	testDeformer.attributeAffects( testDeformer.driver_mesh, OpenMayaMPx.cvar.MPxDeformerNode_outputGeom )
 
+	# 标记当前节点的状态
 	testDeformer.initialized_data = enumAttr.create( "initialize", "inl" )
 	enumAttr.addField(	"Off", 0)
 	enumAttr.addField(	"Re-Set Bind", 1)	
@@ -181,6 +192,7 @@ def nodeInitializer():
 	testDeformer.addAttribute( testDeformer.initialized_data )
 	testDeformer.attributeAffects( testDeformer.initialized_data, OpenMayaMPx.cvar.MPxDeformerNode_outputGeom )	
 
+	# 存储和变形相关的一些数据
 	testDeformer.vert_map = numericAttr.create( "vtxIndexMap", "vtximp", OpenMaya.MFnNumericData.kLong )
 	numericAttr.setKeyable(False)
 	numericAttr.setArray(True)
