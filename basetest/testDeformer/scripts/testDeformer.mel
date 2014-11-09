@@ -1,3 +1,5 @@
+source testDeformer_list.mel;
+
 // utility functions
 global proc string[] xxu_getShapes( string $xform )
 {
@@ -35,6 +37,7 @@ global proc testDeformer_getDeformerNodeFromSelection()
 	$deformNode = `listConnections -s on ($shape+".inMesh")`;
 
 	$g_testDeformerNodeName = $deformNode[0];
+	//print $g_testDeformerNodeName;
 }
 // delete driver mesh
 global proc testDeformer_deleteDriverMesh(string $xform)
@@ -44,6 +47,9 @@ global proc testDeformer_deleteDriverMesh(string $xform)
 	// break the connection, and delete the driver mesh element 
 	// form deform node plug(it is an array plug)
 	removeMultiInstance -b true $driver_mesh_plug;//
+	
+	list_removeItem($xform);
+	list_update();
 }
 global proc testDeformer_deleteSelectedDriverMesh()
 {
@@ -63,6 +69,9 @@ global proc testDeformer_addDriverMesh(string $xform)
 	$i = `getAttr -size ($g_testDeformerNodeName+".vertSnapInput")`;// get the next available index
 	// connect driver mesh to deform node
 	connectAttr ($shape+".worldMesh[0]") ($g_testDeformerNodeName+".vertSnapInput["+$i+"]");
+	
+	list_addItem($xform);
+	list_update();
 }
 global proc testDeformer_addSelectedDriverMesh()
 {
@@ -72,7 +81,7 @@ global proc testDeformer_addSelectedDriverMesh()
 	    testDeformer_addDriverMesh($sel);
 	}
 }
-/*//////////////////////////////////////////////////
+/*
 Title: testDeformer.mel
 
 Required: testDeformer.mll (or testDeformer.so)
@@ -92,7 +101,7 @@ Description:
 
 Return: 	creates & returns a deformer node of "testDeformer" type.
 
-//////////////////////////////////////////////////*/
+*/
 global proc string[] testDeformer()
 {
 	string $defr[];

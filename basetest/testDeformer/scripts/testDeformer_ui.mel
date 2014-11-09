@@ -24,9 +24,13 @@ global proc testDeformer_ShowTheDeformEffect()
     global string $g_testDeformerNodeName;
     setAttr ($g_testDeformerNodeName+".initialize") 1;
 }
+
 ////////////////////////////////////////////
+global string $g_listUI;
 global proc testDeformer_ui()
 {
+    global string $g_listUI;
+
     testDeformer_loadPlugin();
 
     window -width 150;
@@ -45,7 +49,10 @@ global proc testDeformer_ui()
         -label "Remove Driver Mesh(es)"
         -annotation "Select the driver mesh and press this button to disconnect from the deform node"
         -command "testDeformer_deleteSelectedDriverMesh";
-    
+
+        // list
+	    $g_listUI = `textScrollList  -numberOfRows 8 -allowMultiSelection true -showIndexedItem 4`;
+
         button
         -label "Show the deform effect" 
         -annotation "setAttr \"testDeformer1.initialize\" 1"

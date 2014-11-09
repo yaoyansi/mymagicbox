@@ -1,2 +1,4 @@
 source "testDeformer_ui.mel";
+source "testDeformer_list.mel";
 source "testDeformer.mel";
+

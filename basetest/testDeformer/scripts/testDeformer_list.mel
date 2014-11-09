@@ -1,0 +1,49 @@
+global string $g_drivermesh[];
+global string $g_listUI;
+
+//
+global proc list_addItem(string $xform)
+{
+	global string $g_drivermesh[];
+
+	$foundIndex = stringArrayFind($xform, 0, $g_drivermesh);
+	if($foundIndex == -1)
+	{
+		stringArrayInsertAtIndex(size($g_drivermesh), $g_drivermesh, $xform);
+	}
+}
+global proc list_removeItem(string $xform)
+{
+	global string $g_drivermesh[];
+
+	$foundIndex = stringArrayFind($xform, 0, $g_drivermesh);
+	if($foundIndex != -1)
+	{
+		stringArrayRemoveAtIndex($foundIndex, $g_drivermesh);
+	}
+}
+global proc list_removeSelectedItems()
+{
+   	global string $g_listUI;
+	global string $g_drivermesh[];
+
+    string $selected[] = `textScrollList -q -selectItem $g_listUI`;
+    for($sel in $selected)
+    {
+        list_removeItem($sel);
+    }
+}
+//
+
+global proc list_update()
+{
+	global string $g_listUI;
+	global string $g_drivermesh[];
+
+	textScrollList -e -removeAll $g_listUI;//print $g_listUI;
+	for($mesh in $g_drivermesh)
+	{
+		textScrollList -e -append $mesh $g_listUI;
+	}
+
+}
