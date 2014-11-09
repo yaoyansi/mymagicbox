@@ -27,12 +27,10 @@ global proc testDeformer_ShowTheDeformEffect()
 ////////////////////////////////////////////
 global proc testDeformer_ui()
 {
+    testDeformer_loadPlugin();
+
     window -width 150;
     columnLayout -adjustableColumn true;
-        button 
-        -label "Load Plugin"
-        -command "testDeformer_loadPlugin";
-        
         button 
         -label "Create Deformer Node"
         -annotation "Select the driven mesh and press this button to create the deform node"
