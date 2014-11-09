@@ -49,16 +49,17 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 			initialized_mapping = data.inputValue( self.initialized_data ).asShort()
 	
 		if( initialized_mapping == 2 ): 
-	
+			// 获得envelope的值
 			envelope = OpenMayaMPx.cvar.MPxDeformerNode_envelope
 			envelopeHandle = data.inputValue( envelope )
 			env = envelopeHandle.asFloat()
-			
+
+			// 
 			vertMapArrayData  = data.inputArrayValue( self.vert_map )
 			
-			meshAttrHandle = data.inputValue( self.driver_mesh )#得到driver mesh
+			# 得到driver mesh
+			meshAttrHandle = data.inputValue( self.driver_mesh )
 			meshMobj = OpenMaya.MObject()
-			
 			meshMobj = meshAttrHandle.asMesh()
 			vertIter = OpenMaya.MItMeshVertex( meshMobj )
 			
@@ -68,22 +69,29 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 				ww = weight * env;
 					
 				if ( ww != 0 ): 
+					// 得到vert_map里第i个元素的值, 赋给index_mapped
 					vertMapArrayData.jumpToElement( iter.index() )
 					index_mapped = vertMapArrayData.inputValue().asInt() 
+
 					if( index_mapped >= 0 ): 
 						util = OpenMaya.MScriptUtil()   
 						prevInt = util.asIntPtr()   
 					
 						vertIter.setIndex( index_mapped, prevInt )
 						
+						// driver mesh上的点的世界坐标mappedPt
 						mappedPt = OpenMaya.MPoint()
 						mappedPt = vertIter.position( OpenMaya.MSpace.kWorld )
-					
+
+						// driven mesh上的点的世界坐标iterPt
 						iterPt = OpenMaya.MPoint()
 						iterPt = iter.position() * localToWorldMatrix
-						
+
+						// 用ww在iterPt和mappedPt之间插值,得到pt
 						pt = OpenMaya.MPoint()
 						pt = iterPt + ((mappedPt - iterPt) * ww )
+
+						// 用pt设置driven mesh上的点(局部坐标)
 						pt = pt * localToWorldMatrix.inverse() 
 						iter.setPosition( pt )	
 				
@@ -92,16 +100,20 @@ class testDeformer( OpenMayaMPx.MPxDeformerNode ):
 
 	def initVertMapping( self, data, iter, localToWorldMatrix, mIndex):
 
+		// 得到driver mesh
 		meshAttrHandle = data.inputValue( self.driver_mesh  )
 		meshMobj = meshAttrHandle.asMesh()
 
+		// 用vertIter遍历driver mesh上的点
 		vertIter = OpenMaya.MItMeshVertex( meshMobj )
 		vertIter.reset()
 		count = iter.count()
 		
 		vertMapOutArrayData = data.outputArrayValue( self.vert_map )
-		
+
+		// 用vertMapOutArrayBuilder修改vertMapOutArray
 		vertMapOutArrayBuilder = OpenMaya.MArrayDataBuilder( self.vert_map, count )
+
 		allPts = OpenMaya.MPointArray()
 		allPts.clear()
 		
