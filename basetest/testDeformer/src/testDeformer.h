@@ -62,19 +62,6 @@ public:
 
 	static  MStatus	initialize();
 
-
-	// postConstructor:
-	// The postConstructor method allows us to call MPxNode member
-	// functions during initialization. Internally maya creates two
-	// objects when a user defined node is created, the internal MObject
-	// and the user derived object. The association between the these
-	// two objects is not made until after the MPxNode constructor is
-	// called. This implies that no MPxNode member function can be called
-	// from the MPxNode constructor. The postConstructor will get called
-	// immediately after the constructor when it is safe to call any
-	// MPxNode member function.
-	//
-
 	virtual void	postConstructor();
     virtual MStatus deform(MDataBlock& data,
                           MItGeometry& iter,
@@ -93,17 +80,19 @@ private:
                           unsigned int mIndex);
     int getClosestPt(const MPoint &pt, const MPointArray &points);
 
+    // accumulate the deform values of one driver mesh to outputPtr
     void _deform_on_one_mesh(MDataBlock& data,
                               MItGeometry& iter,
                               const MMatrix& localToWorldMatrix,
                               unsigned int mIndex,
                               MObject &meshMobj,
                               const MDataHandle &envelopeHandle, MArrayDataHandle &vertMapArrayData, MPointArray &outputPtr);
+    // initilize the data from one driver mesh
+    void _initVertMapping_on_one_mesh( MObject &meshMobj, MArrayDataBuilder &vertMapOutArrayBuilder, const MPointArray& allPts);
 
-    void _initVertMapping_on_one_mesh( MObject &meshMobj, MArrayDataBuilder &vertMapOutArrayBuilder, const MPointArray& allPts
-                                      );
-    void __debug(const char* format, ...) const;
-    void __debugMeshInfo(const char* msg, MObject &object)const;
+    // utility functions
+    static void __debug(const char* format, ...);
+    static void __debugMeshInfo(const char* msg, MObject &object);
 
 protected:
 	static MTypeId   m_id;
