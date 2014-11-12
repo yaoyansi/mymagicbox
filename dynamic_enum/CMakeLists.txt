@@ -8,12 +8,12 @@ project(${MY_PROJECT_NAME})
 
 
 if(UNIX)
-	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Modules/")
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake/Modules/")
 
-	  set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Modules/")
+	  set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build/cmake/Modules/")
 
 	else ()
-	  message(SEND_ERROR "Failed to find module path: ${CMAKE_CURRENT_SOURCE_DIR}/Modules/")
+	  message(SEND_ERROR "Failed to find module path: ${CMAKE_CURRENT_SOURCE_DIR}/build/cmake/Modules/")
 	endif()
 endif(UNIX)
  
@@ -36,15 +36,19 @@ find_package(Maya REQUIRED)
 #endif()
 
 # Find Boost
- 
+#set(HDRS)
+#set(SRCS)
+#add_subdirectory(src)
+
 set(HDRS
-	../../src/dynamic_enum.h
+	src/dynamic_enum.h
 )
 
 set(SRCS
-	../../src/dynamic_enum.cpp
-	../../src/plugin.cpp
+	src/dynamic_enum.cpp
+	src/plugin.cpp
 )
+
 
 include_directories( 
 	${MAYA_INCLUDE_DIR} 
@@ -84,7 +88,7 @@ SET_TARGET_PROPERTIES( ${MY_PROJECT_NAME}
 		SUFFIX				${MAYA_EXTENSION}
 
 		OUTPUT_NAME			${MY_PROJECT_NAME}
-		LIBRARY_OUTPUT_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR}/../../plug-ins
-#		RUNTIME_OUTPUT_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR}/../../plug-ins
-#		EXECUTABLE_OUTPUT_PATH		${CMAKE_CURRENT_SOURCE_DIR}/../../plug-ins
+		LIBRARY_OUTPUT_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR}/plug-ins
+#		RUNTIME_OUTPUT_DIRECTORY	${CMAKE_CURRENT_SOURCE_DIR}/plug-ins
+#		EXECUTABLE_OUTPUT_PATH		${CMAKE_CURRENT_SOURCE_DIR}/plug-ins
 )
