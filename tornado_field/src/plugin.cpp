@@ -16,16 +16,16 @@ MStatus initializePlugin( MObject obj )
 
 	CHECK_MSTATUS(
 		plugin.registerNode(
-            torusField::cTypeName(),
-            torusField::cTypeId(),
-            torusField::creator,
-            torusField::initialize,
-            torusField::cType(),
-            &torusField::cClassification()
+            tornadoField::cTypeName(),
+            tornadoField::cTypeId(),
+            tornadoField::creator,
+            tornadoField::initialize,
+            tornadoField::cType(),
+            &tornadoField::cClassification()
 		) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
-	command += torusField::cClassification();
+	command += tornadoField::cClassification();
 	command += "\");}\n";
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );
@@ -37,10 +37,10 @@ MStatus uninitializePlugin( MObject obj )
 {
 	MFnPlugin plugin( obj );
 
-	CHECK_MSTATUS( plugin.deregisterNode( torusField::cTypeId() ) );
+	CHECK_MSTATUS( plugin.deregisterNode( tornadoField::cTypeId() ) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
-	command += torusField::cClassification();
+	command += tornadoField::cClassification();
 	command += "\");}\n";
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );

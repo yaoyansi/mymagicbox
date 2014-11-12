@@ -1,13 +1,4 @@
-//-
-// ==========================================================================
-// Copyright 1995,2006,2008 Autodesk, Inc. All rights reserved.
-//
-// Use of this software is subject to the terms of the Autodesk
-// license agreement provided at the time of installation or download,
-// or which otherwise accompanies this software in either electronic
-// or hard copy form.
-// ==========================================================================
-//+
+
 #include "tornado_field.h"
 #include <cmath>
 
@@ -29,43 +20,43 @@
 #include <common/node_ids.h>
 
 
-MObject torusField::aMinDistance;
-MObject torusField::aAttractDistance;
-MObject torusField::aRepelDistance;
-MObject torusField::aDrag;
-MObject torusField::aSwarmAmplitude;
-MObject torusField::aSwarmFrequency;
-MObject torusField::aSwarmPhase;
+MObject tornadoField::aMinDistance;
+MObject tornadoField::aAttractDistance;
+MObject tornadoField::aRepelDistance;
+MObject tornadoField::aDrag;
+MObject tornadoField::aSwarmAmplitude;
+MObject tornadoField::aSwarmFrequency;
+MObject tornadoField::aSwarmPhase;
 
-MTypeId torusField::m_id( NodeID_tornado_field );
-MString torusField::m_classification("utility/general");
+MTypeId tornadoField::m_id( NodeID_tornado_field );
+MString tornadoField::m_classification("utility/general");
 //
-MString torusField::cTypeName()
+MString tornadoField::cTypeName()
 {
-	return "torusField";
+	return "tornadoField";
 }
 //
-MTypeId torusField::cTypeId()
+MTypeId tornadoField::cTypeId()
 {
-	return torusField::m_id;
+	return tornadoField::m_id;
 }
 //
-MPxNode::Type torusField::cType()
+MPxNode::Type tornadoField::cType()
 {
 	return MPxNode::kFieldNode;
 }
 //
-const MString& torusField::cClassification()
+const MString& tornadoField::cClassification()
 {
 	return m_classification;
 }
 //
-void *torusField::creator()
+void *tornadoField::creator()
 {
-    return new torusField;
+    return new tornadoField;
 }
 
-MStatus torusField::initialize()
+MStatus tornadoField::initialize()
 //
 //	Descriptions:
 //		Initialize the node, attributes.
@@ -138,7 +129,7 @@ MStatus torusField::initialize()
 }
 
 
-MStatus torusField::compute(const MPlug& plug, MDataBlock& block)
+MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
 //
 //	Descriptions:
 //		compute output force.
@@ -227,7 +218,7 @@ MStatus torusField::compute(const MPlug& plug, MDataBlock& block)
 }
 
 
-void torusField::applyNoMaxDist
+void tornadoField::applyNoMaxDist
 	(
 		MDataBlock &block,				// get field param from this block
 		const MVectorArray &points,		// current position of Object
@@ -478,7 +469,7 @@ void torusField::applyNoMaxDist
 }
 
 
-void torusField::applyMaxDist
+void tornadoField::applyMaxDist
 	(
 		MDataBlock& block,				// get field param from this block
 		const MVectorArray &points,		// current position of Object
@@ -668,7 +659,7 @@ void torusField::applyMaxDist
 }
 
 
-void torusField::ownerPosition
+void tornadoField::ownerPosition
 	(
 		MDataBlock& block,
 		MVectorArray &ownerPosArray
@@ -740,7 +731,7 @@ void torusField::ownerPosition
 }
 
 
-MStatus torusField::getWorldPosition( MVector &vector )
+MStatus tornadoField::getWorldPosition( MVector &vector )
 //
 //	Descriptions:
 //		get the field position in the world space.
@@ -768,21 +759,21 @@ MStatus torusField::getWorldPosition( MVector &vector )
 	status = matrixPlug.getValue( matrixObject );
 	if( !status )
 	{
-		status.perror("torusField::getWorldPosition: get matrixObject");
+		status.perror("tornadoField::getWorldPosition: get matrixObject");
 		return( status );
 	}
 
 	MFnMatrixData worldMatrixData( matrixObject, &status );
 	if( !status )
 	{
-		status.perror("torusField::getWorldPosition: get worldMatrixData");
+		status.perror("tornadoField::getWorldPosition: get worldMatrixData");
 		return( status );
 	}
 
 	MMatrix worldMatrix = worldMatrixData.matrix( &status );
 	if( !status )
 	{
-		status.perror("torusField::getWorldPosition: get worldMatrix");
+		status.perror("tornadoField::getWorldPosition: get worldMatrix");
 		return( status );
 	}
 
@@ -796,7 +787,7 @@ MStatus torusField::getWorldPosition( MVector &vector )
 }
 
 
-MStatus torusField::getWorldPosition( MDataBlock& block, MVector &vector )
+MStatus tornadoField::getWorldPosition( MDataBlock& block, MVector &vector )
 //
 //	Descriptions:
 //		Find the field position in the world space.
@@ -832,7 +823,7 @@ MStatus torusField::getWorldPosition( MDataBlock& block, MVector &vector )
     return( status );
 }
 
-MStatus torusField::getForceAtPoint(const MVectorArray&	points,
+MStatus tornadoField::getForceAtPoint(const MVectorArray&	points,
                                   const MVectorArray&	velocities,
                                   const MDoubleArray&	masses,
                                   MVectorArray&	forceArray,
@@ -857,7 +848,7 @@ MStatus torusField::getForceAtPoint(const MVectorArray&	points,
     return MS::kSuccess;
 }
 
-MStatus torusField::iconSizeAndOrigin(	GLuint& width,
+MStatus tornadoField::iconSizeAndOrigin(	GLuint& width,
 					GLuint& height,
 					GLuint& xbo,
 					GLuint& ybo   )
@@ -879,7 +870,7 @@ MStatus torusField::iconSizeAndOrigin(	GLuint& width,
 	return MS::kSuccess;
 }
 
-MStatus torusField::iconBitmap(GLubyte* bitmap)
+MStatus tornadoField::iconBitmap(GLubyte* bitmap)
 //
 //	This method is not required to be overridden.  It should be overridden
 //	if the plug-in has custom icon.
@@ -957,7 +948,7 @@ void interpolate( double f[4], register int i, register int n )
 	f[3] = hermite( f0[3], f1[3], f0[n], f1[n], xarg[n] );
 }
 
-void torusField::noiseFunction( double *inNoise, double *out )
+void tornadoField::noiseFunction( double *inNoise, double *out )
 //
 //	Descriptions:
 //		A noise function.
@@ -986,7 +977,7 @@ void torusField::noiseFunction( double *inNoise, double *out )
 //	Descriptions:
 //		Draw a set of rings to symbolie the field. This does not override default icon, you can do that by implementing the iconBitmap() function
 //
-void torusField::draw( M3dView& view, const MDagPath& path, M3dView::DisplayStyle style, M3dView:: DisplayStatus )
+void tornadoField::draw( M3dView& view, const MDagPath& path, M3dView::DisplayStyle style, M3dView:: DisplayStatus )
 {
 	 view.beginGL();
 	 for (int j = 0; j < SEGMENTS; j++ )

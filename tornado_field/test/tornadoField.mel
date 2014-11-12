@@ -1,0 +1,28 @@
+
+global proc tornadoField() 
+{
+	file -force -new;
+	currentUnit -linear centimeter -angle degree -time film;   
+
+	// Load the plug-in field. 
+	//tornadoField
+	loadPlugin "tornadoField.so";
+
+	// Create the new field node
+	createNode tornadoField -name torus;
+
+	// create particle object.
+	//
+	particle -jbp 0.0 0.0 0.0 -nj 250 -jr 5 -c 1 -name particles ;
+
+	// connect torus field node with the particle object.
+	//
+	connectDynamic -f torus particles ;
+	setAttr "torus.attractDistance" 10;
+	setAttr "torus.repelDistance" 5;
+
+	playbackOptions -e -min 0.00 -max 600.0;
+	currentTime -e 0;
+	play -wait -forward true;
+
+}

@@ -1,22 +1,3 @@
-//-
-// ==========================================================================
-// Copyright 1995,2006,2008 Autodesk, Inc. All rights reserved.
-//
-// Use of this software is subject to the terms of the Autodesk
-// license agreement provided at the time of installation or download,
-// or which otherwise accompanies this software in either electronic
-// or hard copy form.
-// ==========================================================================
-//+
-
-//  Description
-//	The torusField node implements an attraction-and-repel field.
-//
-//	The field repels all objects between itself and repelDistance attribute
-//  and attracts objects greater than attractDistance attribute from itself.
-//  This will eventually result in the objects clustering
-//	in a torus shape around the field.
-//
 
 #include <maya/MIOStream.h>
 #include <maya/MVector.h>
@@ -38,11 +19,11 @@
 		return MS::kFailure;		\
 	}
 
-class torusField: public MPxFieldNode
+class tornadoField: public MPxFieldNode
 {
 public:
-	torusField() {};
-	virtual ~torusField() {};
+	tornadoField() {};
+	virtual ~tornadoField() {};
 
 	static void		*creator();
 	static MStatus	initialize();
@@ -152,7 +133,7 @@ private:
 
 // inlines
 //
-inline double torusField::magnitudeValue( MDataBlock& block )
+inline double tornadoField::magnitudeValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -165,7 +146,7 @@ inline double torusField::magnitudeValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::attenuationValue( MDataBlock& block )
+inline double tornadoField::attenuationValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -178,7 +159,7 @@ inline double torusField::attenuationValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::maxDistanceValue( MDataBlock& block )
+inline double tornadoField::maxDistanceValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -191,7 +172,7 @@ inline double torusField::maxDistanceValue( MDataBlock& block )
 	return( value );
 }
 
-inline bool torusField::useMaxDistanceValue( MDataBlock& block )
+inline bool tornadoField::useMaxDistanceValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -204,7 +185,7 @@ inline bool torusField::useMaxDistanceValue( MDataBlock& block )
 	return( value );
 }
 
-inline bool torusField::applyPerVertexValue( MDataBlock& block )
+inline bool tornadoField::applyPerVertexValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -217,7 +198,7 @@ inline bool torusField::applyPerVertexValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::minDistanceValue( MDataBlock& block )
+inline double tornadoField::minDistanceValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -230,7 +211,7 @@ inline double torusField::minDistanceValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::attractDistanceValue( MDataBlock& block )
+inline double tornadoField::attractDistanceValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -243,7 +224,7 @@ inline double torusField::attractDistanceValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::repelDistanceValue( MDataBlock& block )
+inline double tornadoField::repelDistanceValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -256,7 +237,7 @@ inline double torusField::repelDistanceValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::dragValue( MDataBlock& block )
+inline double tornadoField::dragValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -269,7 +250,7 @@ inline double torusField::dragValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::swarmAmplitudeValue( MDataBlock& block )
+inline double tornadoField::swarmAmplitudeValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -282,7 +263,7 @@ inline double torusField::swarmAmplitudeValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::swarmFrequencyValue( MDataBlock& block )
+inline double tornadoField::swarmFrequencyValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -295,7 +276,7 @@ inline double torusField::swarmFrequencyValue( MDataBlock& block )
 	return( value );
 }
 
-inline double torusField::swarmPhaseValue( MDataBlock& block )
+inline double tornadoField::swarmPhaseValue( MDataBlock& block )
 {
 	MStatus status;
 
@@ -308,7 +289,7 @@ inline double torusField::swarmPhaseValue( MDataBlock& block )
 	return( value );
 }
 
-inline MStatus torusField::ownerCentroidValue(MDataBlock& block,MVector &vector)
+inline MStatus tornadoField::ownerCentroidValue(MDataBlock& block,MVector &vector)
 {
 	MStatus status;
 
