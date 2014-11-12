@@ -11,14 +11,14 @@ PLUGIN_EXPORT MStatus initializePlugin( MObject obj )
 
 	MFnPlugin plugin( obj, PLUGIN_COMPANY, "4.5", "Any" );
 
-	CHECK_MSTATUS( 
-		plugin.registerNode( 
-		node_template::typeName(), 
-		node_template::typeId(), 
-		node_template::creator, 
-		node_template::initialize, 
-		node_template::type(),
-		&node_template::classification() 
+	CHECK_MSTATUS(
+		plugin.registerNode(
+		node_template::cTypeName(),
+		node_template::cTypeId(),
+		node_template::creator,
+		node_template::initialize,
+		node_template::cType(),
+		&node_template::classification()
 		) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
@@ -34,7 +34,7 @@ PLUGIN_EXPORT MStatus uninitializePlugin( MObject obj )
 {
 	MFnPlugin plugin( obj );
 
-	CHECK_MSTATUS( plugin.deregisterNode( node_template::typeId() ) );
+	CHECK_MSTATUS( plugin.deregisterNode( node_template::cTypeId() ) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
 	command += node_template::classification();

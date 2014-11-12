@@ -38,13 +38,13 @@
 // IFF type ID
 // Each node requires a unique identifier which is used by
 // MFnDependencyNode::create() to identify which node to create, and by
-// the Maya file format. 
+// the Maya file format.
 //
 // For local testing of nodes you can use any identifier between
 // 0x00000000 and 0x0007ffff, but for any node that you plan to use for
 // more permanent purposes, you should get a universally unique id from
 // Autodesk Support. You will be assigned a unique range that you
-// can manage on your own. 
+// can manage on your own.
 //
 MTypeId node_template::m_id( 0x81000 );
 MString node_template::m_classification("shader/surface");
@@ -84,7 +84,7 @@ MObject  node_template::aLightDirection;
 MObject  node_template::aLightDirectionX;
 MObject  node_template::aLightDirectionY;
 MObject  node_template::aLightDirectionZ;
-MObject  node_template::aLightIntensity; 
+MObject  node_template::aLightIntensity;
 MObject  node_template::aLightIntensityR;
 MObject  node_template::aLightIntensityG;
 MObject  node_template::aLightIntensityB;
@@ -110,17 +110,17 @@ void node_template::postConstructor( )
 	setMPSafe( true );
 }
 
-MString node_template::typeName()
+MString node_template::cTypeName()
 {
 	return "node_template";
 }
 
-MTypeId node_template::typeId()
+MTypeId node_template::cTypeId()
 {
 	return node_template::m_id;
 }
 
-MPxNode::Type node_template::type()
+MPxNode::Type node_template::cType()
 {
 	return MPxNode::kDependNode;
 }
@@ -142,7 +142,7 @@ node_template::~node_template() { }
 // The creator() method allows Maya to instantiate instances of this node.
 // It is called every time a new instance of the node is requested by
 // either the createNode command or the MFnDependencyNode::create()
-// method. 
+// method.
 //
 // In this case creator simply returns a new node_template object.
 //
@@ -156,18 +156,18 @@ void* node_template::creator()
 // The initialize method is called only once when the node is first
 // registered with Maya. In this method you define the attributes of the
 // node, what data comes in and goes out of the node that other nodes may
-// want to connect to. 
+// want to connect to.
 //
 
 MStatus node_template::initialize()
 {
-	MFnNumericAttribute nAttr; 
+	MFnNumericAttribute nAttr;
 	MFnLightDataAttribute lAttr;
 
 	MStatus status; // Status will be used to hold the MStatus value
 	// returned by each api function call. It is important
 	// to check the status returned by a call to aid in
-	// debugging. Failed API calls can result in subtle 
+	// debugging. Failed API calls can result in subtle
 	// errors that can be difficult to track down, you may
 	// wish to use the CHECK_MSTATUS macro for any API
 	// call where you do not need to provide your own
@@ -187,7 +187,7 @@ MStatus node_template::initialize()
 	//
 	// setStorable - Sets whether this attribute should be storable. If an
 	//				 attribute is storable, then it will be writen out
-	//				 when the node is stored to a file. Attributes are 
+	//				 when the node is stored to a file. Attributes are
 	//               storable by default.
 	//
 	// setDefault  - Sets the default value for this attribute.
@@ -227,7 +227,7 @@ MStatus node_template::initialize()
 	//
 	aTranslucenceCoeff = nAttr.create( "translucenceCoeff", "tc",
 		MFnNumericData::kFloat, 0, &status );
-	CHECK_MSTATUS( status );	
+	CHECK_MSTATUS( status );
 	CHECK_MSTATUS( nAttr.setKeyable( true ) );
 	CHECK_MSTATUS( nAttr.setStorable( true ) );
 	CHECK_MSTATUS( nAttr.setDefault( 0.0f ) );
@@ -470,7 +470,7 @@ MStatus node_template::initialize()
 	CHECK_MSTATUS ( nAttr.setWritable(false) );
 	CHECK_MSTATUS( nAttr.setDefault( 1.0f ) );
 
-	aLightIntensity = nAttr.create( "lightIntensity", "li", 
+	aLightIntensity = nAttr.create( "lightIntensity", "li",
 		aLightIntensityR, aLightIntensityG, aLightIntensityB,
 		&status );
 	CHECK_MSTATUS( status );
@@ -537,7 +537,7 @@ MStatus node_template::initialize()
 	CHECK_MSTATUS ( nAttr.setWritable(false) );
 
 	aLightData = lAttr.create( "lightDataArray", "ltd", aLightDirection,
-		aLightIntensity, aLightAmbient, aLightDiffuse, aLightSpecular, 
+		aLightIntensity, aLightAmbient, aLightDiffuse, aLightSpecular,
 		aLightShadowFraction, aPreShadowIntensity, aLightBlindData,
 		&status );
 	CHECK_MSTATUS( status );
@@ -608,15 +608,15 @@ MStatus node_template::initialize()
 
 
 // The compute() method does the actual work of the node using the inputs
-// of the node to generate its output. 
+// of the node to generate its output.
 //
 // Compute takes two parameters: plug and data.
 // - Plug is the the data value that needs to be recomputed
 // - Data provides handles to all of the nodes attributes, only these
 //   handles should be used when performing computations.
 //
-MStatus node_template::compute( const MPlug& plug, MDataBlock& block ) 
-{ 
+MStatus node_template::compute( const MPlug& plug, MDataBlock& block )
+{
 	// The plug parameter will allow us to determine which output attribute
 	// needs to be calculated.
 	//
@@ -630,7 +630,7 @@ MStatus node_template::compute( const MPlug& plug, MDataBlock& block )
 		|| plug == aOutTransB )
 	{
 		MStatus status;
-		MFloatVector resultColor( 0.0, 0.0, 0.0 ); 
+		MFloatVector resultColor( 0.0, 0.0, 0.0 );
 
 
 		// Get surface shading parameters from input block
@@ -675,7 +675,7 @@ MStatus node_template::compute( const MPlug& plug, MDataBlock& block )
 		{
 			// Get the current light out of the array
 			//
-			MDataHandle currentLight = lightData.inputValue( &status ); 
+			MDataHandle currentLight = lightData.inputValue( &status );
 			CHECK_MSTATUS( status );
 
 
@@ -761,7 +761,7 @@ MStatus node_template::compute( const MPlug& plug, MDataBlock& block )
 			outTrans = transparency;   // Set the output value
 			outTransHandle.setClean(); // Mark the output value as clean
 		}
-	} 
+	}
 	else
 	{
 		return( MS::kUnknownParameter ); // We got an unexpected plug
