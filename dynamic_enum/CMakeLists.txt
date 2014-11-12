@@ -28,12 +28,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "")
 endif ()
 
 #set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/dist")
- 
+
 find_package(Maya REQUIRED)
- 
-#if(NOT "${OGRE_VERSION_NAME}" STREQUAL "Cthugha")
-#  message(SEND_ERROR "You need Ogre 1.7 Cthugha to build this.")
-#endif()
 
 #
 add_subdirectory(src)
