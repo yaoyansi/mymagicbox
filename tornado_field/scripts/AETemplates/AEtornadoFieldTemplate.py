@@ -25,20 +25,32 @@ mental ray shader.
 """
 import pymel.core			as pm
 import mymagicbox.AETemplateBase	as AETemplateBase 
+import mymagicbox.log			as log 
 
 class AEtornadoFieldTemplate(AETemplateBase.mmbTemplateBase):
-    def buildBody(self, nodeName):
-        print "building", nodeName
-        self.beginLayout("Transform Attributes",collapse=0)
-        self.addControl("translate")
-        self.addControl("rotate")
-        self.addControl("scale")
-        self.addControl("shear")
-        self.addControl("rotateOrder")
-        self.addControl("rotateAxis")
-        self.addControl("inheritsTransform")
-        self.endLayout()
+	def buildBody(self, nodeName):
+		log.debug("building AETemplate for node: %s", nodeName)
 
-        pm.mel.AEdependNodeTemplate(self.nodeName)
-        
-        self.addExtraControls()
+		self.beginLayout("Transform Attributes",collapse=0)
+		self.addControl("translate")
+		self.addControl("rotate")
+		self.addControl("scale")
+		self.addControl("shear")
+		self.addControl("rotateOrder")
+		self.addControl("rotateAxis")
+		self.addControl("inheritsTransform")
+		self.endLayout()
+
+		self.beginLayout("Torus Field Attributes", collapse=0);
+		self.addControl("minDistance")
+		self.addControl("attractDistance")
+		self.addControl("repelDistance")
+		self.addControl("drag")
+		self.addControl("swarmAmplitude")
+		self.addControl("swarmFrequency")
+		self.addControl("swarmPhase")
+		self.endLayout()
+
+		pm.mel.AEdependNodeTemplate(self.nodeName)
+
+		self.addExtraControls()

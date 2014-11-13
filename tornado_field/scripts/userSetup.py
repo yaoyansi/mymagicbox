@@ -1,4 +1,6 @@
-
+"""
+1. I set PYTHONPATH :+= scripts in mod file, so this userSetup.py is loaded automatically
+"""
 import os
 import sys
 import maya.cmds as cmds
@@ -15,8 +17,7 @@ commonPath = modulePath+'/../common';
 sys.path.insert(0, commonPath);
 
 """
-As a convenience, when pymel is imported it will automatically import the module ``AETemplates``, if it exists,
-thereby causing any AETemplates within it or its sub-modules to be registered. Be sure to import pymel
-or modules containing your ``AETemplate`` classes before opening the Atrribute Editor for the node types in question.
+2. When pymel is imported it will automatically import the module ``AETemplates``, if it exists.
+So I have to import pymel manully to regist my AETemplates which are located at ./AETemplates
 """
 import pymel.core
