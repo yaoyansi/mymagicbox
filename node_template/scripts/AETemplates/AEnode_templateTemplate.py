@@ -23,31 +23,24 @@ To check which python templates are loaded::
 The example below demonstrates the simplest case, which is the first. It provides a layout for the mib_amb_occlusion
 mental ray shader.
 """
+import pymel.core			as pm
+import mymagicbox.AETemplateBase	as AETemplateBase 
+import mymagicbox.log			as log 
 
-from pymel.core import *
+class AEnode_templateTemplate(AETemplateBase.mmbTemplateBase):
+	def buildBody(self, nodeName):
+		log.debug("building AETemplate for node: %s", nodeName)
 
-class LocalizedTemplate(ui.AETemplate):
-    "automatically apply language localizations to template arguments"
-    def _applyLocalization(self, name):
-        if name is not None and len(name)>2 and name[0] == 'k' and name[1].isupper():
-            return mel.uiRes('m_' + self.__class__.__name__ + '.' + name)
-        return name
+		self.AEswatchDisplay(nodeName)
 
-    def addControl(self, control, label=None, **kwargs):
-        label = self._applyLocalization(label)
-        ui.AETemplate.addControl(self, control, label=label, **kwargs)
+		self.beginLayout("Common Material Attributes",collapse=0)
+		self.addControl("color")
+		self.addControl("transparency")
+		self.addControl("incandescence")
+		self.addControl("diffuseReflectivity")
+		self.addControl("translucenceCoeff")
+		self.endLayout()
 
-    def beginLayout(self, name, collapse=True):
-        name =  self._applyLocalization(name)
-        ui.AETemplate.beginLayout(self, name, collapse=collapse)
+		pm.mel.AEdependNodeTemplate(self.nodeName)
 
-class mmbTemplateBase(LocalizedTemplate):
-    def __init__(self, nodeName):
-        LocalizedTemplate.__init__(self,nodeName)
-        self.beginScrollLayout()
-        self.buildBody(nodeName)
-        self.endScrollLayout()
-
-    def AEswatchDisplay(self, nodeName):
-        mel.AEswatchDisplay(nodeName)
-
+		self.addExtraControls()

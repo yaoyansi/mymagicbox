@@ -1,4 +1,5 @@
 + node_template any /home/user0/dev/mymagicbox/node_template
+
 PATH +:= bin
 XBMLANGPATH +:= icons
 MAYA_RENDER_DESC_PATH +:= .
