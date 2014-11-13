@@ -22,6 +22,7 @@
 //
 
 #include "node_template.h"
+#include <common/node_ids.h>
 
 
 /////////////////////////////////
@@ -46,7 +47,7 @@
 // Autodesk Support. You will be assigned a unique range that you
 // can manage on your own.
 //
-MTypeId node_template::m_id( 0x81000 );
+MTypeId node_template::m_id( NodeID_node_template );
 MString node_template::m_classification("shader/surface");
 
 ///////////////////////////////////////////////////////

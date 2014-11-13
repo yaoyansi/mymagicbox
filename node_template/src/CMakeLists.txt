@@ -15,6 +15,7 @@ ADD_LIBRARY( ${MY_PROJECT_NAME}
 
 include_directories( 
 	${MAYA_INCLUDE_DIR} 
+	"../../"
 )
 
 TARGET_LINK_LIBRARIES( ${MY_PROJECT_NAME}
