@@ -1,6 +1,7 @@
 set(HDRS
 	version_control_node.h
 	version_helper.h
+	version.h
 )
 
 set(SRCS

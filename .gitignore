@@ -21,5 +21,6 @@
 *.cache
 *.so
 *.o
+*.swatches
 *.*~
 *~

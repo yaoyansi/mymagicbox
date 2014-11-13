@@ -37,6 +37,10 @@ class AEversion_controlTemplate(AETemplateBase.mmbTemplateBase):
 		self.addControl("color")
 		self.endLayout()
 
+		self.beginLayout("Version",collapse=0)
+		self.addControl("mmbversion")
+		self.endLayout()
+
 		pm.mel.AEdependNodeTemplate(self.nodeName)
 
 		self.addExtraControls()

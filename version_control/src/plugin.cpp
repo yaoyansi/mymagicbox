@@ -2,6 +2,7 @@
 #include <maya/MStatus.h>
 
 #include "version_control_node.h"
+#include "version.h"
 
 // These methods load and unload the plugin, registerNode registers the
 // new node type with maya
@@ -9,7 +10,7 @@
 PLUGIN_EXPORT MStatus initializePlugin( MObject obj )
 {
 
-	MFnPlugin plugin( obj, PLUGIN_COMPANY, "4.5", "Any" );
+	MFnPlugin plugin( obj, PLUGIN_COMPANY, VERSION_STRING, "Any" );
 
 	CHECK_MSTATUS(
 		plugin.registerNode(

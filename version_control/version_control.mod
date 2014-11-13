@@ -1,4 +1,4 @@
-+ version_control any /home/user0/dev/mymagicbox/version_controls
++ version_control any /home/user0/dev/mymagicbox/version_control
 
 PATH +:= bin
 XBMLANGPATH +:= icons
