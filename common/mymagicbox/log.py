@@ -1,19 +1,19 @@
 
 #
 def fatal(format, *params):
-    print("mymagicbox> Fatal> "+format % params);
+    print("mymagicbox| Fat| "+format % params);
 
 def err(format, *params):
-    print("mymagicbox> Err>   "+format % params);
+    print("mymagicbox| Err| "+format % params);
 
 def warn(format, *params):
-    print("mymagicbox> Warn>  "+format % params);
+    print("mymagicbox| Wrn| "+format % params);
 
 def info(format, *params):
-    print("mymagicbox> Info>  "+format % params);
+    print("mymagicbox| Inf| "+format % params);
 
 def debug(format, *params):
-    print("mymagicbox> Debug> "+format % params);
+    print("mymagicbox| Dbg| "+format % params);
 
 #
 if __name__ == "__main__":
