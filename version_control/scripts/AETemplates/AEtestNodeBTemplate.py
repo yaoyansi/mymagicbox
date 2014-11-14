@@ -27,14 +27,14 @@ import pymel.core			as pm
 import mymagicbox.AETemplateBase	as AETemplateBase 
 import mymagicbox.log			as log 
 
-class AEversion_controlTemplate(AETemplateBase.mmbTemplateBase):
+class AEtestNodeBTemplate(AETemplateBase.mmbTemplateBase):
 	def buildBody(self, nodeName):
 		log.debug("building AETemplate for node: %s", nodeName)
 
 		self.AEswatchDisplay(nodeName)
 
 		self.beginLayout("Common Material Attributes",collapse=0)
-		self.addControl("color")
+		self.addControl("attribute0")
 		self.endLayout()
 
 		self.beginLayout("Version",collapse=0)
