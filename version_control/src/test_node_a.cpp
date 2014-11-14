@@ -52,7 +52,7 @@ VersionHelper TestNodeA::m_version_helper;
 // DESCRIPTION: attribute information
 ///////////////////////////////////////////////////////
 //
-MObject  TestNodeA::aColor;
+MObject  TestNodeA::aAttribute0;
 MObject  TestNodeA::aOutColor;
 
 
@@ -130,7 +130,7 @@ MStatus TestNodeA::initialize()
 
 	// Input Attributes
 	//
-	aColor = nAttr.createColor( "color", "c", &status );
+	aAttribute0 = nAttr.createColor( "attribute0", "attr0", &status );
 	CHECK_MSTATUS( status );
 	CHECK_MSTATUS( nAttr.setKeyable( true ) );
 	CHECK_MSTATUS( nAttr.setStorable( true ) );
@@ -146,10 +146,10 @@ MStatus TestNodeA::initialize()
 	CHECK_MSTATUS( nAttr.setWritable( false ) );
 
 
-	CHECK_MSTATUS( addAttribute( aColor ) );
+	CHECK_MSTATUS( addAttribute( aAttribute0 ) );
 	CHECK_MSTATUS( addAttribute( aOutColor ) );
 
-	CHECK_MSTATUS( attributeAffects( aColor, aOutColor ) );
+	CHECK_MSTATUS( attributeAffects( aAttribute0, aOutColor ) );
 
 
 	m_version_helper.initialize();
@@ -179,7 +179,7 @@ MStatus TestNodeA::compute( const MPlug& plug, MDataBlock& block )
 
 		// Get surface shading parameters from input block
 		//
-		MFloatVector& surfaceColor = block.inputValue( aColor, &status ).asFloatVector();
+		MFloatVector& surfaceColor = block.inputValue( aAttribute0, &status ).asFloatVector();
 		CHECK_MSTATUS( status );
 
 		// Factor incident light with surface color and add incandescence

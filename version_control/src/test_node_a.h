@@ -84,7 +84,7 @@ protected:
 	static VersionHelper    m_version_helper;
 
 	// Surface color
-	static MObject  aColor;
+	static MObject  aAttribute0;
 
 	// Output color
 	static MObject  aOutColor;
