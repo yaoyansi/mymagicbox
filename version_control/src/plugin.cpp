@@ -1,7 +1,7 @@
 #include <maya/MFnPlugin.h>
 #include <maya/MStatus.h>
 
-#include "version_control_node.h"
+#include "test_node_a.h"
 #include "version.h"
 
 // These methods load and unload the plugin, registerNode registers the
@@ -10,20 +10,20 @@
 PLUGIN_EXPORT MStatus initializePlugin( MObject obj )
 {
 
-	MFnPlugin plugin( obj, PLUGIN_COMPANY, VERSION_STRING, "Any" );
+	MFnPlugin plugin( obj, PLUGIN_COMPANY, PLUGIN_VERSION_STRING, "Any" );
 
 	CHECK_MSTATUS(
 		plugin.registerNode(
-		node_template::cTypeName(),
-		node_template::cTypeId(),
-		node_template::creator,
-		node_template::initialize,
-		node_template::cType(),
-		&node_template::classification()
+		TestNodeA::cTypeName(),
+		TestNodeA::cTypeId(),
+		TestNodeA::creator,
+		TestNodeA::initialize,
+		TestNodeA::cType(),
+		&TestNodeA::classification()
 		) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
-	command += node_template::classification();
+	command += TestNodeA::classification();
 	command += "\");}\n";
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );
@@ -35,10 +35,10 @@ PLUGIN_EXPORT MStatus uninitializePlugin( MObject obj )
 {
 	MFnPlugin plugin( obj );
 
-	CHECK_MSTATUS( plugin.deregisterNode( node_template::cTypeId() ) );
+	CHECK_MSTATUS( plugin.deregisterNode( TestNodeA::cTypeId() ) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
-	command += node_template::classification();
+	command += TestNodeA::classification();
 	command += "\");}\n";
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );

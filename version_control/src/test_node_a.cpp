@@ -21,8 +21,7 @@
 // "SurfaceShader" attribute.
 //
 
-#include "version_control_node.h"
-#include <common/node_ids.h>
+#include "test_node_a.h"
 
 /////////////////////////////////
 // Plugin Lambert Shader Class //
@@ -46,22 +45,22 @@
 // Autodesk Support. You will be assigned a unique range that you
 // can manage on your own.
 //
-MTypeId node_template::m_id( NodeID_version_control );
-MString node_template::m_classification("shader/surface");
-VersionHelper node_template::m_version_helper;
+MTypeId TestNodeA::m_id( 0x00000 );
+MString TestNodeA::m_classification("shader/surface");
+VersionHelper TestNodeA::m_version_helper;
 ///////////////////////////////////////////////////////
 // DESCRIPTION: attribute information
 ///////////////////////////////////////////////////////
 //
-MObject  node_template::aColor;
-MObject  node_template::aOutColor;
+MObject  TestNodeA::aColor;
+MObject  TestNodeA::aOutColor;
 
 
 // the postConstructor() function is called immediately after the objects
 // constructor. It is not safe to call MPxNode member functions from the
 // constructor, instead they should be called here.
 //
-void node_template::postConstructor( )
+void TestNodeA::postConstructor()
 {
 	// setMPSafe indicates that this shader can be used for multiprocessor
 	// rendering. For a shading node to be MP safe, it cannot access any
@@ -73,22 +72,22 @@ void node_template::postConstructor( )
 	m_version_helper.postConstructor(thisMObject());
 }
 
-MString node_template::cTypeName()
+MString TestNodeA::cTypeName()
 {
-	return "version_control";
+	return "testNodeA";
 }
 
-MTypeId node_template::cTypeId()
+MTypeId TestNodeA::cTypeId()
 {
-	return node_template::m_id;
+	return TestNodeA::m_id;
 }
 
-MPxNode::Type node_template::cType()
+MPxNode::Type TestNodeA::cType()
 {
 	return MPxNode::kDependNode;
 }
 
-const MString& node_template::classification()
+const MString& TestNodeA::classification()
 {
 	return m_classification;
 }
@@ -98,8 +97,8 @@ const MString& node_template::classification()
 // destruction
 //
 
-node_template::node_template() { }
-node_template::~node_template() { }
+TestNodeA::TestNodeA() { }
+TestNodeA::~TestNodeA() { }
 
 
 // The creator() method allows Maya to instantiate instances of this node.
@@ -107,12 +106,12 @@ node_template::~node_template() { }
 // either the createNode command or the MFnDependencyNode::create()
 // method.
 //
-// In this case creator simply returns a new node_template object.
+// In this case creator simply returns a new TestNodeA object.
 //
 
-void* node_template::creator()
+void* TestNodeA::creator()
 {
-	return new node_template();
+	return new TestNodeA();
 }
 
 
@@ -122,7 +121,7 @@ void* node_template::creator()
 // want to connect to.
 //
 
-MStatus node_template::initialize()
+MStatus TestNodeA::initialize()
 {
 	MFnNumericAttribute nAttr;
 	MFnLightDataAttribute lAttr;
@@ -167,7 +166,7 @@ MStatus node_template::initialize()
 // - Data provides handles to all of the nodes attributes, only these
 //   handles should be used when performing computations.
 //
-MStatus node_template::compute( const MPlug& plug, MDataBlock& block )
+MStatus TestNodeA::compute( const MPlug& plug, MDataBlock& block )
 {
 	// The plug parameter will allow us to determine which output attribute
 	// needs to be calculated.

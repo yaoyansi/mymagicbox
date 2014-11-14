@@ -54,5 +54,5 @@ void VersionHelper::postConstructor(const MObject& mobject)
 
     MPlug versionPlug(fnDepNode.findPlug(m_long_name, false, &status));
     CHECK_MSTATUS(status);
-    CHECK_MSTATUS(versionPlug.setValue(VERSION_CODE));
+    CHECK_MSTATUS(versionPlug.setValue(PLUGIN_VERSION_STRING));
 }

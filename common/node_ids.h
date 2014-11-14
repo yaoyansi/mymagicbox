@@ -1,8 +1,8 @@
 /*
 How to request your own Maya NodeIds?
 
-Access http://www.autodesk.com/developmaya and go to 'Register a Maya Developer Node ID Block' section.  
-You'll find a link there to self-register your ID block. 
+Access http://www.autodesk.com/developmaya and go to 'Register a Maya Developer Node ID Block' section.
+You'll find a link there to self-register your ID block.
 
 */
 
@@ -13,7 +13,6 @@ You'll find a link there to self-register your ID block.
 #define	NodeID_mystring		0x00122241
 #define	NodeID_dynamic_enum	0x00122242
 #define	NodeID_tornado_field	0x00122243
-#define	NodeID_version_control	0x00122244
 
 // 0x00122250:0x0012225F
 // 0x00122260:0x0012226F

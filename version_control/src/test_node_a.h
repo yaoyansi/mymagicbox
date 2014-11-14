@@ -47,11 +47,11 @@
 // type MPxNode
 //
 
-class node_template : public MPxNode
+class TestNodeA : public MPxNode
 {
 public:
-	node_template();
-	virtual			~node_template();
+	TestNodeA();
+	virtual			~TestNodeA();
 
 	static  void *	creator();
 	virtual MStatus	compute( const MPlug&, MDataBlock& );

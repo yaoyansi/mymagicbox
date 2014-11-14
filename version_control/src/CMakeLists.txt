@@ -1,11 +1,11 @@
 set(HDRS
-	version_control_node.h
+	test_node_a.h
 	version_helper.h
 	version.h
 )
 
 set(SRCS
-	version_control_node.cpp
+	test_node_a.cpp
 	version_helper.cpp
 	plugin.cpp
 )
