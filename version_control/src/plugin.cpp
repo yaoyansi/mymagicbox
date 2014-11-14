@@ -2,6 +2,7 @@
 #include <maya/MStatus.h>
 
 #include "test_node_a.h"
+#include "test_node_b.h"
 #include "version.h"
 
 // These methods load and unload the plugin, registerNode registers the
@@ -22,6 +23,16 @@ PLUGIN_EXPORT MStatus initializePlugin( MObject obj )
 		&TestNodeA::classification()
 		) );
 
+	CHECK_MSTATUS(
+		plugin.registerNode(
+		TestNodeB::cTypeName(),
+		TestNodeB::cTypeId(),
+		TestNodeB::creator,
+		TestNodeB::initialize,
+		TestNodeB::cType(),
+		&TestNodeB::classification()
+		) );
+
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
 	command += TestNodeA::classification();
 	command += "\");}\n";
@@ -35,6 +46,7 @@ PLUGIN_EXPORT MStatus uninitializePlugin( MObject obj )
 {
 	MFnPlugin plugin( obj );
 
+	CHECK_MSTATUS( plugin.deregisterNode( TestNodeB::cTypeId() ) );
 	CHECK_MSTATUS( plugin.deregisterNode( TestNodeA::cTypeId() ) );
 
 	MString command( "if( `window -exists createRenderNodeWindow` ) {refreshCreateRenderNodeWindow(\"" );
