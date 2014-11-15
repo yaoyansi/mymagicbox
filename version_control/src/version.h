@@ -1,9 +1,9 @@
 #pragma once
 
 // Version of this project:
-#define PLUGIN_VERSION_MAJOR 1
+#define PLUGIN_VERSION_MAJOR 0
 #define PLUGIN_VERSION_MINOR 0
-#define PLUGIN_VERSION_PATCH 0
+#define PLUGIN_VERSION_PATCH 5
 
 #define PLUGIN_VERSION_CODE (10000 * PLUGIN_VERSION_MAJOR + \
                                100 * PLUGIN_VERSION_MINOR + \
