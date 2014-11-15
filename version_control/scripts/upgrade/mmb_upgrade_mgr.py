@@ -15,6 +15,7 @@ class UpgradeBase(object):
 		log.info('------------------------------------');
 		log.info(' Upgrade Is Done                    ');
 		log.info('------------------------------------');
+		log.info('\n\n\n');
 
 	def upgrade_onIdle(self, plugin_name):
 		log.info('------------------------------------');
@@ -26,6 +27,7 @@ class UpgradeBase(object):
 		log.info('------------------------------------');
 		log.info(' Upgrade On Idle Is Done            ');
 		log.info('------------------------------------');
+		log.info('\n\n\n');
 	
 	# virtual 
 	def _upgrade(self):
@@ -46,10 +48,9 @@ class UpgradeBase(object):
 class Upgrade(UpgradeBase):
 
 	def _upgrade(self, plugin_name):
-		log.debug('This is Upgrade::_upgrade()');
+		pass
 
 	def _upgrade_onIdle(self, plugin_name):
-		log.debug('This is Upgrade::_upgrade_onIdle()');
 
 		# which nodes are going to be upgraded in this plugin?
 		registedNodeTypes = cmds.pluginInfo(plugin_name, query=True, dependNode=True );
@@ -65,6 +66,8 @@ class Upgrade(UpgradeBase):
 		self.gather_candidate_nodes(registedNodeTypes, candidateNodes);
 		log.debug('candidateNodes = %s', candidateNodes);
 
+		self.do(candidateNodes);
+
 	def gather_candidate_nodes(self, nodeTypes, outNodes):
 		for nodeType in nodeTypes:
 			self.gather_node_type(nodeType, outNodes);
@@ -72,8 +75,14 @@ class Upgrade(UpgradeBase):
 	def gather_node_type(self, nodeType, outNodes):
 		outNodes.extend(cmds.ls(exactType=nodeType));
 
+	def do(self, nodes):
+		import upgrade.versions.v_00001 as v_00001
+		upgrade= v_00001.Upgrade();
+		upgrade.do(nodes);
 
-
+		import upgrade.versions.v_00005 as v_00005
+		upgrade= v_00005.Upgrade();
+		upgrade.do(nodes);
 
 
 

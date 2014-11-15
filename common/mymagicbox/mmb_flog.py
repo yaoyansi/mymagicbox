@@ -6,7 +6,7 @@ g_indentChar = '    ';
 '''
 usage:
 
-import mymagicbox.flog
+import mymagicbox.mmb_flog	as flog
 
 @flog.trace
 def f1():
