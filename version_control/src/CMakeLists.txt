@@ -1,4 +1,5 @@
 set(HDRS
+	msg_cb_mgr.h
 	test_node_a.h
 	test_node_b.h
 	version_helper.h
@@ -6,6 +7,7 @@ set(HDRS
 )
 
 set(SRCS
+	msg_cb_mgr.cpp
 	test_node_a.cpp
 	test_node_b.cpp
 	version_helper.cpp
