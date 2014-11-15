@@ -11,18 +11,17 @@
 ///------------------------------------------------------------------
 static void MSceneMessage_AfterOpen(void* clientData)
 {
-    LOG("test");
-    //printf();
-    fflush(stdout);
-
     MGlobal::executePythonCommand(
-        "import upgrade.mmb_upgrade as up;"
-        "up.upgrade();");
+        "import upgrade.mmb_upgrade_mgr    as upgrade_mgr;"
+        "upgrade = upgrade_mgr.Upgrade();"
+        "upgrade.upgrade();"
+    );
 
     MGlobal::executePythonCommandOnIdle(
-        "import upgrade.mmb_upgrade as up;"
-        "up.upgrade_onIdle();");
-
+        "import upgrade.mmb_upgrade_mgr    as upgrade_mgr;"
+        "upgrade = upgrade_mgr.Upgrade();"
+        "upgrade.upgrade_onIdle();"
+    );
 }
 ///------------------------------------------------------------------
 /// MessageCallbackMgr
