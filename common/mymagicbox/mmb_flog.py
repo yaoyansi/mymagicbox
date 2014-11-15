@@ -1,12 +1,12 @@
 import sys
 
-g_indent     = 0;
+g_indent     = -1;
 g_indentChar = '    ';
 
 '''
 usage:
 
-import flog
+import mymagicbox.flog
 
 @flog.trace
 def f1():
@@ -18,7 +18,7 @@ def trace(func):
         global g_indentChar;
 
         g_indent += 1;
-        print g_indentChar*g_indent, func.__name__, args, 
+        print 'mymagicbox|', g_indentChar*g_indent, func.__name__, args, 
         print
 
         ret = func(*args);

@@ -17,13 +17,11 @@ static void MSceneMessage_AfterOpen(void* clientData)
 
     MGlobal::executePythonCommand(
         "import upgrade.mmb_upgrade as up;"
-        "up.upgrade();",
-        true);
+        "up.upgrade();");
 
     MGlobal::executePythonCommandOnIdle(
         "import upgrade.mmb_upgrade as up;"
-        "up.upgrade_onIdle();",
-        true);
+        "up.upgrade_onIdle();");
 
 }
 ///------------------------------------------------------------------
