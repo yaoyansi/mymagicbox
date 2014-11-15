@@ -11,16 +11,18 @@
 ///------------------------------------------------------------------
 static void MSceneMessage_AfterOpen(void* clientData)
 {
+    const MString plugin_name("version_control");
+
     MGlobal::executePythonCommand(
         "import upgrade.mmb_upgrade_mgr    as upgrade_mgr;"
         "upgrade = upgrade_mgr.Upgrade();"
-        "upgrade.upgrade();"
+        "upgrade.upgrade('"+plugin_name+"');"
     );
 
     MGlobal::executePythonCommandOnIdle(
         "import upgrade.mmb_upgrade_mgr    as upgrade_mgr;"
         "upgrade = upgrade_mgr.Upgrade();"
-        "upgrade.upgrade_onIdle();"
+        "upgrade.upgrade_onIdle('"+plugin_name+"');"
     );
 }
 ///------------------------------------------------------------------
