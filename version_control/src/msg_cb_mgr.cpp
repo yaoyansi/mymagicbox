@@ -2,6 +2,7 @@
 
 #include <maya/MMessage.h>
 #include <maya/MSceneMessage.h>
+#include <maya/MGlobal.h>
 
 #include <common/log.h>
 
@@ -13,6 +14,17 @@ static void MSceneMessage_AfterOpen(void* clientData)
     LOG("test");
     //printf();
     fflush(stdout);
+
+    MGlobal::executePythonCommand(
+        "import upgrade.mmb_upgrade as up;"
+        "up.upgrade();",
+        true);
+
+    MGlobal::executePythonCommandOnIdle(
+        "import upgrade.mmb_upgrade as up;"
+        "up.upgrade_onIdle();",
+        true);
+
 }
 ///------------------------------------------------------------------
 /// MessageCallbackMgr
