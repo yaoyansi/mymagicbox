@@ -1,3 +1,20 @@
+global proc build_scene() 
+{
+	// create particle
+	string $particle[] = `nParticle`;
+
+	// create emitter
+	string $emitter[] = `emitter -pos 0 0 0 -type omni -r 100 -sro 0 -nuv 0 -cye none -cyi 1 -spd 1 -srn 0 -nsp 1 -tsp 0 -mxd 0 -mnd 0 -dx 1 -dy 0 -dz 0 -sp 0`;
+	connectDynamic -em $emitter[0] $particle[0];
+
+	// add a gravity field
+	string $gravityField[] = `gravity -pos 0 0 0 -m 1.8 -att 0 -dx 0 -dy -1 -dz 0  -mxd -1  -vsh none -vex 0 -vof 0 0 0 -vsw 360 -tsr 0.5 `;
+	connectDynamic -f $gravityField[0]  $particle[0];
+
+	// add a tornado field
+	string $tornadoField1 = `createNode tornadoField`;
+	connectDynamic -f $tornadoField1  $particle[0];
+}
 
 global proc tornadoField() 
 {
@@ -6,20 +23,9 @@ global proc tornadoField()
 
 	// Load the plug-in field. 
 	//tornadoField
-	loadPlugin "tornadoField.so";
+	loadPlugin "tornado_field.so";
 
-	// Create the new field node
-	createNode tornadoField -name torus;
-
-	// create particle object.
-	//
-	particle -jbp 0.0 0.0 0.0 -nj 250 -jr 5 -c 1 -name particles ;
-
-	// connect torus field node with the particle object.
-	//
-	connectDynamic -f torus particles ;
-	setAttr "torus.attractDistance" 10;
-	setAttr "torus.repelDistance" 5;
+	build_scene();
 
 	playbackOptions -e -min 0.00 -max 600.0;
 	currentTime -e 0;
