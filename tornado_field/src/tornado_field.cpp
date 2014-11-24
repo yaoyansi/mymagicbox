@@ -183,7 +183,8 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
 	//
 
 	MVectorArray forceArray;
-	bool useMaxDistSet = useMaxDistanceValue( block );
+	//bool useMaxDistSet = useMaxDistanceValue( block );
+	bool useMaxDistSet = false;
 	if( useMaxDistSet )
 	{
 		applyMaxDist( block, points, velocities, masses, forceArray );
@@ -265,207 +266,13 @@ void tornadoField::applyNoMaxDist
 	// also don't attenuate, because 1 - dist/maxDist isn't
 	// meaningful. No max distance and no attenuation.
 	//
-	if (dragMag <= 0)
-	{
-		if (swarmAmp <= 0)
-		{
-			// No max dist, no attenuation, no drag, no swarm
-			//
-			for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
-			{
-				MVector forceV(0.0,0.0,0.0);
-				const MVector &receptorPoint = points[ptIndex];
+    for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
+    {
+        MVector forceV(1.0, 0.0, 0.0);
 
-				// Apply from every field position to every receptor position.
-				//
-				for(int i = fieldPosCount; --i>=0; )
-				{
-					MVector difference = (receptorPoint-posArray[i]);
+        outputForce.append( forceV );
+    }
 
-					double distance = difference.length();
-					if (distance < minDist) continue;
-
-					if (distance <= repelDist)
-						forceV += difference * magValue;
-					else if (distance >= attractDist)
-						forceV += -difference * magValue;
-				}
-				outputForce.append( forceV );
-			}
-		}
-		else
-		{
-			// No max dist, no attenuation, no drag, yes swarm
-			//
-			for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
-			{
-				MVector forceV(0.0,0.0,0.0);
-				const MVector &receptorPoint = points[ptIndex];
-
-				// Apply from every field position to every receptor position.
-				//
-				double distance = 0.0;
-				int i;
-				for(i = fieldPosCount; --i>=0; )
-				{
-					MVector difference = (receptorPoint-posArray[i]);
-					distance = difference.length();
-					if (distance < minDist) continue;
-
-					if (distance <= repelDist)
-						forceV += difference * magValue;
-					else if (distance >= attractDist)
-						forceV += -difference * magValue;
-				}
-
-				// Apply swarm only if the object is inside the zone
-				// the repulsion-attraction is pushing the object to.
-				//
-				if ( distance >= repelDist && distance <= attractDist)
-				{
-					double frequency = swarmFrequencyValue( block );
-					MVector phase( 0.0, 0.0, swarmPhaseValue(block) );
-
-					// Add swarm in here
-					//
-					for(i = fieldPosCount; --i >= 0;)
-					{
-						MVector difference = receptorPoint - posArray[i];
-						difference = (difference + phase) * frequency;
-
-						double *noiseEffect = &difference.x;
-						if( (noiseEffect[0] < -2147483647.0) ||
-							(noiseEffect[0] >  2147483647.0) ||
-							(noiseEffect[1] < -2147483647.0) ||
-							(noiseEffect[1] >  2147483647.0) ||
-							(noiseEffect[2] < -2147483647.0) ||
-							(noiseEffect[2] >  2147483647.0) )
-							continue;
-
-						double noiseOut[4];
-						noiseFunction( noiseEffect, noiseOut );
-			 			MVector swarmForce( noiseOut[0] * swarmAmp,
-											noiseOut[1] * swarmAmp,
-											noiseOut[2] * swarmAmp );
-						forceV += swarmForce;
-					}
-				}
-				outputForce.append( forceV );
-			}
-		}
-	}
-	else
-	{
-		if (swarmAmp <= 0)
-		{
-			// Yes drag, no swarm
-			//
-			for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
-			{
-				const MVector& receptorPoint = points[ptIndex];
-
-				// Apply from every field position to every receptor position.
-				//
-				MVector forceV(0,0,0);
-				double distance = 0.0;
-				for(int i = fieldPosCount; --i>=0; )
-				{
-					MVector difference = (receptorPoint-posArray[i]);
-					distance = difference.length();
-					if (distance < minDist) continue;
-
-					if (distance <= repelDist)
-						forceV += difference * magValue;
-					else if (distance >= attractDist)
-						forceV += -difference * magValue;
-				}
-
-				// Apply drag only if the object is inside the zone
-				// the repulsion-attraction is pushing the object to.
-				//
-				if ( distance >= repelDist && distance <= attractDist)
-				{
-					if (fieldPosCount > 0)
-					{
-						MVector dragForceV;
-						dragForceV = velocities[ptIndex] *
-												(-dragMag) * fieldPosCount;
-						forceV += dragForceV;
-					}
-				}
-
-				outputForce.append( forceV );
-			}
-		}
-		else
-		{
-			// Yes drag, yes swarm
-			//
-			for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
-			{
-				const MVector &receptorPoint = points[ptIndex];
-
-				// Apply from every field position to every receptor position.
-				//
-				MVector forceV(0,0,0);
-				double distance = 0.0;
-				int i;
-				for(i = fieldPosCount; --i>=0; )
-				{
-					MVector difference = (receptorPoint-posArray[i]);
-					distance = difference.length();
-					if (distance < minDist) continue;
-
-					if (distance <= repelDist)
-						forceV += difference * magValue;
-					else if (distance >= attractDist)
-						forceV += -difference * magValue;
-				}
-
-				// Apply drag and swarm only if the object is inside
-				// the zone the repulsion-attraction is pushing the object to.
-				//
-				if ( distance >= repelDist && distance <= attractDist)
-				{
-					if (fieldPosCount > 0)
-					{
-						MVector dragForceV;
-						dragForceV = velocities[ptIndex] *
-												(-dragMag) * fieldPosCount;
-						forceV += dragForceV;
-					}
-
-					// Add swarm in here
-					//
-					double frequency = swarmFrequencyValue( block );
-					MVector phase( 0.0, 0.0, swarmPhaseValue(block) );
-
-					for(i = fieldPosCount; --i>=0; )
-					{
-						MVector difference = receptorPoint - posArray[i];
-						difference = (difference + phase) * frequency;
-
-						double *noiseEffect = &difference.x;
-						if( (noiseEffect[0] < -2147483647.0) ||
-							(noiseEffect[0] >  2147483647.0) ||
-							(noiseEffect[1] < -2147483647.0) ||
-							(noiseEffect[1] >  2147483647.0) ||
-							(noiseEffect[2] < -2147483647.0) ||
-							(noiseEffect[2] >  2147483647.0) )
-							continue;
-
-						double noiseOut[4];
-						noiseFunction( noiseEffect, noiseOut );
-						MVector swarmForce( noiseOut[0] * swarmAmp,
-											noiseOut[1] * swarmAmp,
-											noiseOut[2] * swarmAmp );
-						forceV += swarmForce;
-					}
-				}
-				outputForce.append( forceV );
-			}
-		}
-	}
 }
 
 
