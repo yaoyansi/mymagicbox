@@ -294,11 +294,12 @@ void tornadoField::applyNoMaxDist
     //COUT("rotation=", rotation);
 
     // direction
-    MVector up(0.0, 1.0, 0.0);// the original up direction is (0, 1, 0),
-    up = up * worldMatrix;    // the new up direction after rotation
+    MVector UP(0.0, 1.0, 0.0);// the original up direction is (0, 1, 0),
+    UP = UP * worldMatrix;    // the new up direction after rotation
+    const MVector UPdir(UP.normal());
     //COUT("up=", up);
 
-    MVector translation(transformMatrix.getTranslation(MSpace::kWorld, &status)); CHECK_MSTATUS(status);
+    MVector ORIGINAL(transformMatrix.getTranslation(MSpace::kWorld, &status)); CHECK_MSTATUS(status);
     //COUT("translation=", translation);
 
 	// get owner's data. posArray may have only one point which is the centroid
@@ -318,9 +319,41 @@ void tornadoField::applyNoMaxDist
 	//
     for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
     {
-        MVector forceV(1.0, 0.0, 0.0);
 
-        outputForce.append( forceV );
+/*
+             UPdir ^
+                   |
+                Pp |-----R--->o P
+                   |         /
+                   |        /
+                   |       /
+                   |      /
+                   |     /
+                   |    /
+                   |   /
+                   |  /
+                   | /
+                   |/
+                   o
+                ORIGINAL
+
+*/      const MVector &P(points[ptIndex]);
+        const double  &M(masses[ptIndex]);
+        const MVector &V(velocities[ptIndex]);
+
+        float l = UPdir * (P - ORIGINAL);
+        MVector Pp = ORIGINAL + UP * l;// Pp is the projection of P onto UP
+        MVector R  = P - Pp;
+        MVector Rdir = R.normal();
+        MVector Fdir = (UPdir ^ V).normal();// direction of F
+
+
+
+        // F = m × (v²/r)
+        const double f = M * (V.length() * V.length() / R.length());
+        const MVector F(Fdir * f);
+
+        outputForce.append( F );
     }
 
 }

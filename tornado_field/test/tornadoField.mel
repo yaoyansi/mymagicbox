@@ -8,7 +8,7 @@ global proc build_scene()
 	connectDynamic -em $emitter[0] $particle[0];
 
 	// add a gravity field
-	string $gravityField[] = `gravity -pos 0 0 0 -m 1.8 -att 0 -dx 0 -dy -1 -dz 0  -mxd -1  -vsh none -vex 0 -vof 0 0 0 -vsw 360 -tsr 0.5 `;
+	string $gravityField[] = `gravity -pos 0 0 0 -m 0.8 -att 0 -dx 0 -dy 1 -dz 0  -mxd -1  -vsh none -vex 0 -vof 0 0 0 -vsw 360 -tsr 0.5 `;
 	connectDynamic -f $gravityField[0]  $particle[0];
 
 	// add a tornado field
@@ -27,7 +27,7 @@ global proc tornadoField()
 
 	build_scene();
 
-	playbackOptions -e -min 0.00 -max 600.0;
+	playbackOptions -e -animationStartTime 0 -animationEndTime 6000 -min 0 -max 6000;
 	currentTime -e 0;
 	play -wait -forward true;
 
