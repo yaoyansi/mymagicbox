@@ -2,12 +2,10 @@
 #include "tornado_field.h"
 #include <cmath>
 
-#include <maya/MIOStream.h>
-#include <maya/MTime.h>
-#include <maya/MVectorArray.h>
-#include <maya/MDoubleArray.h>
-#include <maya/MMatrix.h>
 #include <maya/MArrayDataBuilder.h>
+#include <maya/MDagPath.h>
+#include <maya/MDoubleArray.h>
+#include <maya/MFnDagNode.h>
 #include <maya/MFnDependencyNode.h>
 #include <maya/MFnTypedAttribute.h>
 #include <maya/MFnNumericAttribute.h>
@@ -16,9 +14,17 @@
 #include <maya/MFnVectorArrayData.h>
 #include <maya/MFnDoubleArrayData.h>
 #include <maya/MFnMatrixData.h>
+#include <maya/MGlobal.h>
+#include <maya/MIOStream.h>
+#include <maya/MMatrix.h>
+#include <maya/MTransformationMatrix.h>
+#include <maya/MTime.h>
+#include <maya/MQuaternion.h>
+#include <maya/MVector.h>
+#include <maya/MVectorArray.h>
 
 #include <common/node_ids.h>
-
+#include <common/log.h>
 
 MObject tornadoField::aMinDistance;
 MObject tornadoField::aAttractDistance;
@@ -142,14 +148,14 @@ MStatus tornadoField::initialize()
 
 	// the new attribute will affect output force.
 	//
-	//status = attributeAffects( aMinDistance, outputForce );
-	//McheckErr(status, "ERROR in attributeAffects(aMinDistance,outputForce).\n");
-	//status = attributeAffects( aAttractDistance, outputForce );
-	//McheckErr(status, "ERROR in attributeAffects(aAttractDistance,outputForce).\n");
-	//status = attributeAffects( aRepelDistance, outputForce );
-	//McheckErr(status, "ERROR in attributeAffects(aRepelDistance,outputForce).\n");
-	//status = attributeAffects( aDrag, outputForce );
-	//McheckErr(status, "ERROR in attributeAffects(aDrag,outputForce).\n");
+	//status = attributeAffects( aMinDistance, mOutputForce );
+	//McheckErr(status, "ERROR in attributeAffects(aMinDistance,mOutputForce).\n");
+	//status = attributeAffects( aAttractDistance, mOutputForce );
+	//McheckErr(status, "ERROR in attributeAffects(aAttractDistance,mOutputForce).\n");
+	//status = attributeAffects( aRepelDistance, mOutputForce );
+	//McheckErr(status, "ERROR in attributeAffects(aRepelDistance,mOutputForce).\n");
+	//status = attributeAffects( aDrag, mOutputForce );
+	//McheckErr(status, "ERROR in attributeAffects(aDrag,mOutputForce).\n");
 
 	return( MS::kSuccess );
 }
@@ -250,7 +256,7 @@ void tornadoField::applyNoMaxDist
 		MDataBlock &block,				// get field param from this block
 		const MVectorArray &points,		// current position of Object
 		const MVectorArray &velocities,	// current velocity of Object
-		const MDoubleArray &/*masses*/,		// mass of Object
+		const MDoubleArray &masses,		// mass of Object
 		MVectorArray &outputForce		// output force
 	)
 //
@@ -258,6 +264,8 @@ void tornadoField::applyNoMaxDist
 //		Compute output force in the case that the useMaxDistance is not set.
 //
 {
+    MStatus status;
+
 	// points and velocities should have the same length. If not return.
 	//
 	if( points.length() != velocities.length() )
@@ -276,6 +284,22 @@ void tornadoField::applyNoMaxDist
 	double repelDist = repelDistanceValue( block );
 	double dragMag = dragValue( block );
 	double swarmAmp = swarmAmplitudeValue( block );
+
+	//printMObjectInfo("", thisMObject());
+	MMatrix worldMatrix;// field's world matrix
+	CHECK_MSTATUS(worldMatrixValue(block, worldMatrix));
+	MTransformationMatrix transformMatrix(worldMatrix);
+
+    //MQuaternion rotation(transformMatrix.rotation());
+    //COUT("rotation=", rotation);
+
+    // direction
+    MVector up(0.0, 1.0, 0.0);// the original up direction is (0, 1, 0),
+    up = up * worldMatrix;    // the new up direction after rotation
+    //COUT("up=", up);
+
+    MVector translation(transformMatrix.getTranslation(MSpace::kWorld, &status)); CHECK_MSTATUS(status);
+    //COUT("translation=", translation);
 
 	// get owner's data. posArray may have only one point which is the centroid
 	// (if this has owner) or field position(if without owner). Or it may have
@@ -831,4 +855,33 @@ void tornadoField::draw( M3dView& view, const MDagPath& path, M3dView::DisplaySt
 		glPopMatrix();
 	 }
 	 view.endGL ();
+}
+//
+MStatus tornadoField::worldMatrixValue(MDataBlock& block, MMatrix &m)
+{
+	MStatus status;
+#if 0
+    MFnDependencyNode fnDNode(thisMObject(), &status); CHECK_MSTATUS(status);
+    MPlug pWorldMatrix(fnDNode.findPlug("worldMatrix", true, &status));
+
+    //MObject oMat ;
+	//CHECK_MSTATUS(pWorldMatrix.getValue(oMat));
+
+	MFnMatrixData fnMat(pWorldMatrix.asMObject(), &status); CHECK_MSTATUS(status);//(kInvalidParameter): Object is incompatible with this method
+	m = fnMat.matrix(&status);                              CHECK_MSTATUS(status);
+#else
+    MFnDagNode fnDagNode(thisMObject(), &status);
+    CHECK_MSTATUS(status);
+    MDagPath path2; CHECK_MSTATUS(fnDagNode.getPath(path2));
+
+    MDoubleArray ret;
+    CHECK_MSTATUS(MGlobal::executeCommand("getAttr \""+path2.fullPathName()+".worldMatrix\"", ret));
+    //COUT(path2.fullPathName()+".worldMatrix=", ret);
+
+    m.matrix[0][0] = ret[0];     m.matrix[0][1] = ret[1];     m.matrix[0][2] = ret[2];      m.matrix[0][3] = ret[3];
+    m.matrix[1][0] = ret[4];     m.matrix[1][1] = ret[5];     m.matrix[1][2] = ret[6];      m.matrix[1][3] = ret[7];
+    m.matrix[2][0] = ret[8];     m.matrix[2][1] = ret[9];     m.matrix[2][2] = ret[10];     m.matrix[2][3] = ret[11];
+    m.matrix[3][0] = ret[12];    m.matrix[3][1] = ret[13];    m.matrix[3][2] = ret[14];     m.matrix[3][3] = ret[15];
+#endif
+	return MS::kSuccess;
 }

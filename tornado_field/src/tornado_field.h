@@ -4,6 +4,7 @@
 #include <maya/MObject.h>
 #include <maya/MPlug.h>
 #include <maya/MDataBlock.h>
+#include <maya/MMatrix.h>
 #include <maya/MPxFieldNode.h>
 
 #if defined(OSMac_MachO_)
@@ -130,6 +131,8 @@ private:
 	double	swarmPhaseValue( MDataBlock& block );
 
 	MStatus	ownerCentroidValue( MDataBlock& block, MVector &vector );
+	MStatus worldMatrixValue(MDataBlock& block, MMatrix &matrix);
+
 };
 
 // inlines
@@ -290,7 +293,7 @@ inline double tornadoField::swarmPhaseValue( MDataBlock& block )
 	return( value );
 }
 
-inline MStatus tornadoField::ownerCentroidValue(MDataBlock& block,MVector &vector)
+inline MStatus tornadoField::ownerCentroidValue(MDataBlock& block, MVector &vector)
 {
 	MStatus status;
 
@@ -307,4 +310,5 @@ inline MStatus tornadoField::ownerCentroidValue(MDataBlock& block,MVector &vecto
 
 	return( status );
 }
+
 

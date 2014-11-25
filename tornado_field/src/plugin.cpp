@@ -3,6 +3,7 @@
 #include <maya/MGlobal.h>
 
 #include <common/copyright.h>
+#include <common/log.h>
 #include "tornado_field.h"
 
 
@@ -11,6 +12,9 @@
 //
 MStatus initializePlugin( MObject obj )
 {
+    LOG("---------------------------------");
+    LOG("Plugin is loaded: tornado_field");
+    LOG("---------------------------------");
 
 	MFnPlugin plugin( obj, PLUGIN_AUTHOR, "0.1", "Any" );
 
@@ -45,5 +49,8 @@ MStatus uninitializePlugin( MObject obj )
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );
 
+    LOG("---------------------------------");
+    LOG("Plugin is unloaded: tornado_field");
+    LOG("---------------------------------");
 	return MS::kSuccess;
 }

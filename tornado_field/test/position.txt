@@ -1,0 +1,23 @@
+// emitter1.translate:      0, 0, 1
+// nParticle1.translate:    0, 1, 0
+// gravityField1.translate: 1, 0, 0
+getAttr "gravityField1.ownerCentroid";//0,0,0
+getAttr "gravityField1.translate";//1 0 0
+getAttr "gravityField1.matrix";     //1 0 0 0  0 1 0 0  0 0 1 0  1 0 0 1
+getAttr "gravityField1.worldMatrix";//1 0 0 0  0 1 0 0  0 0 1 0  1 0 0 1 // 
+getAttr "gravityField1.parentMatrix";//I
+
+
+// nParticleShape1
+getAttr "nParticleShape1.matrix";//I
+getAttr "nParticleShape1.worldMatrix"; // 1 0 0 0  0 1 0 0  0 0 1 0  0 1 0 1 
+getAttr "nParticleShape1.parentMatrix";// 1 0 0 0  0 1 0 0  0 0 1 0  0 1 0 1 
+// nParticle1
+getAttr "nParticle1.matrix";     // 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 1 // 
+getAttr "nParticle1.worldMatrix";// 1 0 0 0 0 1 0 0 0 0 1 0 0 1 0 1
+getAttr "nParticle1.parentMatrix";//I
+
+// emitter1
+getAttr "emitter1.matrix";      // 1 0 0 0  0 1 0 0  0 0 1 0  0 0 1 1 
+getAttr "emitter1.worldMatrix"; // 1 0 0 0  0 1 0 0  0 0 1 0  0 0 1 1
+getAttr "emitter1.parentMatrix";// I
