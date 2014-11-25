@@ -22,8 +22,9 @@
 class tornadoField: public MPxFieldNode
 {
 public:
-	tornadoField() {};
-	virtual ~tornadoField() {};
+	tornadoField();
+	virtual ~tornadoField();
+    virtual void postConstructor();
 
 	static void		*creator();
 	static MStatus	initialize();

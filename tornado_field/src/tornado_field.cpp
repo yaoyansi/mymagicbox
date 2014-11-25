@@ -30,6 +30,32 @@ MObject tornadoField::aSwarmPhase;
 
 MTypeId tornadoField::m_id( NodeID_tornado_field );
 MString tornadoField::m_classification("utility/general");
+
+//
+tornadoField::tornadoField()
+{
+}
+//
+tornadoField::~tornadoField()
+{
+}
+//
+void tornadoField::postConstructor()
+{
+    setMPSafe(true);
+
+    MStatus status;
+
+    MFnDependencyNode fnDepNode(thisMObject(), &status);
+    CHECK_MSTATUS(status);
+
+    // If the new name conflicts with the name of an existing node then
+    // the object will be given a unique name based on the supplied name.
+    // If the new name ends in a single '#' it will be replaced with a number
+    // that ensures the new name is unique.
+    fnDepNode.setName(cTypeName()+"#", &status);
+    CHECK_MSTATUS(status);
+}
 //
 MString tornadoField::cTypeName()
 {
