@@ -258,8 +258,23 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
 
 	return( MS::kSuccess );
 }
+//
+MStatus tornadoField::_getForce(
+    MDataBlock& block,
+    const MVectorArray& point,
+    const MVectorArray& velocity,
+    const MDoubleArray& mass,
+    MVectorArray& force,
+    double deltaTime
+)
+{
+    addUpForce(block, point, velocity, mass, force);
+    addCentripetalForce(block, point, velocity, mass, force);
+    addFrictionForce(block, point, velocity, mass, force);
 
-
+    return MS::kSuccess;
+}
+//
 void tornadoField::addCentripetalForce
 	(
 		MDataBlock &block,				// get field param from this block
@@ -637,22 +652,6 @@ MStatus tornadoField::getForceAtPoint(const MVectorArray&	points,
 	MDataBlock block = forceCache();
 
     return _getForce( block, points, velocities, masses, forceArray, deltaTime);
-}
-//
-MStatus tornadoField::_getForce(
-    MDataBlock& block,
-    const MVectorArray& point,
-    const MVectorArray& velocity,
-    const MDoubleArray& mass,
-    MVectorArray& force,
-    double deltaTime
-)
-{
-    addUpForce(block, point, velocity, mass, force);
-    addCentripetalForce(block, point, velocity, mass, force);
-    addFrictionForce(block, point, velocity, mass, force);
-
-    return MS::kSuccess;
 }
 //
 MStatus tornadoField::iconSizeAndOrigin(	GLuint& width,
