@@ -211,20 +211,27 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
 	MDoubleArray masses = fnMass.array( &status );
 	McheckErr(status, "ERROR in fnMass.array(), not find masses.\n");
 
+
+	// points and velocities should have the same length. If not return.
+	//
+	if( points.length() != velocities.length() )
+    {
+        LWrn("points.length() != velocities.length(), %d, %d", points.length(), velocities.length());
+		return MS::kInvalidParameter;
+    }
+
 	// Compute the output force.
 	//
-
 	MVectorArray forceArray;
-	//bool useMaxDistSet = useMaxDistanceValue( block );
-	bool useMaxDistSet = false;
-	if( useMaxDistSet )
-	{
-		applyMaxDist( block, points, velocities, masses, forceArray );
-	}
-	else
-	{
-		applyNoMaxDist( block, points, velocities, masses, forceArray );
-	}
+	status = _getForce(
+           block,
+           points,
+           velocities,
+           masses,
+           forceArray,
+           -1.0// deltaTime is not provided in compute()
+    );
+    CHECK_MSTATUS(status);
 
 	// get output data handle
 	//
@@ -265,11 +272,6 @@ void tornadoField::applyNoMaxDist
 //
 {
     MStatus status;
-
-	// points and velocities should have the same length. If not return.
-	//
-	if( points.length() != velocities.length() )
-		return;
 
 	// clear the output force array.
 	//
@@ -350,9 +352,16 @@ void tornadoField::applyNoMaxDist
 
 
         // F = m × (v²/r)
-        const double f = M * (V.length() * V.length() / R.length());
-        const MVector F(Fdir * f);
+        double f = 1.0;
+        const double minRadius = 0.001;// to avoid dividing Zero
+        if(R.length() > minRadius)
+        {
+            f = M * (V.length() * V.length() / R.length());
+        }else{
+            f = M * (V.length() * V.length() / minRadius);
+        }
 
+        const MVector F(Fdir * f);
         outputForce.append( F );
     }
 
@@ -717,7 +726,7 @@ MStatus tornadoField::getForceAtPoint(const MVectorArray&	points,
                                   const MVectorArray&	velocities,
                                   const MDoubleArray&	masses,
                                   MVectorArray&	forceArray,
-                                  double	/*deltaTime*/)
+                                  double	deltaTime)
 //
 //    This method is not required to be overridden, it is only necessary
 //    for compatibility with the MFnField function set.
@@ -725,19 +734,31 @@ MStatus tornadoField::getForceAtPoint(const MVectorArray&	points,
 {
 	MDataBlock block = forceCache();
 
+    return _getForce( block, points, velocities, masses, forceArray, deltaTime);
+}
+//
+MStatus tornadoField::_getForce(
+    MDataBlock& block,
+    const MVectorArray& point,
+    const MVectorArray& velocity,
+    const MDoubleArray& mass,
+    MVectorArray& force,
+    double deltaTime
+)
+{
 	bool useMaxDistSet = useMaxDistanceValue( block );
 	if( useMaxDistSet )
 	{
-		applyMaxDist( block, points, velocities, masses, forceArray );
+		applyMaxDist( block, point, velocity, mass, force );
 	}
 	else
 	{
-		applyNoMaxDist( block, points, velocities, masses, forceArray );
+		applyNoMaxDist( block, point, velocity, mass, force );
 	}
 
     return MS::kSuccess;
 }
-
+//
 MStatus tornadoField::iconSizeAndOrigin(	GLuint& width,
 					GLuint& height,
 					GLuint& xbo,

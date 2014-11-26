@@ -12,9 +12,9 @@
 //
 MStatus initializePlugin( MObject obj )
 {
-    LOG("---------------------------------");
-    LOG("Plugin is loaded: tornado_field");
-    LOG("---------------------------------");
+    LDbg("---------------------------------");
+    LDbg("Plugin is loaded: tornado_field");
+    LDbg("---------------------------------");
 
 	MFnPlugin plugin( obj, PLUGIN_AUTHOR, "0.1", "Any" );
 
@@ -49,8 +49,8 @@ MStatus uninitializePlugin( MObject obj )
 
 	CHECK_MSTATUS( MGlobal::executeCommand( command ) );
 
-    LOG("---------------------------------");
-    LOG("Plugin is unloaded: tornado_field");
-    LOG("---------------------------------");
+    LDbg("---------------------------------");
+    LDbg("Plugin is unloaded: tornado_field");
+    LDbg("---------------------------------");
 	return MS::kSuccess;
 }

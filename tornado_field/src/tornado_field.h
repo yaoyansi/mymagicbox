@@ -133,6 +133,14 @@ private:
 	MStatus	ownerCentroidValue( MDataBlock& block, MVector &vector );
 	MStatus worldMatrixValue(MDataBlock& block, MMatrix &matrix);
 
+	MStatus _getForce(
+        MDataBlock& block,
+        const MVectorArray& point,
+        const MVectorArray& velocity,
+        const MDoubleArray& mass,
+        MVectorArray& force,
+        double deltaTime
+    );
 };
 
 // inlines
