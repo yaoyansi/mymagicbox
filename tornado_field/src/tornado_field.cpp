@@ -26,6 +26,7 @@
 
 #include <common/node_ids.h>
 #include <common/log.h>
+#include "particle.h"
 
 MObject tornadoField::aMinDistance;
 MObject tornadoField::aAttractDistance;
@@ -357,6 +358,48 @@ void tornadoField::addCentripetalForce
 
 }
 //
+void tornadoField::addFrictionForce( MDataBlock& block,
+                        const MVectorArray &points,
+                        const MVectorArray &velocities,
+                        const MDoubleArray &masses,
+                        MVectorArray &outputForce )
+{
+    MStatus status;
+
+    assert(outputForce.length() == points.length());
+
+    // 空气阻力的公式：Ffri = 0.5*C*ρ*S*(V*V)
+    // C:空气阻力系数，该值通常是实验值，和物体的特征面积（迎风面积），物体光滑程度和整体形状有关；
+    // ρ:空气密度，正常的干燥空气可取1.293g/l，特殊条件下可以实地监测；
+    // S:物体迎风面积；
+    // V:物体与空气的相对运动速度
+
+    const double C   = 1.0;
+    const double rho = 1.293/0.001;// g/(m3)
+
+
+    const int pointCount = points.length();
+    for (int i = 0; i < pointCount; i ++ )
+    {
+        const MVector &P(points[i]);
+        const double  &M(masses[i]);
+        const MVector &V(velocities[i]);
+#if 0
+        Sphere particle(M, 3.0);
+        const double S = particle.Sc();
+        const double f_fri = 0.5 * C * rho * S * (V*V);
+#else
+        const double K_fri = 0.0000018;
+        const double f_fri = K_fri * V.length();
+#endif
+        MVector Fdir_fri(-V.normal());
+        const MVector Ffri(Fdir_fri * f_fri);
+
+        outputForce[i] += Ffri;
+    }
+
+}
+//
 void tornadoField::ownerPosition
 	(
 		MDataBlock& block,
@@ -546,8 +589,8 @@ MStatus tornadoField::_getForce(
 )
 {
 
-    addCentripetalForce( block, point, velocity, mass, force );
-
+    addCentripetalForce(block, point, velocity, mass, force);
+    addFrictionForce(block, point, velocity, mass, force);
 
     return MS::kSuccess;
 }

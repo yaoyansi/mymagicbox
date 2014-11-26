@@ -1,12 +1,14 @@
 set(HDRS
-	tornado_field.h
 	../../common/log.h
+	tornado_field.h
+	particle.h
 )
 
 set(SRCS
-	tornado_field.cpp
-	plugin.cpp
 	../../common/log.cpp
+	plugin.cpp
+	tornado_field.cpp
+	particle.cpp
 )
 
 ADD_LIBRARY( ${MY_PROJECT_NAME} 

@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <maya/MIOStream.h>
 #include <maya/MVector.h>
 #include <maya/MObject.h>
@@ -19,6 +21,7 @@
 		cerr << msg;				\
 		return MS::kFailure;		\
 	}
+
 
 class tornadoField: public MPxFieldNode
 {
@@ -96,6 +99,11 @@ private:
 	// methods to compute output force.
 	//
 	void	addCentripetalForce( MDataBlock& block,
+							const MVectorArray &points,
+							const MVectorArray &velocities,
+							const MDoubleArray &masses,
+							MVectorArray &outputForce );
+	void	addFrictionForce( MDataBlock& block,
 							const MVectorArray &points,
 							const MVectorArray &velocities,
 							const MDoubleArray &masses,
