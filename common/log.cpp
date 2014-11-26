@@ -10,16 +10,16 @@ void printMObjectInfo(const char* msg, MObject mobj)
     MStatus status;
 
     MFnDependencyNode fnDNode(mobj, &status); CHECK_MSTATUS(status);//
-    LOG("%s(), name=%s", msg, fnDNode.name().asChar());
+    LDbg("%s(), name=%s", msg, fnDNode.name().asChar());
 
     MFnDagNode fnDagNode(mobj, &status);
     CHECK_MSTATUS(status);//
 
     MDagPath path2; CHECK_MSTATUS(fnDagNode.getPath(path2));//
-    LOG("%s(), path2=%s", msg, path2.fullPathName().asChar());
+    LDbg("%s(), path2=%s", msg, path2.fullPathName().asChar());
 
     MDagPath dagpath2 = fnDagNode.dagPath(&status); CHECK_MSTATUS(status);//
-    LOG("%s(), dagpath2=%s", msg, dagpath2.fullPathName().asChar());
+    LDbg("%s(), dagpath2=%s", msg, dagpath2.fullPathName().asChar());
 }
 //
 void printMeshInfo(const char* msg, MObject mobj)
@@ -31,14 +31,14 @@ void printMeshInfo(const char* msg, MObject mobj)
     MFnMesh fnMesh(mobj, &status);
     CHECK_MSTATUS(status);
 
-    LOG("%s(), fnMesh.fullPathName=%s", msg, fnMesh.fullPathName().asChar());
-    LOG("%s(), fnMesh.name=%s", msg, fnMesh.name().asChar());
+    LDbg("%s(), fnMesh.fullPathName=%s", msg, fnMesh.fullPathName().asChar());
+    LDbg("%s(), fnMesh.name=%s", msg, fnMesh.name().asChar());
 
     MDagPath path; CHECK_MSTATUS(fnMesh.getPath(path));
-    LOG("%s(), path=%s", msg, path.fullPathName().asChar());
+    LDbg("%s(), path=%s", msg, path.fullPathName().asChar());
 
     MDagPath dagpath = fnMesh.dagPath(&status); CHECK_MSTATUS(status);
-    LOG("%s(), dagpath=%s", msg, dagpath.fullPathName().asChar());
+    LDbg("%s(), dagpath=%s", msg, dagpath.fullPathName().asChar());
 
 
 }
