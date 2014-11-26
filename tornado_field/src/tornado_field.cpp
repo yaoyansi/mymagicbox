@@ -400,6 +400,66 @@ void tornadoField::addFrictionForce( MDataBlock& block,
 
 }
 //
+void tornadoField::addUpForce( MDataBlock& block,
+							const MVectorArray &points,
+							const MVectorArray &velocities,
+							const MDoubleArray &masses,
+							MVectorArray &outputForce)
+{
+    MStatus status;
+
+    assert(outputForce.length() == points.length());
+
+/*
+              Pdir ^
+                   |
+   f_up = 0        +--------->CEILING
+                   |
+                   |
+   f_up = ?        +--------->o P.y
+                   |
+                   |
+                   |
+                   |
+                   |
+                   |
+                   |
+                   |
+                   |
+                   |
+   f_up = f_up_max +--------->ORIGINAL.y
+*/
+    //
+    MMatrix worldMatrix;// field's world matrix
+	CHECK_MSTATUS(worldMatrixValue(block, worldMatrix));
+	MTransformationMatrix transformMatrix(worldMatrix);
+
+    MVector ORIGINAL(transformMatrix.getTranslation(MSpace::kWorld, &status)); CHECK_MSTATUS(status);
+    //COUT("translation=", translation);
+    //
+
+    const double HEIGHT = 200;// tornado height
+    const double CEILING = HEIGHT + ORIGINAL.y;// the hightest position along Y-axis
+
+    const double F_UP_MAX = 500;// the maximum strength of the up force
+
+    const MVector Fdir_up(0.0, 1, 0.0);
+
+    const int pointCount = points.length();
+    for (int i = 0; i < pointCount; i ++ )
+    {
+        const MVector &P(points[i]);
+        const double  &M(masses[i]);
+        const MVector &V(velocities[i]);
+
+        // interpolate up force between CEILING.y and ORIGINAL.y
+        const double f_up = (CEILING - P.y)/(CEILING - ORIGINAL.y)*F_UP_MAX;
+
+        MVector Ffri(Fdir_up * f_up);
+        outputForce[i] += Ffri;
+    }
+}
+//
 void tornadoField::ownerPosition
 	(
 		MDataBlock& block,
@@ -588,7 +648,7 @@ MStatus tornadoField::_getForce(
     double deltaTime
 )
 {
-
+    addUpForce(block, point, velocity, mass, force);
     addCentripetalForce(block, point, velocity, mass, force);
     addFrictionForce(block, point, velocity, mass, force);
 

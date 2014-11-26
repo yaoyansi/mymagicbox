@@ -108,6 +108,11 @@ private:
 							const MVectorArray &velocities,
 							const MDoubleArray &masses,
 							MVectorArray &outputForce );
+	void	addUpForce( MDataBlock& block,
+							const MVectorArray &points,
+							const MVectorArray &velocities,
+							const MDoubleArray &masses,
+							MVectorArray &outputForce );
 
 	void	ownerPosition( MDataBlock& block, MVectorArray &vArray );
 	MStatus	getWorldPosition( MVector &vector );
