@@ -352,7 +352,7 @@ void tornadoField::addCentripetalForce
         MVector Pp = ORIGINAL + UP * l;// Pp is the projection of P onto UP
         MVector R  = P - Pp;
         MVector Rdir = R.normal();
-        MVector Fdir_cen = (UPdir ^ V).normal();// direction of centripetal force
+        MVector Fdir_cen = -Rdir;// direction of centripetal force
 
 
 
