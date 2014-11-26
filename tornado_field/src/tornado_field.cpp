@@ -259,7 +259,7 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
 }
 
 
-void tornadoField::applyNoMaxDist
+void tornadoField::addCentripetalForce
 	(
 		MDataBlock &block,				// get field param from this block
 		const MVectorArray &points,		// current position of Object
@@ -275,16 +275,6 @@ void tornadoField::applyNoMaxDist
     MStatus status;
 
     assert(outputForce.length() == points.length());
-
-	// get field parameters.
-	//
-	double magValue = magnitudeValue( block );
-	// double attenValue = attenuationValue( block );
-	double minDist = minDistanceValue( block );
-	double attractDist = attractDistanceValue( block );
-	double repelDist = repelDistanceValue( block );
-	double dragMag = dragValue( block );
-	double swarmAmp = swarmAmplitudeValue( block );
 
 	//printMObjectInfo("", thisMObject());
 	MMatrix worldMatrix;// field's world matrix
@@ -346,218 +336,27 @@ void tornadoField::applyNoMaxDist
         MVector Pp = ORIGINAL + UP * l;// Pp is the projection of P onto UP
         MVector R  = P - Pp;
         MVector Rdir = R.normal();
-        MVector Fdir = (UPdir ^ V).normal();// direction of F
+        MVector Fdir_cen = (UPdir ^ V).normal();// direction of centripetal force
 
 
 
         // F = m × (v²/r)
-        double f = 1.0;
+        double fcen = 0.0;
         const double minRadius = 0.001;// to avoid dividing Zero
         if(R.length() > minRadius)
         {
-            f = M * (V.length() * V.length() / R.length());
+            fcen = M * (V.length() * V.length() / R.length());
         }else{
-            f = M * (V.length() * V.length() / minRadius);
+            fcen = M * (V.length() * V.length() / minRadius);
         }
 
-        const MVector F(Fdir * f);
+        const MVector Fcen(Fdir_cen * fcen);
 
-        outputForce[i] += F ;// accumulate the force for particle i
+        outputForce[i] += Fcen ;// accumulate the force for particle i
     }
 
 }
-
-
-void tornadoField::applyMaxDist
-	(
-		MDataBlock& block,				// get field param from this block
-		const MVectorArray &points,		// current position of Object
-		const MVectorArray &velocities,	// current velocity of Object
-		const MDoubleArray &/*masses*/,		// mass of Object
-		MVectorArray &outputForce		// output force
-	)
 //
-//	Descriptions:
-//		Compute output force in the case that the useMaxDistance is set.
-//
-{
-	// points and velocities should have the same length. If not return.
-	//
-	if( points.length() != velocities.length() )
-		return;
-
-	// clear the output force array.
-	//
-	outputForce.clear();
-
-	// get field parameters.
-	//
-	double magValue = magnitudeValue( block );
-	double attenValue = attenuationValue( block );
-	double maxDist = maxDistanceValue( block );
-	double minDist = minDistanceValue( block );
-	double attractDist = attractDistanceValue( block );
-	double repelDist = repelDistanceValue( block );
-	double dragMag = dragValue( block );
-	double swarmAmp = swarmAmplitudeValue( block );
-
-	// get owner's data. posArray may have only one point which is the centroid
-	// (if this has owner) or field position(if without owner). Or it may have
-	// a list of points if with owner and applyPerVertex.
-	//
-	MVectorArray posArray;
-	posArray.clear();
-	ownerPosition( block, posArray );
-
-	int fieldPosCount = posArray.length();
-	int receptorSize = points.length();
-
-	if (attenValue > 0.0)
-	{
-		// Max distance applies and so does attenuation.
-		//
-		for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
-		{
-			const MVector &receptorPoint = points[ptIndex];
-
-			// Apply from every field position to every receptor position.
-			//
-			MVector forceV(0,0,0);
-			MVector sumForceV(0,0,0);
-			for(int i = fieldPosCount; --i>=0; )
-			{
-				MVector difference = receptorPoint-posArray[i];
-				double distance  = difference.length();
-				if (distance <= maxDist && distance >= minDist )
-				{
-					double force = magValue *
-									(pow((1.0-(distance/maxDist)),attenValue));
-					forceV = difference * force;
-
-					// Apply drag and swarm if the object is inside
-					// the zone the repulsion-attraction is pushing the
-					// object to, and if they are set.
-					//
-					if ( distance >= repelDist && distance <= attractDist)
-					{
-						if (fieldPosCount > 0 && dragMag > 0)
-						{
-							MVector dragForceV;
-							dragForceV = velocities[ptIndex] *
-											(-dragMag) * fieldPosCount;
-							forceV += dragForceV;
-						}
-
-						// Add swarm if swarm aplitude is set.
-						//
-						if (swarmAmp > 0)
-						{
-							double frequency = swarmFrequencyValue( block );
-							MVector phase( 0.0, 0.0, swarmPhaseValue(block) );
-
-							difference = receptorPoint - posArray[i];
-							difference = (difference + phase) * frequency;
-							double *noiseEffect = &difference.x;
-							if( (noiseEffect[0] < -2147483647.0) ||
-								(noiseEffect[0] >  2147483647.0) ||
-								(noiseEffect[1] < -2147483647.0) ||
-								(noiseEffect[1] >  2147483647.0) ||
-								(noiseEffect[2] < -2147483647.0) ||
-								(noiseEffect[2] >  2147483647.0) )
-								continue;
-
-							double noiseOut[4];
-							noiseFunction( noiseEffect, noiseOut );
-							MVector swarmForce( noiseOut[0] * swarmAmp,
-												noiseOut[1] * swarmAmp,
-												noiseOut[2] * swarmAmp );
-							forceV += swarmForce;
-						}
-					}
-				}
-				if (maxDist > 0.0) forceV *= falloffCurve(distance/maxDist);
-				sumForceV += forceV;
-			}
-			outputForce.append( sumForceV );
-		}
-	}
-	else
-	{
-		// Max dist applies, but not attenuation.
-		//
-		for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
-		{
-			const MVector & receptorPoint = points[ptIndex];
-
-			// Apply from every field position to every receptor position.
-			//
-			MVector forceV(0,0,0);
-			MVector sumForceV(0,0,0);
-			int i;
-			for(i = fieldPosCount; --i>=0; )
-			{
-				MVector difference = (receptorPoint-posArray[i]);
-				double distance = difference.length();
-				if (distance < minDist || distance > maxDist) continue;
-
-				if (distance <= repelDist)
-					forceV = difference * magValue;
-				else if (distance >= attractDist)
-					forceV = -difference * magValue;
-
-				// Apply drag and swarm if the object is inside
-				// the zone the repulsion-attraction is pushing the
-				// object to, and if they are set.
-				//
-				if ( distance >= repelDist && distance <= attractDist)
-				{
-					if (fieldPosCount > 0 && dragMag > 0)
-					{
-						MVector dragForceV;
-						dragForceV = velocities[ptIndex] *
-											(-dragMag) * fieldPosCount;
-						forceV += dragForceV;
-					}
-
-					// Add swarm if swarm aplitude is set.
-					//
-					if (swarmAmp > 0)
-					{
-						double frequency = swarmFrequencyValue( block );
-						MVector phase( 0.0, 0.0, swarmPhaseValue(block) );
-
-						for(i = fieldPosCount; --i >= 0;)
-						{
-							difference = receptorPoint - posArray[i];
-							difference = (difference + phase) * frequency;
-							double *noiseEffect = &difference.x;
-							if( (noiseEffect[0] < -2147483647.0) ||
-								(noiseEffect[0] >  2147483647.0) ||
-								(noiseEffect[1] < -2147483647.0) ||
-								(noiseEffect[1] >  2147483647.0) ||
-								(noiseEffect[2] < -2147483647.0) ||
-								(noiseEffect[2] >  2147483647.0) )
-								continue;
-
-							double noiseOut[4];
-							noiseFunction( noiseEffect, noiseOut );
-							MVector swarmForce( noiseOut[0] * swarmAmp,
-												noiseOut[1] * swarmAmp,
-												noiseOut[2] * swarmAmp );
-
-							forceV += swarmForce;
-						}
-					}
-				}
-				if (maxDist > 0.0) forceV *= falloffCurve(distance/maxDist);
-				sumForceV += forceV;
-			}
-			outputForce.append( sumForceV );
-		}
-	}
-}
-
-
 void tornadoField::ownerPosition
 	(
 		MDataBlock& block,
@@ -746,15 +545,9 @@ MStatus tornadoField::_getForce(
     double deltaTime
 )
 {
-	bool useMaxDistSet = useMaxDistanceValue( block );
-	if( useMaxDistSet )
-	{
-		applyMaxDist( block, point, velocity, mass, force );
-	}
-	else
-	{
-		applyNoMaxDist( block, point, velocity, mass, force );
-	}
+
+    addCentripetalForce( block, point, velocity, mass, force );
+
 
     return MS::kSuccess;
 }

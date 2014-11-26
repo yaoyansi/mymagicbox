@@ -95,13 +95,7 @@ private:
 
 	// methods to compute output force.
 	//
-	void	applyNoMaxDist( MDataBlock& block,
-							const MVectorArray &points,
-							const MVectorArray &velocities,
-							const MDoubleArray &masses,
-							MVectorArray &outputForce );
-
-	void	applyMaxDist( MDataBlock& block,
+	void	addCentripetalForce( MDataBlock& block,
 							const MVectorArray &points,
 							const MVectorArray &velocities,
 							const MDoubleArray &masses,
