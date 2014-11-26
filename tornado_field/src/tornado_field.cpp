@@ -1,5 +1,6 @@
 
 #include "tornado_field.h"
+#include <cassert>
 #include <cmath>
 
 #include <maya/MArrayDataBuilder.h>
@@ -222,7 +223,7 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
 
 	// Compute the output force.
 	//
-	MVectorArray forceArray;
+	MVectorArray forceArray(points.length(), MVector::zero);
 	status = _getForce(
            block,
            points,
@@ -273,9 +274,7 @@ void tornadoField::applyNoMaxDist
 {
     MStatus status;
 
-	// clear the output force array.
-	//
-	outputForce.clear();
+    assert(outputForce.length() == points.length());
 
 	// get field parameters.
 	//
@@ -319,7 +318,7 @@ void tornadoField::applyNoMaxDist
 	// also don't attenuate, because 1 - dist/maxDist isn't
 	// meaningful. No max distance and no attenuation.
 	//
-    for (int ptIndex = 0; ptIndex < receptorSize; ptIndex ++ )
+    for (int i = 0; i < receptorSize; i ++ )
     {
 
 /*
@@ -339,9 +338,9 @@ void tornadoField::applyNoMaxDist
                    o
                 ORIGINAL
 
-*/      const MVector &P(points[ptIndex]);
-        const double  &M(masses[ptIndex]);
-        const MVector &V(velocities[ptIndex]);
+*/      const MVector &P(points[i]);
+        const double  &M(masses[i]);
+        const MVector &V(velocities[i]);
 
         float l = UPdir * (P - ORIGINAL);
         MVector Pp = ORIGINAL + UP * l;// Pp is the projection of P onto UP
@@ -362,7 +361,8 @@ void tornadoField::applyNoMaxDist
         }
 
         const MVector F(Fdir * f);
-        outputForce.append( F );
+
+        outputForce[i] += F ;// accumulate the force for particle i
     }
 
 }
