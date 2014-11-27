@@ -364,7 +364,15 @@ void tornadoField::addCentripetalForce
             Fcen = Fdir_cen * fcen;
         }
 
-        outputForce[i] += Fcen;// accumulate the force for particle i
+        // driver force which aims to provide enough speed for a particle in counterclockwise tangent direction
+        MVector Fdvr;
+        {
+            MVector Tdir = (UPdir ^ Rdir).normal();
+            const double fdvr = 1;// force strength
+            Fdvr = Tdir * fdvr;
+        }
+
+        outputForce[i] += Fcen + Fdvr;// accumulate the force for particle i
     }
 
 }
