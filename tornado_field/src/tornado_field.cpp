@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cmath>
 
+#include <maya/MAngle.h>
 #include <maya/MArrayDataBuilder.h>
 #include <maya/MDagPath.h>
 #include <maya/MDoubleArray.h>
@@ -329,38 +330,64 @@ void tornadoField::addCentripetalForce
 
 /*
              UPdir ^
-                   |
-                Pp |-----R--->o P
-                   |         /
-                   |        /
-                   |       /
-                   |      /
-                   |     /
-                   |    /
-                   |   /
-                   |  /
-                   | /
-                   |/
-                   o
+                   |     .      .              .
+                   |     .      .              .
+                   |     .minR  .innerR        .outerR
+                   |     .      .          P   .
+                Pp +-----------------R---->o   .
+                   |     .      .         /    .
+                   |     .      .        /     .
+                   |     .      .       /      .
+                 h |     .      .      /       .
+                   |     .      .     /        .
+                   |     .      .    /         .
+                   |     .      .   /          .
+                   |     .      .a /           .
+                   |     .      .^/            .
+                   |     .      ./             .
+                   |     .      .              .
                 ORIGINAL
 
 */      const MVector &P(points[i]);
         const double  &M(masses[i]);
         const MVector &V(velocities[i]);
 
-        float l = UPdir * (P - ORIGINAL);
-        MVector Pp = ORIGINAL + UP * l;// Pp is the projection of P onto UP
+        float h = UPdir * (P - ORIGINAL);
+        MVector Pp = ORIGINAL + UP * h;// Pp is the projection of P onto UP
         MVector R  = P - Pp;
         MVector Rdir = R.normal();
-        MVector Fdir_cen = -Rdir;// direction of centripetal force
+
 
 
         MVector Fcen;// centripetal force of uniform circle motion
         {
+            MVector Fdir_cen = -Rdir;// direction of centripetal force
             double fcen = 0.0;// force strength
-            // F = m × (v²/r)
-            fcen = M * (V.length() * V.length() / R.length());// uniform circle motion
+            {
+#if 1
+                MAngle a(45.0, MAngle::kDegrees);
+//                 |         minR       innerR      outerR
+//                 o         .          .           . /
+//                 |         .          .<----1---->./
+//                 |         1          2
+                const double innerR = 2.0;// to avoid dividing Zero
+                const double thick  = 1.0 + abs(h * tan(a.asRadians()));
+                const double outerR = innerR + thick;
 
+                if(R.length() <= innerR)
+                {
+                    fcen = M * (V.length() * V.length() / innerR);// push the particle to innerRadius
+                }
+                else if(innerR < R.length() && R.length() <= outerR){
+                    fcen = M * (V.length() * V.length() / R.length());// uniform circular motion
+                }
+                else{// outerR < R.length()
+                    fcen = M * (V.length() * V.length() / outerR);// pull the particle to outerRadius
+                }
+#else
+                fcen = M * (V.length() * V.length() / R.length());// uniform circle motion
+#endif
+            }
             Fcen = Fdir_cen * fcen;
         }
 
@@ -368,7 +395,7 @@ void tornadoField::addCentripetalForce
         MVector Fdvr;
         {
             MVector Tdir = (UPdir ^ Rdir).normal();
-            const double fdvr = 1;// force strength
+            const double fdvr = 5;// force strength, should be big enough!!!
             Fdvr = Tdir * fdvr;
         }
 
