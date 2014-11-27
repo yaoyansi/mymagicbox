@@ -148,6 +148,8 @@ private:
         MVectorArray& force,
         double deltaTime
     );
+
+    double getOutline(const double height) const;
 };
 
 // inlines

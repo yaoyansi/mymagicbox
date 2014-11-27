@@ -365,13 +365,12 @@ void tornadoField::addCentripetalForce
             double fcen = 0.0;// force strength
             {
 #if 1
-                MAngle a(45.0, MAngle::kDegrees);
 //                 |         minR       innerR      outerR
 //                 o         .          .           . /
 //                 |         .          .<----1---->./
 //                 |         1          2
                 const double innerR = 2.0;// to avoid dividing Zero
-                const double thick  = 1.0 + abs(h * tan(a.asRadians()));
+                const double thick  = getOutline(h);
                 const double outerR = innerR + thick;
 
                 if(R.length() <= innerR)
@@ -864,4 +863,48 @@ MStatus tornadoField::worldMatrixValue(MDataBlock& block, MMatrix &m)
     m.matrix[3][0] = ret[12];    m.matrix[3][1] = ret[13];    m.matrix[3][2] = ret[14];     m.matrix[3][3] = ret[15];
 #endif
 	return MS::kSuccess;
+}
+//
+double tornadoField::getOutline(const double x) const
+{
+    double y = 0.0;
+
+    int type = 1;
+
+    switch(type)
+    {
+    case 0:
+        {
+            // y = tan(a) * x;
+            MAngle a(45.0, MAngle::kDegrees);
+            y = 1.0 + abs(x * tan(a.asRadians()));
+        }break;
+    case 1:
+        {
+            // y = x^2;
+            MAngle a(45.0, MAngle::kDegrees);
+            y = 1.0 + x*x;
+        }break;
+    case 2:
+        {
+            const double H = 20;
+            const double epsion = 0.1;
+
+            // y = -1/(x-H);
+            if( abs(H - x) >= epsion)
+            {
+                y = 1.0/(H - x);
+            }else{
+                y = 1.0/epsion;
+            }
+
+        }break;
+    default:
+        y = 1.0;
+        break;
+    }
+
+
+    return y;
+
 }
