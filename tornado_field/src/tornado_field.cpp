@@ -268,9 +268,9 @@ MStatus tornadoField::_getForce(
     double deltaTime
 )
 {
-    addUpForce(block, point, velocity, mass, force);
+    //addUpForce(block, point, velocity, mass, force);
     addCentripetalForce(block, point, velocity, mass, force);
-    addFrictionForce(block, point, velocity, mass, force);
+    //addFrictionForce(block, point, velocity, mass, force);
 
     return MS::kSuccess;
 }
@@ -355,20 +355,16 @@ void tornadoField::addCentripetalForce
         MVector Fdir_cen = -Rdir;// direction of centripetal force
 
 
-
-        // F = m × (v²/r)
-        double fcen = 0.0;
-        const double minRadius = 0.001;// to avoid dividing Zero
-        if(R.length() > minRadius)
+        MVector Fcen;// centripetal force of uniform circle motion
         {
-            fcen = M * (V.length() * V.length() / R.length());
-        }else{
-            fcen = M * (V.length() * V.length() / minRadius);
+            double fcen = 0.0;// force strength
+            // F = m × (v²/r)
+            fcen = M * (V.length() * V.length() / R.length());// uniform circle motion
+
+            Fcen = Fdir_cen * fcen;
         }
 
-        const MVector Fcen(Fdir_cen * fcen);
-
-        outputForce[i] += Fcen ;// accumulate the force for particle i
+        outputForce[i] += Fcen;// accumulate the force for particle i
     }
 
 }
