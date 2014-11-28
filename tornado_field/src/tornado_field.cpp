@@ -260,6 +260,21 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
 	return( MS::kSuccess );
 }
 //
+MStatus tornadoField::getForceAtPoint(const MVectorArray&	points,
+                                  const MVectorArray&	velocities,
+                                  const MDoubleArray&	masses,
+                                  MVectorArray&	forceArray,
+                                  double	deltaTime)
+//
+//    This method is not required to be overridden, it is only necessary
+//    for compatibility with the MFnField function set.
+//
+{
+	MDataBlock block = forceCache();
+
+    return _getForce( block, points, velocities, masses, forceArray, deltaTime);
+}
+//
 MStatus tornadoField::_getForce(
     MDataBlock& block,
     const MVectorArray& point,
@@ -669,20 +684,6 @@ MStatus tornadoField::getWorldPosition( MDataBlock& block, MVector &vector )
     return( status );
 }
 
-MStatus tornadoField::getForceAtPoint(const MVectorArray&	points,
-                                  const MVectorArray&	velocities,
-                                  const MDoubleArray&	masses,
-                                  MVectorArray&	forceArray,
-                                  double	deltaTime)
-//
-//    This method is not required to be overridden, it is only necessary
-//    for compatibility with the MFnField function set.
-//
-{
-	MDataBlock block = forceCache();
-
-    return _getForce( block, points, velocities, masses, forceArray, deltaTime);
-}
 //
 MStatus tornadoField::iconSizeAndOrigin(	GLuint& width,
 					GLuint& height,
