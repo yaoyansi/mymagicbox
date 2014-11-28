@@ -287,10 +287,10 @@ MStatus tornadoField::_getForce(
     double deltaTime
 )
 {
-    addSimpleCentripetalForce(block, point, velocity, mass, deltaTime, force);
+    //addSimpleCentripetalForce(block, point, velocity, mass, deltaTime, force);
 
     //addUpForce(block, point, velocity, mass, deltaTime, force);
-    //addCentripetalForce(block, point, velocity, mass, deltaTime, force);
+    addCentripetalForce(block, point, velocity, mass, deltaTime, force);
     //addFrictionForce(block, point, velocity, mass, deltaTime, force);
 
     return MS::kSuccess;
@@ -980,9 +980,9 @@ MStatus tornadoField::worldMatrixValue(MDataBlock& block, MMatrix &m)
 // outout : Y
 double tornadoField::getOutline(const double X) const
 {
-    double y(0.0);
+    double Y(0.0);
 
-    const double x = (1.0/20.0) * X + (0.0);
+    double y(0.0);
 
     int type = 1;
 
@@ -990,17 +990,27 @@ double tornadoField::getOutline(const double X) const
     {
     case 0:
         {
+            const double x = (1.0/20.0) * X + (0.0);
+
             // y = x * tan(a);
             MAngle a(45.0, MAngle::kDegrees);
             y = abs(x * tan(a.asRadians()));
+
+            Y = (1.0) * y + (0.0);
         }break;
     case 1:
         {
-            // y = x^2;
-            y = x*x;
+            const double x = (1.0/40.0) * X + (0.0);
+
+            // y = x^8;
+            y = pow(x, 8);
+
+            Y = (1.0) * y + (0.0);
         }break;
     case 2:
         {
+            const double x = (1.0/20.0) * X + (0.0);
+
             const double H = 20;
             const double epsion = 0.1;
 
@@ -1012,6 +1022,17 @@ double tornadoField::getOutline(const double X) const
                 y = 1.0/epsion;
             }
 
+            Y = (1.0) * y + (0.0);
+
+        }break;
+    case 3:
+        {
+            const double x = (1.3) * X - (30.0);
+
+            // y = 1.22^x;
+            y = pow(1.22, x);
+
+            Y = (1.0) * y + (0.0);
         }break;
     default:
         y = 1.0;
@@ -1019,7 +1040,7 @@ double tornadoField::getOutline(const double X) const
     }
 
 
-    const double Y = (1.0) * y + (0.0);
+
     return Y;
 
 }
