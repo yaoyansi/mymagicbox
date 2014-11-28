@@ -39,10 +39,11 @@ MObject tornadoField::aSwarmPhase;
 
 MTypeId tornadoField::m_id( NodeID_tornado_field );
 MString tornadoField::m_classification("utility/general");
-
+double  tornadoField::m_deltaTime;
 //
 tornadoField::tornadoField()
 {
+    m_deltaTime = 1/30.0;// 30 fps
 }
 //
 tornadoField::~tornadoField()
@@ -232,7 +233,7 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
            velocities,
            masses,
            forceArray,
-           -1.0// deltaTime is not provided in compute()
+           m_deltaTime// deltaTime is not provided in compute()
     );
     CHECK_MSTATUS(status);
 
@@ -284,9 +285,9 @@ MStatus tornadoField::_getForce(
     double deltaTime
 )
 {
-    //addUpForce(block, point, velocity, mass, force);
-    addCentripetalForce(block, point, velocity, mass, force);
-    //addFrictionForce(block, point, velocity, mass, force);
+    //addUpForce(block, point, velocity, mass, deltaTime, force);
+    addCentripetalForce(block, point, velocity, mass, deltaTime, force);
+    //addFrictionForce(block, point, velocity, mass, deltaTime, force);
 
     return MS::kSuccess;
 }
@@ -297,6 +298,7 @@ void tornadoField::addCentripetalForce
 		const MVectorArray &points,		// current position of Object
 		const MVectorArray &velocities,	// current velocity of Object
 		const MDoubleArray &masses,		// mass of Object
+		const double deltaTime,
 		MVectorArray &outputForce		// output force
 	)
 //
@@ -422,6 +424,7 @@ void tornadoField::addFrictionForce( MDataBlock& block,
                         const MVectorArray &points,
                         const MVectorArray &velocities,
                         const MDoubleArray &masses,
+                        const double deltaTime,
                         MVectorArray &outputForce )
 {
     MStatus status;
@@ -464,6 +467,7 @@ void tornadoField::addUpForce( MDataBlock& block,
 							const MVectorArray &points,
 							const MVectorArray &velocities,
 							const MDoubleArray &masses,
+							const double deltaTime,
 							MVectorArray &outputForce)
 {
     MStatus status;

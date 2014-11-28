@@ -94,6 +94,8 @@ public:
 	//
 	static MTypeId	m_id;
 	static MString  m_classification;
+
+	static double   m_deltaTime;
 private:
 
 	// methods to compute output force.
@@ -102,16 +104,19 @@ private:
 							const MVectorArray &points,
 							const MVectorArray &velocities,
 							const MDoubleArray &masses,
+							const double deltaTime,
 							MVectorArray &outputForce );
 	void	addFrictionForce( MDataBlock& block,
 							const MVectorArray &points,
 							const MVectorArray &velocities,
 							const MDoubleArray &masses,
+							const double deltaTime,
 							MVectorArray &outputForce );
 	void	addUpForce( MDataBlock& block,
 							const MVectorArray &points,
 							const MVectorArray &velocities,
 							const MDoubleArray &masses,
+							const double deltaTime,
 							MVectorArray &outputForce );
 
 	void	ownerPosition( MDataBlock& block, MVectorArray &vArray );
