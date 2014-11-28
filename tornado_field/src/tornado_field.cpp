@@ -291,10 +291,10 @@ MStatus tornadoField::_getForce(
     double deltaTime
 )
 {
-    addSimpleCentripetalForce(block, point, velocity, mass, deltaTime, force);
+    //addSimpleCentripetalForce(block, point, velocity, mass, deltaTime, force);
 
     //addUpForce(block, point, velocity, mass, deltaTime, force);
-    //addCentripetalForce(block, point, velocity, mass, deltaTime, force);
+    addCentripetalForce(block, point, velocity, mass, deltaTime, force);
     //addFrictionForce(block, point, velocity, mass, deltaTime, force);
 
     return MS::kSuccess;
@@ -483,6 +483,7 @@ void tornadoField::addCentripetalForce
 
         float h = UPdir * (P - ORIGINAL);
         MVector Pp = ORIGINAL + UP * h;// Pp is the projection of P onto UP
+        Pp +=  getTrunkDisturbance(h, m_Time);
         MVector R  = P - Pp;
         MVector Rdir = R.normal();
 
@@ -1052,8 +1053,8 @@ double tornadoField::getOutline(const double X) const
 //
 MVector tornadoField::getTrunkDisturbance(const double h, const double t)
 {
-    double X = 5*sin(h/13.0) + sin(t/2.0);
-    double Z = 7*cos(h/11.0) + cos(t/3.0);
+    double X = 3*cos(h/11.0 + t/1.0) + sin(h/13.0 + t/2.0)   + cos(t/3.0);
+    double Z = 0.0;
 
     return MVector(X, 0.0, Z);
 }
