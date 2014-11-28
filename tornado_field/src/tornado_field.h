@@ -96,6 +96,7 @@ public:
 	static MString  m_classification;
 
 	static double   m_deltaTime;
+	static double   m_Time;
 private:
 
 	// methods to compute output force.
@@ -164,6 +165,7 @@ private:
     );
 
     double getOutline(const double height) const;
+    MVector getTrunkDisturbance(const double x, const double t);
 };
 
 // inlines

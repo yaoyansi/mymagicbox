@@ -40,10 +40,12 @@ MObject tornadoField::aSwarmPhase;
 MTypeId tornadoField::m_id( NodeID_tornado_field );
 MString tornadoField::m_classification("utility/general");
 double  tornadoField::m_deltaTime;
+double  tornadoField::m_Time;
 //
 tornadoField::tornadoField()
 {
     m_deltaTime = 1/30.0;// 30 fps
+    m_Time = 0.0;
 }
 //
 tornadoField::~tornadoField()
@@ -224,6 +226,8 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
 		return MS::kInvalidParameter;
     }
 
+    m_Time += m_deltaTime;
+
 	// Compute the output force.
 	//
 	MVectorArray forceArray(points.length(), MVector::zero);
@@ -233,7 +237,7 @@ MStatus tornadoField::compute(const MPlug& plug, MDataBlock& block)
            velocities,
            masses,
            forceArray,
-           m_deltaTime// deltaTime is not provided in compute()
+           m_deltaTime
     );
     CHECK_MSTATUS(status);
 
@@ -287,10 +291,10 @@ MStatus tornadoField::_getForce(
     double deltaTime
 )
 {
-    //addSimpleCentripetalForce(block, point, velocity, mass, deltaTime, force);
+    addSimpleCentripetalForce(block, point, velocity, mass, deltaTime, force);
 
     //addUpForce(block, point, velocity, mass, deltaTime, force);
-    addCentripetalForce(block, point, velocity, mass, deltaTime, force);
+    //addCentripetalForce(block, point, velocity, mass, deltaTime, force);
     //addFrictionForce(block, point, velocity, mass, deltaTime, force);
 
     return MS::kSuccess;
@@ -372,6 +376,7 @@ void tornadoField::addSimpleCentripetalForce
 
         float h = UPdir * (P - ORIGINAL);
         MVector Pp = ORIGINAL + UP * h;// Pp is the projection of P onto UP
+        Pp +=  getTrunkDisturbance(h, m_Time);
         MVector R  = P - Pp;
         MVector Rdir = R.normal();
 
@@ -1043,4 +1048,12 @@ double tornadoField::getOutline(const double X) const
 
     return Y;
 
+}
+//
+MVector tornadoField::getTrunkDisturbance(const double h, const double t)
+{
+    double X = 5*sin(h/13.0) + sin(t/2.0);
+    double Z = 7*cos(h/11.0) + cos(t/3.0);
+
+    return MVector(X, 0.0, Z);
 }

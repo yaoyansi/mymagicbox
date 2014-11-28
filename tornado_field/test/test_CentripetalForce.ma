@@ -1,6 +1,6 @@
 //Maya ASCII 2015 scene
 //Name: test_CentripetalForce.ma
-//Last modified: Fri, Nov 28, 2014 10:03:51 pm
+//Last modified: Fri, Nov 28, 2014 11:42:45 pm
 //Codeset: UTF-8
 requires maya "2015";
 requires -nodeType "tornadoField" "tornado_field" "0.1";
@@ -12,8 +12,8 @@ fileInfo "cutIdentifier" "201407071530-922714";
 fileInfo "osv" "Linux 3.10.0-123.9.3.el7.x86_64 #1 SMP Thu Nov 6 15:06:03 UTC 2014 x86_64";
 createNode transform -s -n "persp";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" -1.7222748745121077 -0.21076795907184476 106.9452218606724 ;
-	setAttr ".r" -type "double3" 23.06164727051052 0.19999999998816184 5.590852837398813e-17 ;
+	setAttr ".t" -type "double3" 20.190660888834042 61.261655843478415 112.04578083751264 ;
+	setAttr ".r" -type "double3" -5.7383527294894474 8.199999999988167 -1.0041899440702138e-16 ;
 createNode camera -s -n "perspShape" -p "persp";
 	setAttr -k off ".v" no;
 	setAttr ".fl" 34.999999999999993;
@@ -179,15 +179,15 @@ createNode locator -n "locatorShape1" -p "locator1";
 	setAttr -k off ".v";
 	setAttr ".lp" -type "double3" 0 200 0 ;
 createNode transform -n "camera1";
-	setAttr ".t" -type "double3" 0 62.306792109000213 7.1735488902380713e-15 ;
-	setAttr ".r" -type "double3" -90 0 3.9760809242565742e-16 ;
+	setAttr ".t" -type "double3" 0.37166592619113781 20.385724547370653 26.616881365215292 ;
+	setAttr ".r" -type "double3" -40.200000000000273 0.80000000000000815 0 ;
 createNode camera -n "cameraShape1" -p "camera1";
 	setAttr -k off ".v";
 	setAttr ".rnd" no;
 	setAttr ".cap" -type "double2" 1.41732 0.94488 ;
 	setAttr ".ff" 0;
 	setAttr ".ovr" 1.3;
-	setAttr ".coi" 65.886638439388008;
+	setAttr ".coi" 35.800612112369052;
 	setAttr ".ow" 30;
 	setAttr ".imn" -type "string" "camera1";
 	setAttr ".den" -type "string" "camera1_depth";
