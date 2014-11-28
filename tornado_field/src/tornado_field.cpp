@@ -287,11 +287,116 @@ MStatus tornadoField::_getForce(
     double deltaTime
 )
 {
+    addSimpleCentripetalForce(block, point, velocity, mass, deltaTime, force);
+
     //addUpForce(block, point, velocity, mass, deltaTime, force);
-    addCentripetalForce(block, point, velocity, mass, deltaTime, force);
+    //addCentripetalForce(block, point, velocity, mass, deltaTime, force);
     //addFrictionForce(block, point, velocity, mass, deltaTime, force);
 
     return MS::kSuccess;
+}
+//
+void tornadoField::addSimpleCentripetalForce
+	(
+		MDataBlock &block,				// get field param from this block
+		const MVectorArray &points,		// current position of Object
+		const MVectorArray &velocities,	// current velocity of Object
+		const MDoubleArray &masses,		// mass of Object
+		const double deltaTime,
+		MVectorArray &outputForce		// output force
+	)
+//
+//	Descriptions:
+//		Compute output force in the case that the useMaxDistance is not set.
+//
+{
+    MStatus status;
+
+    assert(outputForce.length() == points.length());
+
+	//printMObjectInfo("", thisMObject());
+	MMatrix worldMatrix;// field's world matrix
+	CHECK_MSTATUS(worldMatrixValue(block, worldMatrix));
+	MTransformationMatrix transformMatrix(worldMatrix);
+
+    //MQuaternion rotation(transformMatrix.rotation());
+    //COUT("rotation=", rotation);
+
+    // direction
+    MVector UP(0.0, 1.0, 0.0);// the original up direction is (0, 1, 0),
+    UP = UP * worldMatrix;    // the new up direction after rotation
+    const MVector UPdir(UP.normal());
+    //COUT("up=", up);
+
+    MVector ORIGINAL(transformMatrix.getTranslation(MSpace::kWorld, &status)); CHECK_MSTATUS(status);
+    //COUT("translation=", translation);
+
+	// get owner's data. posArray may have only one point which is the centroid
+	// (if this has owner) or field position(if without owner). Or it may have
+	// a list of points if with owner and applyPerVertex.
+	//
+	MVectorArray posArray;
+	posArray.clear();
+	ownerPosition( block, posArray );
+
+	int fieldPosCount = posArray.length();
+	int receptorSize = points.length();
+
+	// With this model,if max distance isn't set then we
+	// also don't attenuate, because 1 - dist/maxDist isn't
+	// meaningful. No max distance and no attenuation.
+	//
+    for (int i = 0; i < receptorSize; i ++ )
+    {
+/*
+             UPdir ^
+                   |
+                Pp |-----R--->o P
+                   |         /
+                   |        /
+                   |       /
+                   |      /
+                   |     /
+                   |    /
+                   |   /
+                   |  /
+                   | /
+                   |/
+                   o
+                ORIGINAL
+
+*/
+        const MVector &P(points[i]);
+        const double  &M(masses[i]);
+        const MVector &V(velocities[i]);
+
+        float h = UPdir * (P - ORIGINAL);
+        MVector Pp = ORIGINAL + UP * h;// Pp is the projection of P onto UP
+        MVector R  = P - Pp;
+        MVector Rdir = R.normal();
+
+
+        MVector Fcen;// centripetal force of uniform circle motion
+        {
+            MVector Fdir_cen = -Rdir;// direction of centripetal force
+            double fcen(0.0);// force strength
+            {
+                fcen = M * (V.length() * V.length() / R.length());// uniform circle motion
+            }
+            Fcen = Fdir_cen * fcen;
+        }
+
+        // driver force which aims to provide enough speed for a particle in counterclockwise tangent direction
+        MVector Fdvr;
+        {
+
+            MVector Tdir = (UPdir ^ Rdir).normal();
+            const double fdvr = 5;// force strength, should be big enough!!!
+            Fdvr = Tdir * fdvr;
+        }
+
+        outputForce[i] += Fcen + Fdvr;// accumulate the force for particle i
+    }
 }
 //
 void tornadoField::addCentripetalForce

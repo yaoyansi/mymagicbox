@@ -100,12 +100,21 @@ private:
 
 	// methods to compute output force.
 	//
+	// provide a simple model for debugging other forces, e.g. friction force, up force, ...
+	void	addSimpleCentripetalForce( MDataBlock& block,
+							const MVectorArray &points,
+							const MVectorArray &velocities,
+							const MDoubleArray &masses,
+							const double deltaTime,
+							MVectorArray &outputForce);
+
 	void	addCentripetalForce( MDataBlock& block,
 							const MVectorArray &points,
 							const MVectorArray &velocities,
 							const MDoubleArray &masses,
 							const double deltaTime,
 							MVectorArray &outputForce );
+
 	void	addFrictionForce( MDataBlock& block,
 							const MVectorArray &points,
 							const MVectorArray &velocities,
