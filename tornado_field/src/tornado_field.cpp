@@ -271,6 +271,8 @@ MStatus tornadoField::getForceAtPoint(const MVectorArray&	points,
 //    for compatibility with the MFnField function set.
 //
 {
+    assert(deltaTime > 0.0 && "deltaTime should be a positive number");
+
 	MDataBlock block = forceCache();
 
     return _getForce( block, points, velocities, masses, forceArray, deltaTime);
@@ -386,8 +388,8 @@ void tornadoField::addCentripetalForce
 //                 o         .          .           . /
 //                 |         .          .<----1---->./
 //                 |         1          2
-                const double innerR = 2.0;// to avoid dividing Zero
-                const double thick  = getOutline(h);
+                const double innerR = 1.0 + getOutline(h);
+                const double thick  = 10.0;
                 const double outerR = innerR + thick;
 
                 if(R.length() <= innerR)
@@ -869,10 +871,13 @@ MStatus tornadoField::worldMatrixValue(MDataBlock& block, MMatrix &m)
 #endif
 	return MS::kSuccess;
 }
-//
-double tornadoField::getOutline(const double x) const
+// input  : X
+// outout : Y
+double tornadoField::getOutline(const double X) const
 {
-    double y = 0.0;
+    double y(0.0);
+
+    const double x = (1.0/20.0) * X + (0.0);
 
     int type = 1;
 
@@ -880,15 +885,14 @@ double tornadoField::getOutline(const double x) const
     {
     case 0:
         {
-            // y = tan(a) * x;
+            // y = x * tan(a);
             MAngle a(45.0, MAngle::kDegrees);
-            y = 1.0 + abs(x * tan(a.asRadians()));
+            y = abs(x * tan(a.asRadians()));
         }break;
     case 1:
         {
             // y = x^2;
-            MAngle a(45.0, MAngle::kDegrees);
-            y = 1.0 + x*x;
+            y = x*x;
         }break;
     case 2:
         {
@@ -910,6 +914,7 @@ double tornadoField::getOutline(const double x) const
     }
 
 
-    return y;
+    const double Y = (1.0) * y + (0.0);
+    return Y;
 
 }
