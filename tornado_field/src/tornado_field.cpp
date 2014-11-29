@@ -1053,8 +1053,37 @@ double tornadoField::getOutline(const double X) const
 //
 MVector tornadoField::getTrunkDisturbance(const double h, const double t)
 {
-    double X = 3*cos(h/11.0 + t/1.0) + sin(h/13.0 + t/2.0)   + cos(t/3.0);
-    double Z = 0.0;
+    double X(0.0), Z(0.0);
+
+    int type = 1;
+
+    switch(type)
+    {
+    case 0:
+        {
+            X = Z = 0.0;
+        }break;
+    case 1:// test_0001
+        {
+            X = 3*cos(h/11.0 + t/1.0) + sin(h/13.0 + t/2.0)   + cos(t/3.0);
+            Z = 0.0;
+        }break;
+    case 2:// test_0002
+        {
+            X=    3.0*( sin(h/13.0 +t) +sin(h/11.0 +t*3.0)/3.0 +sin(h/9.0 +t*5.0)/5.0 )//
+
+                + 0.2*( sin(t) +sin(t*3) +sin(t*5) +sin(t*7) +sin(t*17) )// movement where h is Zero
+                ;
+
+            Z = 0.0;
+        }break;
+
+    default:
+        break;
+    }
+
+
+
 
     return MVector(X, 0.0, Z);
 }

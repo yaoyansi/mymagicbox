@@ -1,0 +1,2 @@
+in tornadoField::getTrunkDisturbance(...)
+set type to 1

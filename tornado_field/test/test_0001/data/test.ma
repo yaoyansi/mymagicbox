@@ -1,6 +1,6 @@
 //Maya ASCII 2015 scene
-//Name: test_CentripetalForce.ma
-//Last modified: Sat, Nov 29, 2014 11:05:12 am
+//Name: test.ma
+//Last modified: Sat, Nov 29, 2014 01:07:41 pm
 //Codeset: UTF-8
 requires maya "2015";
 requires -nodeType "tornadoField" "tornado_field" "0.1";
@@ -12,15 +12,15 @@ fileInfo "cutIdentifier" "201407071530-922714";
 fileInfo "osv" "Linux 3.10.0-123.9.3.el7.x86_64 #1 SMP Thu Nov 6 15:06:03 UTC 2014 x86_64";
 createNode transform -s -n "persp";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" 4.0367637648275281 52.977331497975364 152.0313922638378 ;
-	setAttr ".r" -type "double3" -3.9383527294894765 0.9999999999882172 1.8638901381660201e-17 ;
+	setAttr ".t" -type "double3" 0.045112746617081978 102.07392070214655 117.94269323552918 ;
+	setAttr ".r" -type "double3" -27.338352729489472 0.59999999998821496 -2.4849445959822314e-17 ;
 createNode camera -s -n "perspShape" -p "persp";
 	setAttr -k off ".v" no;
 	setAttr ".ovr" 1.3;
 	setAttr ".fl" 34.999999999999993;
 	setAttr ".ncp" 0.001;
 	setAttr ".fcp" 1000000;
-	setAttr ".coi" 259.35742679864842;
+	setAttr ".coi" 234.63520883104121;
 	setAttr ".imn" -type "string" "persp";
 	setAttr ".den" -type "string" "persp_depth";
 	setAttr ".man" -type "string" "persp_mask";
@@ -161,7 +161,7 @@ createNode nParticle -n "nParticleShape1" -p "nParticle1";
 	setAttr ".attributeName" -type "string" "particleId";
 createNode nucleus -n "nucleus1";
 createNode pointEmitter -n "emitter1";
-	setAttr ".t" -type "double3" -3.2554769468519038 0 0.041559065997977207 ;
+	setAttr ".t" -type "double3" -3.3203283132332562 0 -0.23177905666264387 ;
 	setAttr ".emt" 0;
 	setAttr ".sro" no;
 	setAttr -l on ".urpp";
@@ -438,4 +438,4 @@ connectAttr "defaultRenderLayer.msg" ":defaultRenderingList1.r" -na;
 connectAttr "pSphereShape1.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "pSphereShape2.iog" ":initialShadingGroup.dsm" -na;
 connectAttr "pPlaneShape1.iog" ":initialShadingGroup.dsm" -na;
-// End of test_CentripetalForce.ma
+// End of test.ma
