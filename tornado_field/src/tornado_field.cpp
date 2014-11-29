@@ -1055,7 +1055,7 @@ MVector tornadoField::getTrunkDisturbance(const double h, const double t)
 {
     double X(0.0), Z(0.0);
 
-    int type = 1;
+    int type = 2;
 
     switch(type)
     {
