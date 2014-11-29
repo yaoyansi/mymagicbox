@@ -1077,7 +1077,14 @@ MVector tornadoField::getTrunkDisturbance(const double h, const double t)
 
             Z = 0.0;
         }break;
+    case 3:// test_0003
+        {
+            X=    3.0*sin(h/11.0 + t/1.0)
+                + 1.0*(sin(t) + sin(t*3) +sin(t*5)  + sin(t*7) + sin(t*17));// movement where h is Zero
+                ;
 
+            Z = 0.0;
+        }break;
     default:
         break;
     }
