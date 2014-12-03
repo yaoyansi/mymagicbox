@@ -1,5 +1,10 @@
+========================
 mymagicbox
-==========
+========================
+
+------------------------
+Projects & Descriptions
+------------------------
 
 node_template
 This is a project template for my maya node.
